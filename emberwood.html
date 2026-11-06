@@ -7,13 +7,12 @@
   <meta name="description" content="Emberwood — เกมเอาชีวิตรอดในป่า รวบรวมไม้ อัปเกรดกองไฟ และต่อสู้จนรุ่งสาง เล่นได้ในไฟล์เดียว">
   <title>Emberwood · ปกป้องแสงไฟสุดท้าย</title>
   <style>
-    /* The simulation always uses 450 × 800 logical pixels. Only the outer
-       frame scales, so canvas artwork, touch input, and HUD stay aligned. */
-    :root { color-scheme: dark; --cream:#f6efd8; --muted:#9ca99b; --gold:#e5bc73; --line:rgba(229,188,115,.2); --scale:1; }
+    /* The canvas fills the viewport. World units scale uniformly while the
+       HUD stays in CSS pixels, keeping text and touch controls readable. */
+    :root { color-scheme: dark; --cream:#f6efd8; --muted:#9ca99b; --gold:#e5bc73; --line:rgba(229,188,115,.2); --control-height:151px; }
     * { box-sizing:border-box; }
-    html,body { margin:0; min-height:100%; }
-    body { min-height:100svh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:24px 16px; overflow-x:hidden; color:var(--cream); font-family:"Leelawadee UI",Tahoma,"Segoe UI",sans-serif; background:radial-gradient(ellipse at 50% 56%,#26342a 0%,#14211d 42%,#0b1413 100%); }
-    body::before { content:""; position:fixed; inset:0; pointer-events:none; opacity:.17; background-image:radial-gradient(#d3c69c .6px,transparent .6px); background-size:7px 7px; mask-image:linear-gradient(transparent,#000); }
+    html,body { margin:0; width:100%; height:100%; overflow:hidden; overscroll-behavior:none; }
+    body { color:var(--cream); font-family:"Leelawadee UI",Tahoma,"Segoe UI",sans-serif; background:#14211d; }
     button { font:inherit; color:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent; }
     button:focus-visible,canvas:focus-visible,#joystick:focus-visible { outline:3px solid #f6d389; outline-offset:5px; }
     button:disabled { cursor:default; }
@@ -22,22 +21,22 @@
     .wordmark b { color:var(--gold); font-weight:400; }
     .edition { display:flex; align-items:center; gap:7px; color:#a9b5a5; font-size:9px; letter-spacing:2px; }
     .edition::before { content:""; width:5px; height:5px; border-radius:50%; background:#ddaf67; box-shadow:0 0 10px #e6b66570; }
-    .frame { width:calc(450px * var(--scale)); height:calc(800px * var(--scale)); position:relative; flex:none; }
-    .game { position:absolute; width:450px; height:800px; transform:scale(var(--scale)); transform-origin:top left; overflow:hidden; border-radius:27px; background:#243a2e; outline:1px solid #83907145; box-shadow:0 28px 80px #0009,0 0 0 7px #0b14134a,inset 0 0 0 1px #ffe9ae20; isolation:isolate; user-select:none; }
-    #scene { position:absolute; inset:0; width:450px; height:800px; touch-action:none; }
+    .frame { position:fixed; inset:0; width:100%; height:100vh; height:100dvh; }
+    .game { position:absolute; inset:0; width:100%; height:100%; overflow:hidden; background:#243a2e; isolation:isolate; user-select:none; }
+    #scene { position:absolute; inset:0; width:100%; height:100%; touch-action:none; }
     .hud { position:absolute; inset:0; pointer-events:none; }
     .hud button { pointer-events:auto; }
     .top-shade { position:absolute; inset:0 0 auto; height:225px; background:linear-gradient(#081612e6,#0b191694 64%,transparent); }
-    .topline { position:absolute; top:24px; left:24px; right:24px; display:flex; align-items:center; justify-content:space-between; }
-    .night { font-size:10px; letter-spacing:2.3px; color:#c4c9ac; display:flex; align-items:center; gap:7px; }
+    .topline { position:absolute; top:calc(14px + env(safe-area-inset-top)); left:max(16px,env(safe-area-inset-left)); right:max(16px,env(safe-area-inset-right)); display:flex; align-items:center; justify-content:space-between; }
+    .night { font-size:12px; letter-spacing:2.3px; color:#c4c9ac; display:flex; align-items:center; gap:7px; }
     .moon { width:14px; height:14px; border-radius:50%; box-shadow:-4px 2px 0 0 #e7d7a5; transform:rotate(-25deg); margin-left:5px; margin-right:4px; }
     .tools { display:flex; gap:8px; }
-    .icon-button { width:33px; height:33px; border:1px solid #e2d8ad33; background:#14271ddd; border-radius:11px; display:grid; place-items:center; color:#e8e0c1; box-shadow:0 3px 0 #07100f60; transition:background .18s; }
+    .icon-button { width:44px; height:44px; border:1px solid #e2d8ad33; background:#14271ddd; border-radius:11px; display:grid; place-items:center; color:#e8e0c1; box-shadow:0 3px 0 #07100f60; transition:background .18s; }
     .icon-button:hover { background:#354b32; }
     .help-icon { font:600 16px Georgia,serif; }
     .pause-icon { display:flex; gap:4px; }
     .pause-icon::before,.pause-icon::after { content:""; width:3px; height:12px; border-radius:1px; background:currentColor; }
-    .wave { position:absolute; top:70px; left:76px; right:76px; text-align:center; }
+    .wave { position:absolute; top:calc(74px + env(safe-area-inset-top)); left:50%; transform:translateX(-50%); width:min(300px,calc(100% - 112px)); text-align:center; }
     .eyebrow { font-size:8px; letter-spacing:3.8px; color:#c1c7a6; margin-bottom:7px; }
     .wave-title { font-size:23px; font-weight:800; letter-spacing:2px; line-height:1.2; text-shadow:0 2px 3px #0008; }
     .wave-title strong { color:#f3ce80; font-size:28px; }
@@ -48,14 +47,14 @@
     .monster-count { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:#e6e6cf; }
     .monster-count::before { content:""; width:5px; height:5px; border-radius:50%; background:#bad081; box-shadow:0 0 7px #acc17750; }
     .monster-count b { color:#f0cc84; }
-    .inventory { position:absolute; left:18px; top:185px; display:flex; flex-direction:column; gap:9px; }
+    .inventory { position:absolute; left:max(16px,env(safe-area-inset-left)); top:calc(185px + env(safe-area-inset-top)); display:flex; flex-direction:column; gap:9px; }
     .resource { min-width:66px; height:38px; border:1px solid #c5d3a62b; border-radius:13px; background:linear-gradient(120deg,#13291ee8,#12241bbd); display:flex; align-items:center; gap:7px; padding:0 10px 0 5px; box-shadow:0 3px 8px #0002; font-size:15px; font-weight:750; font-variant-numeric:tabular-nums; }
     .resource canvas { width:29px; height:29px; }
     .resource:last-child { border-color:#c19e5c50; }
     .resource-label { display:none; }
-    .objective { position:absolute; top:194px; right:20px; text-align:right; color:#c1c6a1; font-size:9px; letter-spacing:1.5px; }
+    .objective { position:absolute; top:calc(194px + env(safe-area-inset-top)); right:max(16px,env(safe-area-inset-right)); text-align:right; color:#c1c6a1; font-size:11px; letter-spacing:1.5px; }
     .objective strong { display:block; margin-top:5px; color:#eee7c9; font-size:12px; letter-spacing:1px; font-weight:500; }
-    .build { position:absolute; left:225px; top:462px; transform:translateX(-50%); width:115px; padding:7px 9px 8px; border:1px solid #ebcc8c8c; border-radius:13px; background:linear-gradient(#243b29ed,#172d21f2); color:#eee4c6; box-shadow:0 4px 0 #07161190,0 6px 15px #0004; text-align:center; transition:opacity .2s,filter .2s; }
+    .build { position:absolute; transform:translateX(-50%); width:125px; min-height:64px; padding:7px 9px 8px; border:1px solid #ebcc8c8c; border-radius:13px; background:linear-gradient(#243b29ed,#172d21f2); color:#eee4c6; box-shadow:0 4px 0 #07161190,0 6px 15px #0004; text-align:center; transition:opacity .2s,filter .2s; }
     .build::after { content:""; position:absolute; bottom:-6px; left:50%; width:9px; height:9px; transform:translateX(-50%) rotate(45deg); background:#172d21; border-right:1px solid #ebcc8c8c; border-bottom:1px solid #ebcc8c8c; }
     .build[hidden] { display:none; }
     .build:hover:enabled { filter:brightness(1.18); }
@@ -64,10 +63,10 @@
     .build-cost canvas { width:17px; height:17px; }
     .build.ready { border-color:#d5e9a5; box-shadow:0 4px 0 #07161190,0 0 18px #b6d88325; }
     .build.ready .build-cost { color:#162c19; background:#b2d582; }
-    .toast { position:absolute; top:238px; left:50%; transform:translate(-50%,-6px); width:max-content; max-width:310px; padding:9px 17px; border:1px solid #e1c58744; border-radius:25px; background:#13271fee; color:#f0e2be; font-size:11px; opacity:0; transition:opacity .3s,transform .3s; text-align:center; }
+    .toast { position:absolute; top:calc(238px + env(safe-area-inset-top)); left:50%; transform:translate(-50%,-6px); width:max-content; max-width:calc(100% - 32px); padding:9px 17px; border:1px solid #e1c58744; border-radius:25px; background:#13271fee; color:#f0e2be; font-size:12px; opacity:0; transition:opacity .3s,transform .3s; text-align:center; }
     .toast.visible { opacity:1; transform:translate(-50%,0); }
     .bottom-shade { position:absolute; inset:auto 0 0; height:178px; background:linear-gradient(transparent,#0a1b1799 44%,#081713ec); pointer-events:none; }
-    .controls { position:absolute; inset:auto 0 0; height:151px; }
+    .controls { position:absolute; inset:auto 0 0; height:calc(var(--control-height) + env(safe-area-inset-bottom)); }
     #joystick { position:absolute; left:50%; top:0; transform:translateX(-50%); width:110px; height:110px; border:1px solid #f0e6ba2b; border-radius:50%; background:radial-gradient(circle,#e5e1bf0a 0%,#e5e1bf05 64%,#d9deb015 65%,#e8e3bf07 100%); box-shadow:0 0 0 8px #dce4c803,inset 0 2px 10px #0002; pointer-events:auto; touch-action:none; cursor:grab; }
     #joystick.active { cursor:grabbing; border-color:#e6ce9166; }
     #joystick::before,#joystick::after { position:absolute; color:#e3d8ab55; font-size:8px; left:50%; transform:translateX(-50%); }
@@ -75,11 +74,11 @@
     #joystick::after { content:"⌄"; bottom:7px; }
     #stick { position:absolute; top:33px; left:33px; width:42px; height:42px; border-radius:50%; border:1px solid #d9d5ad63; background:radial-gradient(circle at 36% 25%,#8a978080,#465e4b8c 65%,#324a3a); box-shadow:0 5px 12px #0005,inset 0 1px 2px #f4e8c229; pointer-events:none; }
     #stick::after { content:""; position:absolute; width:8px; height:8px; border:1px solid #e6e0b88c; border-radius:50%; top:16px; left:16px; }
-    .control-label { position:absolute; top:48px; font-size:10px; letter-spacing:1px; color:#c1c9acb0; }
+    .control-label { position:absolute; top:48px; font-size:12px; letter-spacing:1px; color:#c1c9acb0; white-space:nowrap; }
     .control-label.left { right:calc(50% + 77px); text-align:right; }
     .control-label.right { left:calc(50% + 77px); }
-    .control-label small { display:block; font-size:8px; color:#96a28e8c; margin-top:5px; letter-spacing:1.7px; white-space:nowrap; }
-    .bottomline { position:absolute; bottom:15px; left:24px; right:24px; display:flex; justify-content:space-between; color:#9cae947d; font-size:8px; letter-spacing:1.7px; }
+    .control-label small { display:block; font-size:10px; color:#96a28e8c; margin-top:5px; letter-spacing:1.7px; white-space:nowrap; }
+    .bottomline { position:absolute; bottom:calc(12px + env(safe-area-inset-bottom)); left:max(16px,env(safe-area-inset-left)); right:max(16px,env(safe-area-inset-right)); display:flex; justify-content:space-between; gap:12px; color:#9cae94bd; font-size:11px; letter-spacing:1.7px; }
     .fire-status { color:#d8b577bf; }
     .outside-footer { position:relative; display:flex; align-items:center; gap:13px; font-size:9px; letter-spacing:1.4px; color:#8c9c8d; }
     .outside-footer i { display:block; width:24px; height:1px; background:#9c976345; }
@@ -105,17 +104,33 @@
     .result-stats span { color:#a0b393; font-size:10px; }
     /* Thai combining marks need natural spacing and slightly larger small text. */
     .edition,.night,.eyebrow,.wave-title,.objective,.objective strong,.build-title,.control-label,.control-label small,.bottomline,.outside-footer,dialog .kicker,dialog h2,.primary,.secondary { letter-spacing:.2px; }
-    .edition,.eyebrow,.bottomline,.outside-footer,dialog .kicker { font-size:10px; }
+    .edition,.eyebrow,.outside-footer,dialog .kicker { font-size:11px; }
     dialog { font-size:13px; } .fineprint { font-size:11px; }
-    @media (max-width:500px) { body { padding:14px 10px; gap:12px; } .masthead { width:calc(450px * var(--scale)); } .wordmark { font-size:18px; letter-spacing:4px; } .edition { font-size:10px; } .outside-footer { font-size:10px; gap:8px; } }
+    @media (max-height:600px) {
+      .wave { top:calc(66px + env(safe-area-inset-top)); }
+      .wave .eyebrow { display:none; }
+      .inventory { top:calc(146px + env(safe-area-inset-top)); gap:7px; }
+      .objective { top:calc(154px + env(safe-area-inset-top)); }
+      .toast { top:calc(210px + env(safe-area-inset-top)); }
+      .bottomline { bottom:calc(8px + env(safe-area-inset-bottom)); }
+    }
+    @media (orientation:landscape) {
+      .wave { top:calc(16px + env(safe-area-inset-top)); width:240px; }
+      .wave .eyebrow { display:none; }
+      .wave-track { margin:8px 0 6px; }
+      .night { max-width:calc(50vw - 145px); overflow:hidden; white-space:nowrap; }
+      .inventory { top:calc(104px + env(safe-area-inset-top)); }
+      .objective { top:calc(112px + env(safe-area-inset-top)); }
+      .toast { top:calc(112px + env(safe-area-inset-top)); max-width:calc(100% - 280px); }
+      .controls { left:max(20px,env(safe-area-inset-left)); right:auto; bottom:calc(20px + env(safe-area-inset-bottom)); width:120px; height:128px; }
+      .control-label { display:none; }
+      .bottom-shade { height:110px; }
+    }
+    @media (max-width:360px) { .control-label { font-size:10px; } .control-label small { font-size:9px; } .night { font-size:10px; } }
     @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none!important; } }
   </style>
 </head>
 <body>
-  <header class="masthead" aria-label="Emberwood">
-    <div class="wordmark">EMBER<b>W</b>OOD</div>
-    <div class="edition">เกมเอาชีวิตรอด</div>
-  </header>
   <main class="frame">
     <section class="game" aria-label="Emberwood เกมเอาชีวิตรอด">
       <canvas id="scene" width="450" height="800" tabindex="0" aria-label="ฉากเกม: ใช้ WASD ปุ่มลูกศร หรือจอยด้านล่างเพื่อเคลื่อนที่ ตัวละครเหวี่ยงขวานอัตโนมัติ เข้าใกล้กองไฟแล้วกด B เพื่ออัปเกรด"></canvas>
@@ -155,7 +170,6 @@
       </div>
     </section>
   </main>
-  <footer class="outside-footer"><i></i> แสงไฟเล็ก ๆ กับค่ำคืนอันยาวนาน <i></i></footer>
 
   <dialog id="helpDialog" aria-labelledby="helpHeading">
     <div class="kicker">คู่มือผู้เอาชีวิตรอด</div>
@@ -188,7 +202,7 @@
   'use strict';
   /*
    * EMBERWOOD — standalone UI-first canvas game / implementation map
-   * 1. Fixed 450×800 coordinates + DPR-aware rendering and responsive frame.
+   * 1. Full-viewport world + DPR-aware, uniform artwork scaling and CSS HUD.
    * 2. Procedural forest, chibi actors, campfire and crescent axe VFX.
    * 3. Pointer/keyboard input → simulation → depth-sorted rendering → DOM HUD.
    * 4. Five waves, drops, destructible saplings, campfire upgrades, pause/retry.
@@ -204,7 +218,10 @@
    * The first frame deliberately mirrors a mid-run mobile survival scene.
    * State arrays below are the extension points for more content.
    */
-  const W=450, H=800, TAU=Math.PI*2;
+  const TAU=Math.PI*2;
+  let W=450,H=800;
+  const view={width:450,height:800,zoom:1,landscape:false,controlHeight:151};
+  let arena={left:40,right:410,top:235,bottom:655};
   const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
   const $=id=>document.getElementById(id);
   const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
@@ -222,15 +239,38 @@
   const input={x:0,y:0,keys:new Set(),pointer:null};
   const hud={gems:$('gems'),coins:$('coins'),wood:$('wood'),wave:$('waveTitle'),monsters:$('monsterCount'),segments:[...document.querySelectorAll('.wave-segment i')],build:$('buildButton'),cost:$('buildCost')};
 
-  /** Keep the same portrait composition on phones, tablets and desktop. */
+  /** Fill the viewport without stretching characters or shrinking the HUD.
+      Resizing remaps live entities and preserves the current run. */
   function fitFrame(){
-    const scale=Math.min(1,(innerWidth-28)/W,(innerHeight-119)/H);
-    document.documentElement.style.setProperty('--scale',Math.max(.2,scale));
+    const oldWidth=W,oldArena=arena;
+    view.width=Math.max(1,innerWidth);view.height=Math.max(1,innerHeight);
+    view.landscape=view.width>view.height;
+    view.controlHeight=view.landscape?128:view.height<=600?134:151;
+    view.zoom=clamp(Math.min(view.width/450,view.height/600),.72,1.4);
+    W=view.width/view.zoom;H=view.height/view.zoom;
+    arena={left:40,right:W-40,top:235*H/800,
+      bottom:H-(view.landscape?44:view.controlHeight-6)/view.zoom};
+    document.documentElement.style.setProperty('--control-height',`${view.controlHeight}px`);
     const dpr=Math.min(devicePixelRatio||1,2);
-    canvas.width=Math.round(W*dpr); canvas.height=Math.round(H*dpr);
-    ctx.setTransform(dpr,0,0,dpr,0,0);
+    canvas.width=Math.round(view.width*dpr);canvas.height=Math.round(view.height*dpr);
+    ctx.setTransform(dpr*view.zoom,0,0,dpr*view.zoom,0,0);
+    if(state){
+      const remap=entity=>{
+        entity.x=entity.x/oldWidth*W;
+        entity.y=arena.top+(entity.y-oldArena.top)/(oldArena.bottom-oldArena.top)*(arena.bottom-arena.top);
+      };
+      for(const entity of [player,fire,...world.enemies,...world.pickups,...world.particles,...world.floaters])remap(entity);
+      const saplings=world.trees.filter(tree=>tree.harvestable).map(({hp,regrow,hit,cooldown})=>({hp,regrow,hit,cooldown}));
+      makeForest();world.trees.filter(tree=>tree.harvestable).forEach((tree,i)=>Object.assign(tree,saplings[i]));
+      player.x=clamp(player.x,arena.left,arena.right);player.y=clamp(player.y,arena.top,arena.bottom);
+      makeGround();clearInput();updateHUD();
+    }
   }
   addEventListener('resize',fitFrame); fitFrame();
+  if(typeof visualViewport!=='undefined')visualViewport.addEventListener('resize',fitFrame);
+
+  /** Place the original composition within the current playable clearing. */
+  function worldPoint(x,y){return {x:x/450*W,y:arena.top+(y-235)/420*(arena.bottom-arena.top)};}
 
   // Small, reusable canvas primitives. Paths are all original procedural art.
   function ellipse(c,x,y,rx,ry,fill,stroke,line=2){
@@ -426,16 +466,18 @@
   }
 
   // Pre-render static ground once. The cache is another canvas, never an image.
-  const ground=document.createElement('canvas');ground.width=W;ground.height=H;
+  const ground=document.createElement('canvas');
   function makeGround(){
+    ground.width=Math.ceil(W);ground.height=Math.ceil(H);
     const c=ground.getContext('2d'),random=seeded(12876);
-    const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'#263d2c');g.addColorStop(.55,'#45503a');g.addColorStop(1,'#2c4530');c.fillStyle=g;c.fillRect(0,0,W,H);
+    c.scale(W/450,H/800);
+    const g=c.createLinearGradient(0,0,0,800);g.addColorStop(0,'#263d2c');g.addColorStop(.55,'#45503a');g.addColorStop(1,'#2c4530');c.fillStyle=g;c.fillRect(0,0,450,800);
     // Broad organic path, moss, fine earth grain, pebbles and grass sprigs.
     c.beginPath();c.moveTo(160,145);c.bezierCurveTo(180,280,76,357,114,463);c.bezierCurveTo(160,556,133,644,197,800);c.lineTo(350,800);c.bezierCurveTo(299,637,349,583,327,472);c.bezierCurveTo(307,350,344,285,290,139);c.closePath();c.fillStyle='#756a4b29';c.fill();
-    for(let i=0;i<75;i++){const x=random()*W,y=190+random()*610;ellipse(c,x,y,7+random()*34,3+random()*17,random()>.5?'#a4a36b05':'#112d1c09');}
-    for(let i=0;i<5600;i++){const x=random()*W,y=random()*H;c.fillStyle=random()>.5?'#e4dca708':'#0f28150c';c.fillRect(x,y,random()*1.4+.3,.8);}
+    for(let i=0;i<75;i++){const x=random()*450,y=190+random()*610;ellipse(c,x,y,7+random()*34,3+random()*17,random()>.5?'#a4a36b05':'#112d1c09');}
+    for(let i=0;i<5600;i++){const x=random()*450,y=random()*800;c.fillStyle=random()>.5?'#e4dca708':'#0f28150c';c.fillRect(x,y,random()*1.4+.3,.8);}
     for(let i=0;i<120;i++){
-      const x=random()*W,y=180+random()*610;
+      const x=random()*450,y=180+random()*610;
       if(random()>.5){ellipse(c,x,y,1+random()*2.8,1+random()*1.2,'#253b2b5e');}
       else {c.strokeStyle=random()>.5?'#8a9b5b39':'#1d3c2c7a';c.lineWidth=1.2;c.beginPath();c.moveTo(x-3,y-4);c.lineTo(x,y);c.lineTo(x+1,y-6);c.moveTo(x,y);c.lineTo(x+4,y-3);c.stroke();}
     }
@@ -449,9 +491,10 @@
   function makeForest(){
     const random=seeded(84);world.trees.length=0;
     // Dense overlapping top canopy and asymmetric side walls frame a clearing.
-    for(let row=0;row<3;row++)for(let i=0;i<8;i++)world.trees.push({x:i*69-13+(row%2?27:0),y:66+row*65+random()*24,size:.95+random()*.4,seed:random()*10,hp:Infinity,harvestable:false,hit:0,regrow:0});
-    for(let side=0;side<2;side++)for(let i=0;i<9;i++)world.trees.push({x:side?438+random()*27:-15+random()*25,y:288+i*68,size:.87+random()*.32,seed:random()*10,hp:Infinity,harvestable:false,hit:0,regrow:0});
-    [[54,334,.79],[401,351,.82],[42,523,.93],[401,550,.85],[60,701,1.1],[389,734,1.1],[100,376,.53],[352,443,.56],[107,582,.54]].forEach(([x,y,size],i)=>world.trees.push({x,y,size,seed:i*1.3,hp:i<6?Infinity:3,harvestable:i>=6,hit:0,regrow:0}));
+    for(let row=0;row<3;row++)for(let i=0;i<Math.ceil(W/69)+2;i++)world.trees.push({x:i*69-13+(row%2?27:0),y:(66+row*65+random()*24)*H/800,size:.95+random()*.4,seed:random()*10,hp:Infinity,harvestable:false,hit:0,regrow:0});
+    const sideTop=worldPoint(0,288).y;
+    for(let side=0;side<2;side++)for(let i=0;i<Math.ceil((H-sideTop)/68)+2;i++)world.trees.push({x:side?W-12+random()*27:-15+random()*25,y:sideTop+i*68,size:.87+random()*.32,seed:random()*10,hp:Infinity,harvestable:false,hit:0,regrow:0});
+    [[54,334,.79],[401,351,.82],[42,523,.93],[401,550,.85],[60,701,1.1],[389,734,1.1],[100,376,.53],[352,443,.56],[107,582,.54]].forEach(([x,y,size],i)=>world.trees.push({...(i<6?{x:x/450*W,y:y/800*H}:worldPoint(x,y)),size,seed:i*1.3,hp:i<6?Infinity:3,harvestable:i>=6,hit:0,regrow:0}));
   }
   function spawnWave(){
     const config=getWaveConfig(state.wave), random=seeded(state.wave*93);
@@ -461,17 +504,18 @@
       let x,y;
       if(state.wave===1){[x,y]=starts[i];}
       else {const side=i%3;x=side===0?46:side===1?405:70+random()*310;y=side===2?215:240+random()*390;}
-      world.enemies.push({x,y,hp:config.hp,maxHp:config.hp,speed:config.speed,seed:random()*20,hit:0,cooldown:0});
+      world.enemies.push({...worldPoint(x,y),hp:config.hp,maxHp:config.hp,speed:config.speed,seed:random()*20,hit:0,cooldown:0});
     }
   }
   function resetGame(){
     state={wave:1,waveTotal:9,waveKills:0,kills:0,wood:23,coins:3,gems:0,time:0,started:false,paused:false,ended:false,intermission:0,lastCountdown:0};
-    player={x:225,y:406,hp:100,speed:112,invincible:0,angle:0,moving:false};
-    fire={x:225,y:558,upgrades:0,radius:100};
+    player={...worldPoint(225,406),hp:100,speed:112,invincible:0,angle:0,moving:false};
+    fire={...worldPoint(225,558),upgrades:0,radius:100};
+    player.y=Math.max(player.y,fire.y-152);
     for(const key of ['pickups','particles','floaters'])world[key].length=0;
     makeForest();spawnWave();
     // Two little bundles teach collecting before the first 30-log upgrade.
-    world.pickups.push({x:178,y:447,type:'wood',amount:4,phase:0},{x:273,y:465,type:'wood',amount:4,phase:2});
+    world.pickups.push({x:player.x-47,y:player.y+41,type:'wood',amount:4,phase:0},{x:player.x+48,y:player.y+59,type:'wood',amount:4,phase:2});
     clearInput();toastUntil=0;$('toast').textContent='';$('toast').classList.remove('visible');updateHUD();
   }
   function notify(text,duration=2.6){$('toast').textContent=text;$('toast').classList.add('visible');toastUntil=visualTime+duration;}
@@ -518,15 +562,15 @@
     player.angle+=dt*(TAU/(1.6-fire.upgrades*.12));
     if(!state.started)return;
     state.time+=dt;player.invincible=Math.max(0,player.invincible-dt);
-    player.x=clamp(player.x+mx*player.speed*dt,40,410);
-    player.y=clamp(player.y+my*player.speed*dt,235,655);
+    player.x=clamp(player.x+mx*player.speed*dt,arena.left,arena.right);
+    player.y=clamp(player.y+my*player.speed*dt,arena.top,arena.bottom);
     // Solid trunks, rather than foliage, define navigation and chopping range.
     for(const tree of world.trees){
       tree.hit=Math.max(0,tree.hit-dt);if(tree.regrow>0){tree.regrow-=dt;if(tree.regrow<=0)tree.hp=3;continue;}
       const d=dist(player,tree),r=12+tree.size*9;
       if(d<r&&d>0){player.x+=(player.x-tree.x)/d*(r-d);player.y+=(player.y-tree.y)/d*(r-d);}
     }
-    player.x=clamp(player.x,40,410);player.y=clamp(player.y,235,655);
+    player.x=clamp(player.x,arena.left,arena.right);player.y=clamp(player.y,arena.top,arena.bottom);
     // Campfire heals only within its logical circle; upgrading expands it.
     if(dist(player,fire)<fire.radius)player.hp=Math.min(100,player.hp+3*dt);
     if(state.intermission>0){
@@ -580,11 +624,11 @@
 
   /** Painter's algorithm gives trees, zombies and player consistent depth. */
   function render(t){
-    ctx.clearRect(0,0,W,H);ctx.drawImage(ground,0,0); // draws a procedural canvas cache
+    ctx.clearRect(0,0,W,H);ctx.drawImage(ground,0,0,W,H); // draws a procedural canvas cache
     drawCampfire(ctx,fire.x,fire.y,t,true);
     // Ambient motes make the forest feel alive without any external assets.
     for(let i=0;i<17;i++){
-      const x=(i*113.7+Math.sin(t*.25+i)*13)%W,y=200+(i*69.9)%440;
+      const x=(i*113.7+Math.sin(t*.25+i)*13)%W,y=arena.top+(i*69.9)%(arena.bottom-arena.top);
       const a=.1+(Math.sin(t*1.2+i*2)+1)*.15;
       ellipse(ctx,x,y,1,1,`rgba(220,224,145,${a})`);
     }
@@ -604,16 +648,20 @@
     for(const p of world.particles){ctx.globalAlpha=clamp(p.life*2,0,1);ellipse(ctx,p.x,p.y,p.size,p.size,p.color);}ctx.globalAlpha=1;
     for(const f of world.floaters){ctx.globalAlpha=clamp(f.life/.3,0,1);label(ctx,f.text,f.x,f.y,11,f.color);}ctx.globalAlpha=1;
     // Cinematic vignette is intentionally weak in the playable clearing.
-    const vignette=ctx.createRadialGradient(225,410,100,225,410,470);vignette.addColorStop(0,'#06151000');vignette.addColorStop(.65,'#0615100d');vignette.addColorStop(1,'#03120da8');ctx.fillStyle=vignette;ctx.fillRect(0,0,W,H);
-    if(!state.started){label(ctx,'สำรวจป่า · เก็บไม้ · รอดให้ครบห้าระลอก',225,625,11,'#d4d3b4ba');}
+    const vignette=ctx.createRadialGradient(W/2,H*.5,Math.min(W,H)*.17,W/2,H*.5,Math.hypot(W,H)*.62);vignette.addColorStop(0,'#06151000');vignette.addColorStop(.65,'#0615100d');vignette.addColorStop(1,'#03120da8');ctx.fillStyle=vignette;ctx.fillRect(0,0,W,H);
+    if(!state.started&&view.height>650){label(ctx,'สำรวจป่า · เก็บไม้ · รอดให้ครบห้าระลอก',fire.x,Math.min(fire.y+78,arena.bottom-5),11,'#d4d3b4ba');}
   }
 
   function updateHUD(){
+    drawHUDIcons();
     hud.gems.textContent=state.gems;hud.coins.textContent=state.coins;hud.wood.textContent=state.wood;
     hud.wave.innerHTML=`ระลอก <strong>${state.wave}</strong> <span>/ 5</span>`;
     hud.monsters.innerHTML=state.intermission>0?'ผ่านระลอกแล้ว · <b>พักฟื้น</b>':`เหลือศัตรู <b>${world.enemies.length}</b> ตัว`;
     hud.segments.forEach((segment,i)=>{segment.style.width=i<state.wave-1?'100%':i===state.wave-1?`${Math.max(8,state.waveKills/state.waveTotal*100)}%`:'0%';});
     const cost=getBuildRequirement(fire.upgrades),near=dist(player,fire)<=160;
+    // Anchor the DOM prompt to the projected fire, outside the player's path.
+    hud.build.style.left=`${clamp(fire.x*view.zoom+90,72,view.width-72)}px`;
+    hud.build.style.top=`${clamp(fire.y*view.zoom-82,view.landscape?106:142,view.height-(view.landscape?16:view.controlHeight)-72)}px`;
     hud.build.hidden=!near||fire.upgrades>=3||state.ended;
     hud.build.disabled=state.wood<cost||state.paused||!state.started;
     hud.build.classList.toggle('ready',state.wood>=cost);
@@ -687,8 +735,13 @@
   // Escape on the result screen keeps the result open until the player retries.
   $('endDialog').addEventListener('cancel',event=>event.preventDefault());
 
-  for(const [id,type] of [['gemIcon','gem'],['coinIcon','coin'],['woodIcon','wood'],['buildWoodIcon','wood']]){
-    const c=$(id).getContext('2d');c.scale(2,2);drawResource(c,type,14.5,14.5,.85);
+  // Refresh the small canvas surfaces with the HUD, including after viewport
+  // changes. Reset the transform each time so repeated draws never grow icons.
+  function drawHUDIcons(){
+    for(const [id,type] of [['gemIcon','gem'],['coinIcon','coin'],['woodIcon','wood'],['buildWoodIcon','wood']]){
+      const c=$(id).getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,58,58);
+      c.setTransform(2,0,0,2,0,0);drawResource(c,type,14.5,14.5,.85);
+    }
   }
   $('balanceRows').innerHTML=Array.from({length:5},(_,i)=>{const w=getWaveConfig(i+1);return `<tr><td>ระลอก ${i+1}</td><td>${w.count}</td><td>${w.speed.toFixed(1)}</td><td>${w.hp}</td></tr>`;}).join('');
   resetGame();requestAnimationFrame(frame);
