@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101c19">
+  <meta name="description" content="Emberwood — เกมเอาชีวิตรอดในป่า รวบรวมไม้ อัปเกรดกองไฟ และต่อสู้จนรุ่งสาง เล่นได้ในไฟล์เดียว">
+  <title>Emberwood · ปกป้องแสงไฟสุดท้าย</title>
+  <style>
+    /* The simulation always uses 450 × 800 logical pixels. Only the outer
+       frame scales, so canvas artwork, touch input, and HUD stay aligned. */
+    :root { color-scheme: dark; --cream:#f6efd8; --muted:#9ca99b; --gold:#e5bc73; --line:rgba(229,188,115,.2); --scale:1; }
+    * { box-sizing:border-box; }
+    html,body { margin:0; min-height:100%; }
+    body { min-height:100svh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:24px 16px; overflow-x:hidden; color:var(--cream); font-family:"Leelawadee UI",Tahoma,"Segoe UI",sans-serif; background:radial-gradient(ellipse at 50% 56%,#26342a 0%,#14211d 42%,#0b1413 100%); }
+    body::before { content:""; position:fixed; inset:0; pointer-events:none; opacity:.17; background-image:radial-gradient(#d3c69c .6px,transparent .6px); background-size:7px 7px; mask-image:linear-gradient(transparent,#000); }
+    button { font:inherit; color:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    button:focus-visible,canvas:focus-visible,#joystick:focus-visible { outline:3px solid #f6d389; outline-offset:5px; }
+    button:disabled { cursor:default; }
+    .masthead { width:450px; max-width:100%; display:flex; justify-content:space-between; align-items:center; position:relative; }
+    .wordmark { font:600 21px Georgia,serif; letter-spacing:5px; color:#ede5ce; }
+    .wordmark b { color:var(--gold); font-weight:400; }
+    .edition { display:flex; align-items:center; gap:7px; color:#a9b5a5; font-size:9px; letter-spacing:2px; }
+    .edition::before { content:""; width:5px; height:5px; border-radius:50%; background:#ddaf67; box-shadow:0 0 10px #e6b66570; }
+    .frame { width:calc(450px * var(--scale)); height:calc(800px * var(--scale)); position:relative; flex:none; }
+    .game { position:absolute; width:450px; height:800px; transform:scale(var(--scale)); transform-origin:top left; overflow:hidden; border-radius:27px; background:#243a2e; outline:1px solid #83907145; box-shadow:0 28px 80px #0009,0 0 0 7px #0b14134a,inset 0 0 0 1px #ffe9ae20; isolation:isolate; user-select:none; }
+    #scene { position:absolute; inset:0; width:450px; height:800px; touch-action:none; }
+    .hud { position:absolute; inset:0; pointer-events:none; }
+    .hud button { pointer-events:auto; }
+    .top-shade { position:absolute; inset:0 0 auto; height:225px; background:linear-gradient(#081612e6,#0b191694 64%,transparent); }
+    .topline { position:absolute; top:24px; left:24px; right:24px; display:flex; align-items:center; justify-content:space-between; }
+    .night { font-size:10px; letter-spacing:2.3px; color:#c4c9ac; display:flex; align-items:center; gap:7px; }
+    .moon { width:14px; height:14px; border-radius:50%; box-shadow:-4px 2px 0 0 #e7d7a5; transform:rotate(-25deg); margin-left:5px; margin-right:4px; }
+    .tools { display:flex; gap:8px; }
+    .icon-button { width:33px; height:33px; border:1px solid #e2d8ad33; background:#14271ddd; border-radius:11px; display:grid; place-items:center; color:#e8e0c1; box-shadow:0 3px 0 #07100f60; transition:background .18s; }
+    .icon-button:hover { background:#354b32; }
+    .help-icon { font:600 16px Georgia,serif; }
+    .pause-icon { display:flex; gap:4px; }
+    .pause-icon::before,.pause-icon::after { content:""; width:3px; height:12px; border-radius:1px; background:currentColor; }
+    .wave { position:absolute; top:70px; left:76px; right:76px; text-align:center; }
+    .eyebrow { font-size:8px; letter-spacing:3.8px; color:#c1c7a6; margin-bottom:7px; }
+    .wave-title { font-size:23px; font-weight:800; letter-spacing:2px; line-height:1.2; text-shadow:0 2px 3px #0008; }
+    .wave-title strong { color:#f3ce80; font-size:28px; }
+    .wave-title span { font-size:18px; color:#a7b199; }
+    .wave-track { display:flex; gap:5px; margin:12px 0 10px; }
+    .wave-segment { height:5px; flex:1; border-radius:9px; background:#e8e5bf1c; box-shadow:inset 0 1px 2px #0009; overflow:hidden; }
+    .wave-segment i { display:block; width:0; height:100%; background:linear-gradient(90deg,#ca9a50,#f4d990); border-radius:9px; transition:width .25s; }
+    .monster-count { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:#e6e6cf; }
+    .monster-count::before { content:""; width:5px; height:5px; border-radius:50%; background:#bad081; box-shadow:0 0 7px #acc17750; }
+    .monster-count b { color:#f0cc84; }
+    .inventory { position:absolute; left:18px; top:185px; display:flex; flex-direction:column; gap:9px; }
+    .resource { min-width:66px; height:38px; border:1px solid #c5d3a62b; border-radius:13px; background:linear-gradient(120deg,#13291ee8,#12241bbd); display:flex; align-items:center; gap:7px; padding:0 10px 0 5px; box-shadow:0 3px 8px #0002; font-size:15px; font-weight:750; font-variant-numeric:tabular-nums; }
+    .resource canvas { width:29px; height:29px; }
+    .resource:last-child { border-color:#c19e5c50; }
+    .resource-label { display:none; }
+    .objective { position:absolute; top:194px; right:20px; text-align:right; color:#c1c6a1; font-size:9px; letter-spacing:1.5px; }
+    .objective strong { display:block; margin-top:5px; color:#eee7c9; font-size:12px; letter-spacing:1px; font-weight:500; }
+    .build { position:absolute; left:225px; top:462px; transform:translateX(-50%); width:115px; padding:7px 9px 8px; border:1px solid #ebcc8c8c; border-radius:13px; background:linear-gradient(#243b29ed,#172d21f2); color:#eee4c6; box-shadow:0 4px 0 #07161190,0 6px 15px #0004; text-align:center; transition:opacity .2s,filter .2s; }
+    .build::after { content:""; position:absolute; bottom:-6px; left:50%; width:9px; height:9px; transform:translateX(-50%) rotate(45deg); background:#172d21; border-right:1px solid #ebcc8c8c; border-bottom:1px solid #ebcc8c8c; }
+    .build[hidden] { display:none; }
+    .build:hover:enabled { filter:brightness(1.18); }
+    .build-title { font-size:12px; letter-spacing:2px; font-weight:700; }
+    .build-cost { display:flex; justify-content:center; gap:6px; align-items:center; margin-top:5px; padding:4px 0; border-radius:6px; color:#d8edbd; background:#66984b51; font-size:12px; letter-spacing:.4px; font-weight:700; }
+    .build-cost canvas { width:17px; height:17px; }
+    .build.ready { border-color:#d5e9a5; box-shadow:0 4px 0 #07161190,0 0 18px #b6d88325; }
+    .build.ready .build-cost { color:#162c19; background:#b2d582; }
+    .toast { position:absolute; top:238px; left:50%; transform:translate(-50%,-6px); width:max-content; max-width:310px; padding:9px 17px; border:1px solid #e1c58744; border-radius:25px; background:#13271fee; color:#f0e2be; font-size:11px; opacity:0; transition:opacity .3s,transform .3s; text-align:center; }
+    .toast.visible { opacity:1; transform:translate(-50%,0); }
+    .bottom-shade { position:absolute; inset:auto 0 0; height:178px; background:linear-gradient(transparent,#0a1b1799 44%,#081713ec); pointer-events:none; }
+    .controls { position:absolute; inset:auto 0 0; height:151px; }
+    #joystick { position:absolute; left:50%; top:0; transform:translateX(-50%); width:110px; height:110px; border:1px solid #f0e6ba2b; border-radius:50%; background:radial-gradient(circle,#e5e1bf0a 0%,#e5e1bf05 64%,#d9deb015 65%,#e8e3bf07 100%); box-shadow:0 0 0 8px #dce4c803,inset 0 2px 10px #0002; pointer-events:auto; touch-action:none; cursor:grab; }
+    #joystick.active { cursor:grabbing; border-color:#e6ce9166; }
+    #joystick::before,#joystick::after { position:absolute; color:#e3d8ab55; font-size:8px; left:50%; transform:translateX(-50%); }
+    #joystick::before { content:"⌃"; top:7px; }
+    #joystick::after { content:"⌄"; bottom:7px; }
+    #stick { position:absolute; top:33px; left:33px; width:42px; height:42px; border-radius:50%; border:1px solid #d9d5ad63; background:radial-gradient(circle at 36% 25%,#8a978080,#465e4b8c 65%,#324a3a); box-shadow:0 5px 12px #0005,inset 0 1px 2px #f4e8c229; pointer-events:none; }
+    #stick::after { content:""; position:absolute; width:8px; height:8px; border:1px solid #e6e0b88c; border-radius:50%; top:16px; left:16px; }
+    .control-label { position:absolute; top:48px; font-size:10px; letter-spacing:1px; color:#c1c9acb0; }
+    .control-label.left { right:calc(50% + 77px); text-align:right; }
+    .control-label.right { left:calc(50% + 77px); }
+    .control-label small { display:block; font-size:8px; color:#96a28e8c; margin-top:5px; letter-spacing:1.7px; white-space:nowrap; }
+    .bottomline { position:absolute; bottom:15px; left:24px; right:24px; display:flex; justify-content:space-between; color:#9cae947d; font-size:8px; letter-spacing:1.7px; }
+    .fire-status { color:#d8b577bf; }
+    .outside-footer { position:relative; display:flex; align-items:center; gap:13px; font-size:9px; letter-spacing:1.4px; color:#8c9c8d; }
+    .outside-footer i { display:block; width:24px; height:1px; background:#9c976345; }
+    dialog { margin:auto; width:350px; max-width:calc(100vw - 36px); max-height:calc(100svh - 48px); overflow:auto; color:#e9e5d0; padding:27px; border:1px solid #9a925562; border-radius:22px; background:linear-gradient(145deg,#273c2f,#14271f); box-shadow:0 20px 70px #0009; font-size:12px; line-height:1.8; }
+    dialog::backdrop { background:#050f0cc9; backdrop-filter:blur(6px); }
+    dialog h2 { font-size:24px; font-weight:650; margin:4px 0 8px; color:#f2dfae; letter-spacing:1px; }
+    dialog .kicker { font-size:9px; color:#bbbf98; letter-spacing:3px; }
+    dialog p { color:#bfc8b4; margin:8px 0 17px; }
+    .instruction { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid #e6d09913; }
+    .instruction b { color:#e5cf97; min-width:48px; }
+    table { width:100%; border-collapse:collapse; margin:15px 0; font-size:11px; text-align:left; font-variant-numeric:tabular-nums; }
+    th { color:#cab780; font-weight:500; padding:7px 4px; border-bottom:1px solid #d3bc6e38; }
+    td { padding:6px 4px; color:#c6d1bb; border-bottom:1px solid #d3bc6e12; }
+    .primary,.secondary { display:block; width:100%; padding:12px; border-radius:10px; font-size:12px; letter-spacing:1px; margin-top:11px; }
+    .primary { color:#20321e; font-weight:750; background:linear-gradient(#e5cd92,#c5a760); border:1px solid #f1dfb2; box-shadow:0 3px 0 #0716107a; }
+    .primary:hover { filter:brightness(1.08); }
+    .secondary { border:1px solid #d3cfb42b; background:#11261d50; color:#c5ceb8; }
+    .fineprint { font-size:10px; color:#99ad91; line-height:1.7; }
+    .result-mark { font-size:38px; color:#e9c77d; text-align:center; margin:7px; }
+    #endDialog { text-align:center; }
+    .result-stats { display:flex; justify-content:space-around; padding:14px 0; border-block:1px solid #b7ad6b2b; margin-bottom:20px; }
+    .result-stats b { font-size:23px; display:block; color:#e4ce9e; }
+    .result-stats span { color:#a0b393; font-size:10px; }
+    /* Thai combining marks need natural spacing and slightly larger small text. */
+    .edition,.night,.eyebrow,.wave-title,.objective,.objective strong,.build-title,.control-label,.control-label small,.bottomline,.outside-footer,dialog .kicker,dialog h2,.primary,.secondary { letter-spacing:.2px; }
+    .edition,.eyebrow,.bottomline,.outside-footer,dialog .kicker { font-size:10px; }
+    dialog { font-size:13px; } .fineprint { font-size:11px; }
+    @media (max-width:500px) { body { padding:14px 10px; gap:12px; } .masthead { width:calc(450px * var(--scale)); } .wordmark { font-size:18px; letter-spacing:4px; } .edition { font-size:10px; } .outside-footer { font-size:10px; gap:8px; } }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none!important; } }
+  </style>
+</head>
+<body>
+  <header class="masthead" aria-label="Emberwood">
+    <div class="wordmark">EMBER<b>W</b>OOD</div>
+    <div class="edition">เกมเอาชีวิตรอด</div>
+  </header>
+  <main class="frame">
+    <section class="game" aria-label="Emberwood เกมเอาชีวิตรอด">
+      <canvas id="scene" width="450" height="800" tabindex="0" aria-label="ฉากเกม: ใช้ WASD ปุ่มลูกศร หรือจอยด้านล่างเพื่อเคลื่อนที่ ตัวละครเหวี่ยงขวานอัตโนมัติ เข้าใกล้กองไฟแล้วกด B เพื่ออัปเกรด"></canvas>
+      <div class="hud">
+        <div class="top-shade"></div>
+        <div class="topline">
+          <div class="night"><i class="moon"></i>ป่ายามสนธยา · คืนที่ 01</div>
+          <div class="tools">
+            <button class="icon-button help-icon" id="helpButton" aria-label="วิธีเล่นและข้อมูลระลอก" title="วิธีเล่นและข้อมูลระลอก">?</button>
+            <button class="icon-button" id="pauseButton" aria-label="พักเกม" title="พักเกม · Esc"><span class="pause-icon"></span></button>
+          </div>
+        </div>
+        <div class="wave">
+          <div class="eyebrow">เอาชีวิตรอดจนรุ่งสาง</div>
+          <div class="wave-title" id="waveTitle">ระลอก <strong>1</strong> <span>/ 5</span></div>
+          <div class="wave-track" id="waveTrack" aria-label="ความคืบหน้า 5 ระลอก"><div class="wave-segment"><i></i></div><div class="wave-segment"><i></i></div><div class="wave-segment"><i></i></div><div class="wave-segment"><i></i></div><div class="wave-segment"><i></i></div></div>
+          <div class="monster-count" id="monsterCount">เหลือศัตรู <b>9</b> ตัว</div>
+        </div>
+        <div class="inventory" aria-label="กระเป๋าทรัพยากร">
+          <div class="resource" title="อัญมณีสีม่วง"><canvas id="gemIcon" width="58" height="58" aria-hidden="true"></canvas><span class="resource-label">💎 อัญมณีสีม่วง</span><span id="gems" aria-label="จำนวนอัญมณี">0</span></div>
+          <div class="resource" title="เหรียญทอง"><canvas id="coinIcon" width="58" height="58" aria-hidden="true"></canvas><span class="resource-label">🪙 เหรียญทอง</span><span id="coins" aria-label="จำนวนเหรียญทอง">3</span></div>
+          <div class="resource" title="ไม้"><canvas id="woodIcon" width="58" height="58" aria-hidden="true"></canvas><span class="resource-label">🪵 ไม้</span><span id="wood" aria-label="จำนวนไม้">23</span></div>
+        </div>
+        <div class="objective">อย่าให้ไฟมอด<strong>ปกป้องแสงไฟสุดท้าย</strong></div>
+        <button class="build" id="buildButton" aria-label="สร้างกองไฟ ใช้ไม้ 30 ท่อน" disabled>
+          <div class="build-title" id="buildTitle">สร้างกองไฟ</div>
+          <div class="build-cost"><canvas id="buildWoodIcon" width="58" height="58" aria-hidden="true"></canvas><span id="buildCost">23/30</span></div>
+        </button>
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>
+        <div class="bottom-shade"></div>
+        <div class="controls">
+          <div class="control-label left">ลากเพื่อเดิน<small>WASD / ↑↓←→</small></div>
+          <div id="joystick" tabindex="0" role="group" aria-label="จอยควบคุม ลากเพื่อเคลื่อนที่ หรือใช้ปุ่มลูกศร"><div id="stick"></div></div>
+          <div class="control-label right">โจมตีอัตโนมัติ<small>อยู่ในแสงไฟ</small></div>
+        </div>
+        <div class="bottomline"><span id="playStatus">ลากจอยเพื่อเริ่มเอาชีวิตรอด</span><span class="fire-status" id="fireStatus">กองไฟ ระดับ 1</span></div>
+      </div>
+    </section>
+  </main>
+  <footer class="outside-footer"><i></i> แสงไฟเล็ก ๆ กับค่ำคืนอันยาวนาน <i></i></footer>
+
+  <dialog id="helpDialog" aria-labelledby="helpHeading">
+    <div class="kicker">คู่มือผู้เอาชีวิตรอด</div>
+    <h2 id="helpHeading" tabindex="-1" autofocus>เอาชีวิตรอดในแสงไฟ</h2>
+    <p>ศัตรูห้าระลอก ขวานหนึ่งเล่ม และกองไฟที่ต้องปกป้อง</p>
+    <div class="instruction"><b>เคลื่อนที่</b><span>ลากจอยด้านล่าง หรือใช้ WASD / ปุ่มลูกศร เริ่มจับเวลาเมื่อเคลื่อนที่ครั้งแรก</span></div>
+    <div class="instruction"><b>โจมตี</b><span>ขวานหมุนโจมตีอัตโนมัติ เข้าใกล้ศัตรูหรือต้นสนเล็กที่มีเครื่องหมายสีทอง เพื่อกำจัดศัตรู ตัดต้นไม้ และเก็บทรัพยากร</span></div>
+    <div class="instruction"><b>กองไฟ</b><span>ยืนในวงแสงเพื่อฟื้นฟูพลังชีวิต เก็บไม้ 30 ท่อน เข้าใกล้กองไฟแล้วกด «สร้างกองไฟ» หรือปุ่ม B เพื่อขยายวงแสงและเพิ่มพลังโจมตี</span></div>
+    <table aria-label="ข้อมูลศัตรูทั้ง 5 ระลอก">
+      <thead><tr><th>ระลอก</th><th>ศัตรู</th><th>ความเร็ว px/s</th><th>พลังชีวิต</th></tr></thead>
+      <tbody id="balanceRows"></tbody>
+    </table>
+    <p class="fineprint">จำนวนศัตรู = 9 + 4 × (ระลอก − 1)<br>ความเร็ว = 14 × [1 + 0.15 × (ระลอก − 1)]<br>พลังชีวิตศัตรู = 2 + ปัดลง[(ระลอก − 1) / 2]<br>ไม้ที่ใช้อัปเกรด = 30 + 15 × จำนวนครั้งที่อัปเกรดแล้ว (สูงสุด 3 ครั้ง)<br>ต้นสนเล็กให้ไม้ 8 ท่อน ศัตรูแต่ละตัวให้เหรียญทอง 2 เหรียญและไม้ 1 ท่อน กำจัดครบทุก 3 ตัวจะได้อัญมณีเพิ่ม 1 เม็ด พักระหว่างระลอก 5 วินาทีและฟื้นพลังชีวิต 35 หน่วย<br>Esc / เว้นวรรค: พักเกม อัญมณีและเหรียญทองใช้บันทึกของที่เก็บได้ในรอบนี้</p>
+    <button class="primary" id="closeHelp">กลับสู่ป่า</button>
+  </dialog>
+  <dialog id="pauseDialog" aria-labelledby="pauseHeading">
+    <div class="kicker">หยุดพักสักครู่</div><h2 id="pauseHeading">พักหายใจข้างกองไฟ</h2>
+    <p>เกมหยุดพักแล้ว เมื่อพร้อมก็กลับไปเฝ้ากองไฟต่อได้เลย</p>
+    <button class="primary" id="resumeButton">เล่นต่อ</button>
+    <button class="secondary" id="restartButton">เริ่มใหม่</button>
+  </dialog>
+  <dialog id="endDialog" aria-labelledby="endHeading">
+    <div class="kicker" id="endKicker">จนกว่ารุ่งสางจะมาเยือน</div><div class="result-mark" aria-hidden="true">✧</div>
+    <h2 id="endHeading">รุ่งสางจะมาถึงเสมอ</h2><p id="endDescription"></p>
+    <div class="result-stats"><div><b id="resultWaves">0</b><span>ระลอกที่ผ่าน</span></div><div><b id="resultKills">0</b><span>ศัตรูที่กำจัด</span></div><div><b id="resultTime">0:00</b><span>เวลารอดชีวิต</span></div></div>
+    <button class="primary" id="retryButton">เอาชีวิตรอดอีกคืน</button>
+  </dialog>
+
+  <script>
+  'use strict';
+  /*
+   * EMBERWOOD — standalone UI-first canvas game / implementation map
+   * 1. Fixed 450×800 coordinates + DPR-aware rendering and responsive frame.
+   * 2. Procedural forest, chibi actors, campfire and crescent axe VFX.
+   * 3. Pointer/keyboard input → simulation → depth-sorted rendering → DOM HUD.
+   * 4. Five waves, drops, destructible saplings, campfire upgrades, pause/retry.
+   * No imports, network requests, image files, fonts or third-party libraries.
+   *
+   * BALANCING (all speeds are logical pixels / second)
+   * Wave       1     2     3     4     5
+   * Enemies    9    13    17    21    25
+   * Speed     14  16.1  18.2  20.3  22.4   (+15% of base / wave)
+   * HP         2     2     3     3     4
+   * Fire: cost(u)=30+15u; radius(u)=100+22u; axe damage(u)=1+0.4u.
+   * Start with 23 logs. Small trees yield 8; each enemy yields 1 log + 2 coins.
+   * The first frame deliberately mirrors a mid-run mobile survival scene.
+   * State arrays below are the extension points for more content.
+   */
+  const W=450, H=800, TAU=Math.PI*2;
+  const canvas=document.getElementById('scene'), ctx=canvas.getContext('2d');
+  const $=id=>document.getElementById(id);
+  const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+  const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+  const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const world={
+    enemies:[],     // { x, y, hp, maxHp, speed, seed, hit, cooldown }
+    trees:[],       // { x, y, size, seed, harvestable, hp, hit, regrow }
+    pickups:[],     // { x, y, type: 'wood'|'coin'|'gem', amount, phase }
+    particles:[],   // short-lived sparks, leaves and hit flecks
+    floaters:[]     // short-lived damage / reward labels
+    // Add projectiles, elite enemies, or additional loot here.
+  };
+  let state,player,fire,lastTime=0,visualTime=0,toastUntil=0,hudTimer=0;
+  const input={x:0,y:0,keys:new Set(),pointer:null};
+  const hud={gems:$('gems'),coins:$('coins'),wood:$('wood'),wave:$('waveTitle'),monsters:$('monsterCount'),segments:[...document.querySelectorAll('.wave-segment i')],build:$('buildButton'),cost:$('buildCost')};
+
+  /** Keep the same portrait composition on phones, tablets and desktop. */
+  function fitFrame(){
+    const scale=Math.min(1,(innerWidth-28)/W,(innerHeight-119)/H);
+    document.documentElement.style.setProperty('--scale',Math.max(.2,scale));
+    const dpr=Math.min(devicePixelRatio||1,2);
+    canvas.width=Math.round(W*dpr); canvas.height=Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  addEventListener('resize',fitFrame); fitFrame();
+
+  // Small, reusable canvas primitives. Paths are all original procedural art.
+  function ellipse(c,x,y,rx,ry,fill,stroke,line=2){
+    c.beginPath();c.ellipse(x,y,rx,ry,0,0,TAU);c.fillStyle=fill;c.fill();
+    if(stroke){c.strokeStyle=stroke;c.lineWidth=line;c.stroke();}
+  }
+  function poly(c,points,fill,stroke,line=2){
+    c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();
+    c.fillStyle=fill;c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=line;c.stroke();}
+  }
+  function roundRect(c,x,y,w,h,r,fill,stroke,line=2){
+    c.beginPath();c.roundRect(x,y,w,h,r);c.fillStyle=fill;c.fill();
+    if(stroke){c.strokeStyle=stroke;c.lineWidth=line;c.stroke();}
+  }
+  function gradient(c,x,y,r,inner,outer){const g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,inner);g.addColorStop(1,outer);return g;}
+  function seeded(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
+  function label(c,text,x,y,size=10,color='#f4dfae'){
+    c.font=`600 ${size}px "Leelawadee UI",Tahoma,"Segoe UI",sans-serif`;c.textAlign='center';c.fillStyle=color;c.fillText(text,x,y);
+  }
+
+  /** Purple cut gem, gold coin, brown logs — also used by the DOM HUD canvases. */
+  function drawResource(c,type,x,y,size=1){
+    c.save();c.translate(x,y);c.scale(size,size);c.lineJoin='round';
+    if(type==='gem'){
+      poly(c,[[-11,-5],[-5,-12],[5,-12],[12,-5],[9,8],[0,13],[-10,7]],'#b154e5','#321d4b',2);
+      poly(c,[[-11,-5],[0,-7],[0,13],[-10,7]],'#b667ec');
+      poly(c,[[0,-7],[12,-5],[9,8],[0,13]],'#853ac8');
+      poly(c,[[-5,-12],[5,-12],[12,-5],[0,-7],[-11,-5]],'#e9b9ff');
+      poly(c,[[0,-7],[6,-4],[0,7],[-5,0]],'#da96fa');
+      c.strokeStyle='#f4dcff';c.lineWidth=1.5;c.beginPath();c.moveTo(-7,-4);c.lineTo(-6,3);c.stroke();
+    } else if(type==='coin'){
+      ellipse(c,0,1,12,12,'#9d6423','#3d301c',2);ellipse(c,0,-1,11,11,'#e7b848','#543d20',1.5);
+      ellipse(c,0,-1,7.8,7.8,'#c7932e','#f5d67c',1.5);
+      poly(c,[[-3,-5],[3,-5],[3,2],[0,5],[-3,2]],'#f8dc7f');
+      c.strokeStyle='#ffe7a3';c.lineWidth=1.5;c.beginPath();c.arc(0,-1,9,3.5,5.3);c.stroke();
+    } else {
+      poly(c,[[-11,-5],[5,-10],[12,-3],[-4,3]],'#ad7848','#3c3024',2);
+      poly(c,[[-11,-5],[-4,3],[-4,10],[-12,3]],'#6c4930','#3c3024',1.5);
+      poly(c,[[-4,3],[12,-3],[12,4],[-4,10]],'#8e5e39','#3c3024',1.5);
+      ellipse(c,-7,2,5,7,'#bf9258','#4b3424',1.5);
+      ellipse(c,-7,2,2.5,4,'#a77644','#76502e',1);
+      c.strokeStyle='#c18c55';c.lineWidth=1.3;c.beginPath();c.moveTo(-1,4);c.lineTo(9,0);c.moveTo(-1,7);c.lineTo(7,4);c.stroke();
+    } c.restore();
+  }
+
+  /** Player: oversized spiky red hair, blue shirt, grey trousers and tiny boots. */
+  function drawPlayer(c,x,y,t,moving=false){
+    const step=moving?Math.sin(t*13)*2.4:0, bob=moving?Math.sin(t*26)*.7:Math.sin(t*3)*.65;
+    c.save();c.translate(x,y);ellipse(c,0,4,20,7,'#071b136b');c.translate(0,bob);
+    if(player.invincible>0&&Math.floor(t*12)%2===0)c.globalAlpha=.55;
+    // Legs and boots are independently animated, without sprite assets.
+    roundRect(c,-11,-5+step,9,13,3,'#899391','#213133',2);
+    roundRect(c,2,-5-step,9,13,3,'#9ba29a','#213133',2);
+    roundRect(c,-12,4+step,11,5,2,'#354749','#192c2b',2);
+    roundRect(c,2,4-step,11,5,2,'#354749','#192c2b',2);
+    ellipse(c,-14,-16+step*.3,5,7,'#e8bc91','#3a3c2e',2);
+    ellipse(c,14,-16-step*.3,5,7,'#e8bc91','#3a3c2e',2);
+    const shirt=c.createLinearGradient(-10,-30,10,-5);shirt.addColorStop(0,'#8ebbc2');shirt.addColorStop(1,'#497d91');
+    poly(c,[[-11,-28],[10,-28],[13,-7],[7,-3],[-10,-4],[-13,-11]],shirt,'#243c41',2.5);
+    poly(c,[[-5,-27],[0,-19],[5,-27]],'#ddceb2','#3e5d61',1.3);
+    c.strokeStyle='#bfdae0';c.lineWidth=1.2;c.beginPath();c.moveTo(-9,-11);c.lineTo(9,-11);c.stroke();
+    roundRect(c,-10,-6,20,4,1,'#5e503b','#273b38',1);roundRect(c,-2,-6,5,4,1,'#dfc88c');
+    ellipse(c,-14,-35,4,6,'#d9ad82','#473d32',1.5);ellipse(c,14,-35,4,6,'#d9ad82','#473d32',1.5);
+    ellipse(c,0,-37,16,16,'#efd0a2','#443e31',2.5);
+    ellipse(c,-6,-36,4,5,'#fff7da','#5d5142',1);ellipse(c,6,-36,4,5,'#fff7da','#5d5142',1);
+    ellipse(c,-5,-35,1.7,2.5,'#263b3d');ellipse(c,5,-35,1.7,2.5,'#263b3d');
+    c.strokeStyle='#86674a';c.lineWidth=1.2;c.beginPath();c.moveTo(-2,-27);c.quadraticCurveTo(1,-25,4,-28);c.stroke();
+    ellipse(c,-11,-29,3,1.5,'#d9907980');ellipse(c,11,-29,3,1.5,'#d9907980');
+    const hair=c.createLinearGradient(-10,-64,12,-36);hair.addColorStop(0,'#ee6858');hair.addColorStop(.55,'#c94449');hair.addColorStop(1,'#a13340');
+    poly(c,[[-18,-40],[-22,-44],[-17,-51],[-20,-55],[-10,-56],[-9,-63],[-2,-59],[4,-65],[8,-58],[16,-60],[15,-52],[21,-47],[17,-38],[11,-43],[7,-40],[2,-47],[-3,-41],[-9,-45],[-13,-37]],hair,'#592f31',2.5);
+    c.strokeStyle='#ff9580';c.lineWidth=1.7;c.beginPath();c.moveTo(-14,-52);c.lineTo(-7,-54);c.lineTo(-6,-58);c.moveTo(0,-56);c.lineTo(5,-59);c.stroke();
+    c.restore();
+    // Health bar is part of the world, so it always follows the character.
+    roundRect(c,x-23,y-80,46,6,3,'#122c20','#102219',1.5);
+    roundRect(c,x-22,y-79,44*clamp(player.hp/100,0,1),4,2,player.hp>35?'#acd37c':'#e87765');
+    label(c,'คุณ',x,y-87,9,'#e0dfbd');
+  }
+
+  /** Zombie: celery green skin, tattered teal clothes, an embedded iron axe. */
+  function drawEnemy(c,e,t){
+    const step=state.started?Math.sin(t*7+e.seed)*2:Math.sin(t*2+e.seed)*.5;
+    c.save();c.translate(e.x,e.y);ellipse(c,0,3,15,5,'#08170f66');c.translate(0,step*.4);
+    roundRect(c,-8,-4+step,6,10,2,'#50694d','#233a2c',2);roundRect(c,3,-4-step,6,10,2,'#556f54','#233a2c',2);
+    roundRect(c,-10,3+step,8,4,2,'#34463b','#1a2f24',1.5);roundRect(c,2,3-step,9,4,2,'#34463b','#1a2f24',1.5);
+    poly(c,[[-9,-24],[8,-24],[12,-8],[7,-4],[2,-8],[-1,-4],[-10,-6]],'#698a76','#263e31',2);
+    poly(c,[[-6,-23],[-1,-13],[5,-23]],'#a5b784','#375541',1);
+    c.save();c.rotate(Math.sin(t*4+e.seed)*.09);
+    roundRect(c,-15,-22,7,15,3,'#8da16a','#344c31',2);roundRect(c,9,-24,6,15,3,'#8da16a','#344c31',2);c.restore();
+    ellipse(c,-12,-34,4,5,'#96ae6c','#33462c',1.5);ellipse(c,12,-34,4,5,'#96ae6c','#33462c',1.5);
+    ellipse(c,0,-36,14,14,e.hit>0?'#d0dba0':'#a6b875','#35492f',2.3);
+    poly(c,[[-14,-38],[-16,-46],[-9,-49],[-4,-53],[4,-50],[11,-50],[15,-42],[10,-40],[7,-45],[-1,-42],[-7,-45]],'#66715a','#33452e',2);
+    ellipse(c,-5,-36,4.4,4.9,'#e6dfad','#56613d',1.2);ellipse(c,5,-36,4.4,4.9,'#e6dfad','#56613d',1.2);
+    ellipse(c,-4,-35,1.4,2,'#475a36');ellipse(c,4,-35,1.4,2,'#475a36');
+    poly(c,[[-5,-27],[5,-28],[4,-23],[-3,-24]],'#425437','#506038',1);roundRect(c,0,-27,3,3,.3,'#e6dec0');
+    // A tiny axe is lodged at an angle into its head — handle and forged blade.
+    c.save();c.translate(1,-49);c.rotate(-.55);
+    roundRect(c,-2,-20,4,25,1,'#8b7150','#344237',1.4);
+    poly(c,[[0,-20],[10,-23],[14,-18],[12,-10],[2,-11]],'#a5b5aa','#34443e',1.7);
+    poly(c,[[10,-23],[14,-18],[12,-10],[10,-11],[11,-18]],'#d4dcd0');c.restore();
+    if(e.hp<e.maxHp){roundRect(c,-13,-65,26,3,1.5,'#163322');roundRect(c,-13,-65,26*e.hp/e.maxHp,3,1.5,'#c9bb72');}
+    c.restore();
+  }
+
+  /** Layered pine with rounded chibi boughs, soft gradients and clean outlines. */
+  function drawTree(c,tree,t=0){
+    const {x,y,size:s,seed}=tree;
+    c.save();c.translate(x,y);c.scale(s,s);
+    if(tree.regrow>0){
+      ellipse(c,0,1,14,5,'#162c1c88');roundRect(c,-8,-8,16,10,3,'#76583c','#283b29',2);ellipse(c,0,-8,8,3,'#ad8854','#38432b',1.5);c.restore();return;
+    }
+    ellipse(c,1,2,32,10,'#0b211850');
+    poly(c,[[-9,-44],[8,-44],[10,-7],[18,2],[5,0],[-1,4],[-17,1],[-9,-8]],'#795c3e','#23382a',2.5);
+    c.strokeStyle='#a7834d';c.lineWidth=2;c.beginPath();c.moveTo(-3,-29);c.lineTo(-3,-6);c.lineTo(-7,-1);c.stroke();
+    const sway=reducedMotion?0:Math.sin(t*.8+seed)*1.1;
+    c.translate(sway,tree.hit>0?Math.sin(tree.hit*55)*2:0);
+    for(let layer=0;layer<3;layer++){
+      const base=-12-layer*26, width=40-layer*7, top=base-57;
+      const g=c.createLinearGradient(-width,top,width,base);
+      g.addColorStop(0,layer===2?'#527c4a':'#416b43');g.addColorStop(.55,layer===2?'#3f6e43':'#305e3e');g.addColorStop(1,'#244d38');
+      c.beginPath();c.moveTo(-width,base-7);
+      c.quadraticCurveTo(-width-3,base-14,-width+6,base-21);
+      c.quadraticCurveTo(-width+7,base-29,-width+15,base-35);
+      c.quadraticCurveTo(-13,top+9,-4,top);c.quadraticCurveTo(0,top-5,5,top+1);
+      c.quadraticCurveTo(15,top+10,width-13,base-35);
+      c.quadraticCurveTo(width-4,base-29,width-5,base-20);
+      c.quadraticCurveTo(width+6,base-10,width,base-5);
+      c.quadraticCurveTo(width-10,base+2,width-20,base-3);
+      c.quadraticCurveTo(0,base+7,-width+17,base-2);
+      c.quadraticCurveTo(-width+8,base+1,-width,base-7);c.closePath();
+      c.fillStyle=g;c.fill();c.strokeStyle='#183e2c';c.lineWidth=2.5;c.stroke();
+      c.strokeStyle='#78a16a30';c.lineWidth=2.5;c.beginPath();c.moveTo(-width+9,base-17);c.quadraticCurveTo(-width+14,base-26,-width+20,base-30);c.stroke();
+    }
+    if(tree.harvestable){
+      c.strokeStyle='#e1c57d8a';c.lineWidth=1.4;c.beginPath();c.moveTo(-5,-5);c.lineTo(5,-15);c.moveTo(-5,-15);c.lineTo(5,-5);c.stroke();
+      if(tree.hp<3){roundRect(c,-15,8,30,3,1,'#172f20');roundRect(c,-15,8,10*tree.hp,3,1,'#c9b56a');}
+    }
+    c.restore();
+  }
+
+  /** Warmth zone is rendered before actors; opaque campfire after depth sorting. */
+  function drawCampfire(c,x,y,t,lightOnly=false){
+    const pulse=reducedMotion?0:Math.sin(t*2.3)*5+Math.sin(t*4)*2;
+    if(lightOnly){
+      const r=fire.radius+32+pulse;
+      c.save();c.globalCompositeOperation='screen';
+      c.fillStyle=gradient(c,x,y-12,r,'#efaa3c55','#e6b03900');c.beginPath();c.arc(x,y-12,r,0,TAU);c.fill();
+      c.fillStyle=gradient(c,x,y-17,62,'#ffbe4937','#e6b03900');c.beginPath();c.arc(x,y-17,62,0,TAU);c.fill();c.restore();
+      c.save();c.strokeStyle='#e4c16e24';c.lineWidth=1;c.setLineDash([3,8]);c.beginPath();c.ellipse(x,y-8,fire.radius,fire.radius*.68,0,0,TAU);c.stroke();c.restore();return;
+    }
+    c.save();c.translate(x,y);ellipse(c,0,5,35,15,'#12291bb0');ellipse(c,0,-1,29,18,'#524a36','#273b2d',2);
+    ellipse(c,0,-3,24,14,'#3a3829','#283329',2);
+    // Back stones, crossed logs, then front stones create a readable fire ring.
+    function stone(a){const sx=Math.cos(a)*28,sy=Math.sin(a)*14;
+      c.save();c.translate(sx,sy);c.rotate(Math.sin(a)*.2);
+      const g=c.createLinearGradient(-7,-9,8,4);g.addColorStop(0,'#899184');g.addColorStop(.45,'#677266');g.addColorStop(1,'#434e46');
+      poly(c,[[-9,-4],[-5,-10],[4,-11],[10,-4],[8,4],[0,7],[-8,4]],g,'#2c3d32',2);
+      c.strokeStyle='#b3b6a050';c.lineWidth=1.2;c.beginPath();c.moveTo(-5,-7);c.lineTo(3,-8);c.stroke();c.restore();
+    }
+    for(let i=4;i<9;i++)stone(i*TAU/9);
+    c.save();c.rotate(.45);roundRect(c,-22,-8,44,10,4,'#795336','#332f24',2);c.restore();
+    c.save();c.rotate(-.45);roundRect(c,-22,-8,44,10,4,'#8d5c34','#332f24',2);c.restore();
+    ellipse(c,0,-6,17,9,'#ed882f80');
+    const f=Math.sin(t*8)*3, g=c.createLinearGradient(0,-55,0,-7);g.addColorStop(0,'#ffe89a');g.addColorStop(.4,'#ffc34e');g.addColorStop(1,'#e76328');
+    c.beginPath();c.moveTo(-14,-9);c.bezierCurveTo(-25,-25,-3,-35,-5+f,-55);c.bezierCurveTo(12,-46,5,-35,12,-32);c.bezierCurveTo(17,-37,17,-34,18,-29);c.bezierCurveTo(26,-13,10,-4,-1,-4);c.closePath();c.fillStyle=g;c.fill();
+    c.beginPath();c.moveTo(-7,-9);c.bezierCurveTo(-11,-20,1,-24,2+f*.4,-36);c.bezierCurveTo(14,-22,10,-10,5,-7);c.closePath();c.fillStyle='#fff2ac';c.fill();
+    for(let i=0;i<4;i++)stone(i*TAU/9);
+    if(!reducedMotion)for(let i=0;i<6;i++){const phase=(t*.45+i*.173)%1;ellipse(c,Math.sin(i*8+t+phase)*13,-30-phase*50,1.3*(1-phase),2*(1-phase),`rgba(255,205,103,${1-phase})`);}
+    label(c,`กองไฟ · ระดับ ${fire.upgrades+1}`,0,35,10,'#dbc18b');c.restore();
+  }
+
+  function drawAxe(c,x,y,angle,scale=1){
+    c.save();c.translate(x,y);c.rotate(angle);c.scale(scale,scale);c.lineJoin='round';
+    roundRect(c,-20,-2,39,5,2,'#9d8057','#2d3b32',1.6);
+    roundRect(c,-12,-3,6,7,1,'#b7a17a','#3b4334',1);
+    const steel=c.createLinearGradient(9,-16,29,14);steel.addColorStop(0,'#eef4df');steel.addColorStop(.42,'#b3c7bf');steel.addColorStop(1,'#6c898a');
+    poly(c,[[10,-5],[12,-14],[24,-19],[30,-13],[29,12],[20,16],[12,11]],steel,'#304848',2);
+    poly(c,[[24,-19],[30,-13],[29,12],[24,13],[25,-10]],'#dfe9d7');
+    c.strokeStyle='#f6ffe6';c.lineWidth=1.3;c.beginPath();c.moveTo(28,-12);c.lineTo(27,10);c.stroke();c.restore();
+  }
+
+  /** A white tapered crescent follows the axe, using a curved filled path. */
+  function drawAttackVFX(c,x,y,angle){
+    const r=64;
+    c.save();c.translate(x,y-22);c.rotate(angle);
+    const trail=c.createLinearGradient(-70,-65,72,28);
+    trail.addColorStop(0,'#f5ffe100');trail.addColorStop(.52,'#f4ffe11a');trail.addColorStop(1,'#f5fff49c');
+    c.beginPath();c.moveTo(Math.cos(-2.15)*r,Math.sin(-2.15)*r);
+    c.arc(0,0,r,-2.15,0);c.quadraticCurveTo(r+7,8,r-2,15);
+    c.quadraticCurveTo(38,-31,Math.cos(-2.15)*r,Math.sin(-2.15)*r);
+    c.fillStyle=trail;c.fill();
+    c.strokeStyle='#f0ffe270';c.lineWidth=1.2;c.beginPath();c.arc(0,0,r+4,-1.1,-.08);c.stroke();
+    drawAxe(c,r,0,Math.PI*.44,.87);c.restore();
+  }
+
+  // Pre-render static ground once. The cache is another canvas, never an image.
+  const ground=document.createElement('canvas');ground.width=W;ground.height=H;
+  function makeGround(){
+    const c=ground.getContext('2d'),random=seeded(12876);
+    const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'#263d2c');g.addColorStop(.55,'#45503a');g.addColorStop(1,'#2c4530');c.fillStyle=g;c.fillRect(0,0,W,H);
+    // Broad organic path, moss, fine earth grain, pebbles and grass sprigs.
+    c.beginPath();c.moveTo(160,145);c.bezierCurveTo(180,280,76,357,114,463);c.bezierCurveTo(160,556,133,644,197,800);c.lineTo(350,800);c.bezierCurveTo(299,637,349,583,327,472);c.bezierCurveTo(307,350,344,285,290,139);c.closePath();c.fillStyle='#756a4b29';c.fill();
+    for(let i=0;i<75;i++){const x=random()*W,y=190+random()*610;ellipse(c,x,y,7+random()*34,3+random()*17,random()>.5?'#a4a36b05':'#112d1c09');}
+    for(let i=0;i<5600;i++){const x=random()*W,y=random()*H;c.fillStyle=random()>.5?'#e4dca708':'#0f28150c';c.fillRect(x,y,random()*1.4+.3,.8);}
+    for(let i=0;i<120;i++){
+      const x=random()*W,y=180+random()*610;
+      if(random()>.5){ellipse(c,x,y,1+random()*2.8,1+random()*1.2,'#253b2b5e');}
+      else {c.strokeStyle=random()>.5?'#8a9b5b39':'#1d3c2c7a';c.lineWidth=1.2;c.beginPath();c.moveTo(x-3,y-4);c.lineTo(x,y);c.lineTo(x+1,y-6);c.moveTo(x,y);c.lineTo(x+4,y-3);c.stroke();}
+    }
+    for(let i=0;i<13;i++){const y=300+i*29,x=221+Math.sin(i*.8)*16;ellipse(c,x,y,6+random()*3,3+random()*2,'#b0a8830a');}
+  }
+  makeGround();
+
+  /** Pure balancing functions: change these to rebalance without editing UI. */
+  function getWaveConfig(wave){return {count:9+4*(wave-1),speed:14*(1+.15*(wave-1)),hp:2+Math.floor((wave-1)/2)};}
+  function getBuildRequirement(upgrades){return 30+15*upgrades;}
+  function makeForest(){
+    const random=seeded(84);world.trees.length=0;
+    // Dense overlapping top canopy and asymmetric side walls frame a clearing.
+    for(let row=0;row<3;row++)for(let i=0;i<8;i++)world.trees.push({x:i*69-13+(row%2?27:0),y:66+row*65+random()*24,size:.95+random()*.4,seed:random()*10,hp:Infinity,harvestable:false,hit:0,regrow:0});
+    for(let side=0;side<2;side++)for(let i=0;i<9;i++)world.trees.push({x:side?438+random()*27:-15+random()*25,y:288+i*68,size:.87+random()*.32,seed:random()*10,hp:Infinity,harvestable:false,hit:0,regrow:0});
+    [[54,334,.79],[401,351,.82],[42,523,.93],[401,550,.85],[60,701,1.1],[389,734,1.1],[100,376,.53],[352,443,.56],[107,582,.54]].forEach(([x,y,size],i)=>world.trees.push({x,y,size,seed:i*1.3,hp:i<6?Infinity:3,harvestable:i>=6,hit:0,regrow:0}));
+  }
+  function spawnWave(){
+    const config=getWaveConfig(state.wave), random=seeded(state.wave*93);
+    world.enemies.length=0;state.waveTotal=config.count;state.waveKills=0;
+    const starts=[[124,290],[348,290],[390,409],[76,484],[351,606],[60,605],[330,220],[146,224],[398,558]];
+    for(let i=0;i<config.count;i++){
+      let x,y;
+      if(state.wave===1){[x,y]=starts[i];}
+      else {const side=i%3;x=side===0?46:side===1?405:70+random()*310;y=side===2?215:240+random()*390;}
+      world.enemies.push({x,y,hp:config.hp,maxHp:config.hp,speed:config.speed,seed:random()*20,hit:0,cooldown:0});
+    }
+  }
+  function resetGame(){
+    state={wave:1,waveTotal:9,waveKills:0,kills:0,wood:23,coins:3,gems:0,time:0,started:false,paused:false,ended:false,intermission:0,lastCountdown:0};
+    player={x:225,y:406,hp:100,speed:112,invincible:0,angle:0,moving:false};
+    fire={x:225,y:558,upgrades:0,radius:100};
+    for(const key of ['pickups','particles','floaters'])world[key].length=0;
+    makeForest();spawnWave();
+    // Two little bundles teach collecting before the first 30-log upgrade.
+    world.pickups.push({x:178,y:447,type:'wood',amount:4,phase:0},{x:273,y:465,type:'wood',amount:4,phase:2});
+    clearInput();toastUntil=0;$('toast').textContent='';$('toast').classList.remove('visible');updateHUD();
+  }
+  function notify(text,duration=2.6){$('toast').textContent=text;$('toast').classList.add('visible');toastUntil=visualTime+duration;}
+  function startGame(){if(!state.started){state.started=true;notify('เข้าใกล้ต้นสนเล็กเพื่อตัดไม้');}}
+  function addFloater(text,x,y,color='#e4d59d'){world.floaters.push({text,x,y,color,life:1.1,max:1.1});}
+  function burst(x,y,color,count=8){
+    if(reducedMotion)return;
+    for(let i=0;i<count;i++){const a=Math.random()*TAU,s=12+Math.random()*40;world.particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-15,life:.35+Math.random()*.35,color,size:1+Math.random()*2});}
+  }
+  function drop(type,amount,x,y){world.pickups.push({type,amount,x,y,phase:Math.random()*TAU});}
+  function killEnemy(e){
+    state.kills++;state.waveKills++;burst(e.x,e.y-24,'#b4c477');
+    drop('coin',2,e.x-8,e.y);drop('wood',1,e.x+8,e.y+7);
+    if(state.kills%3===0)drop('gem',1,e.x,e.y-8);
+  }
+  function buildFire(){
+    const cost=getBuildRequirement(fire.upgrades);
+    if(state.paused||state.ended||!state.started||fire.upgrades>=3||dist(player,fire)>160||state.wood<cost)return;
+    state.wood-=cost;fire.upgrades++;fire.radius=100+22*fire.upgrades;
+    burst(fire.x,fire.y-28,'#ffe09b',22);notify('อัปเกรดกองไฟแล้ว! วงแสงกว้างขึ้น โจมตีแรงขึ้น');updateHUD();
+  }
+  function finishGame(won){
+    if(state.ended)return;state.ended=true;clearInput();
+    $('endKicker').textContent=won?'คุณรอดชีวิตจนรุ่งสาง':'ทุกประกายไฟคือการเริ่มต้นใหม่';
+    $('endHeading').textContent=won?'คุณรักษาแสงไฟไว้ได้':'แสงไฟยังรอคุณอยู่';
+    $('endDescription').textContent=won?'ศัตรูทั้งห้าระลอกล่าถอย ป่าแห่งนี้ได้ต้อนรับแสงแรกของวัน':'การเฝ้ากองไฟครั้งนี้จบลงแล้ว ลองเก็บไม้และอยู่ใกล้กองไฟ ครั้งหน้าคุณจะไปได้ไกลกว่าเดิม';
+    $('resultWaves').textContent=won?5:state.wave-1;$('resultKills').textContent=state.kills;$('resultTime').textContent=formatTime(state.time);
+    $('endDialog').showModal();updateHUD();
+  }
+  function formatTime(seconds){return `${Math.floor(seconds/60)}:${String(Math.floor(seconds%60)).padStart(2,'0')}`;}
+
+  /** Fixed-unit simulation. dt is capped after tab switching to avoid jumps. */
+  function update(dt){
+    if(state.paused||state.ended)return;
+    let mx=input.x,my=input.y;
+    if(input.keys.has('a')||input.keys.has('arrowleft'))mx-=1;
+    if(input.keys.has('d')||input.keys.has('arrowright'))mx+=1;
+    if(input.keys.has('w')||input.keys.has('arrowup'))my-=1;
+    if(input.keys.has('s')||input.keys.has('arrowdown'))my+=1;
+    const magnitude=Math.hypot(mx,my);if(magnitude>1){mx/=magnitude;my/=magnitude;}
+    player.moving=magnitude>.09;if(player.moving)startGame();
+    // The opening scene animates, but combat waits for the first movement.
+    const previousAngle=player.angle;
+    player.angle+=dt*(TAU/(1.6-fire.upgrades*.12));
+    if(!state.started)return;
+    state.time+=dt;player.invincible=Math.max(0,player.invincible-dt);
+    player.x=clamp(player.x+mx*player.speed*dt,40,410);
+    player.y=clamp(player.y+my*player.speed*dt,235,655);
+    // Solid trunks, rather than foliage, define navigation and chopping range.
+    for(const tree of world.trees){
+      tree.hit=Math.max(0,tree.hit-dt);if(tree.regrow>0){tree.regrow-=dt;if(tree.regrow<=0)tree.hp=3;continue;}
+      const d=dist(player,tree),r=12+tree.size*9;
+      if(d<r&&d>0){player.x+=(player.x-tree.x)/d*(r-d);player.y+=(player.y-tree.y)/d*(r-d);}
+    }
+    player.x=clamp(player.x,40,410);player.y=clamp(player.y,235,655);
+    // Campfire heals only within its logical circle; upgrading expands it.
+    if(dist(player,fire)<fire.radius)player.hp=Math.min(100,player.hp+3*dt);
+    if(state.intermission>0){
+      state.intermission-=dt;
+      const n=Math.ceil(state.intermission);
+      if(n!==state.lastCountdown){state.lastCountdown=n;notify(`พักข้างกองไฟ · ระลอกถัดไปใน ${n} วินาที`,1.1);}
+      if(state.intermission<=0){state.wave++;spawnWave();notify(`ระลอก ${state.wave} · ปกป้องกองไฟ`);}
+    }
+    // Each enemy can be struck once per axe orbit. An angular sweep test also
+    // catches contacts between frames, avoiding frame-rate-dependent misses.
+    const axeY=player.y-22,hitDamage=1+fire.upgrades*.4;
+    function swept(tx,ty){
+      const dx=tx-player.x,dy=ty-axeY;if(Math.hypot(dx,dy)>83)return false;
+      const angle=Math.atan2(dy,dx),passed=((angle-previousAngle)%TAU+TAU)%TAU;
+      return passed<(player.angle-previousAngle)+.24;
+    }
+    for(let i=world.enemies.length-1;i>=0;i--){
+      const e=world.enemies[i];e.cooldown=Math.max(0,e.cooldown-dt);e.hit=Math.max(0,e.hit-dt);
+      const dx=player.x-e.x,dy=player.y-e.y,d=Math.hypot(dx,dy);
+      if(d>22){e.x+=dx/d*e.speed*dt;e.y+=dy/d*e.speed*dt;}
+      if(e.cooldown===0&&swept(e.x,e.y-24)){
+        e.hp-=hitDamage;e.cooldown=1.15-fire.upgrades*.08;e.hit=.23;
+        if(d>0){e.x-=dx/d*13;e.y-=dy/d*13;}
+        addFloater(hitDamage.toFixed(hitDamage%1?1:0),e.x,e.y-50);burst(e.x,e.y-25,'#d8e0aa',4);
+        if(e.hp<=0){killEnemy(e);world.enemies.splice(i,1);continue;}
+      }
+      if(d<23&&player.invincible<=0){player.hp-=13;player.invincible=.85;burst(player.x,player.y-30,'#e9a283',5);addFloater('−13',player.x,player.y-63,'#f0ac91');}
+    }
+    for(const tree of world.trees){
+      if(!tree.harvestable||tree.regrow>0)continue;
+      tree.cooldown=Math.max(0,(tree.cooldown||0)-dt);
+      if(tree.cooldown===0&&swept(tree.x,tree.y-20)){
+        tree.hp--;tree.hit=.25;tree.cooldown=1.25;burst(tree.x,tree.y-36,'#bbc687',7);
+        if(tree.hp<=0){tree.regrow=24;drop('wood',8,tree.x,tree.y+5);addFloater('ไม้ +8',tree.x,tree.y-25);}
+      }
+    }
+    // Nearby resources magnetize gently toward the player, then update inventory.
+    for(let i=world.pickups.length-1;i>=0;i--){
+      const p=world.pickups[i],d=dist(player,p);
+      if(d<62&&d>1){p.x+=(player.x-p.x)/d*115*dt;p.y+=(player.y-p.y)/d*115*dt;}
+      if(d<17){const key=p.type==='coin'?'coins':p.type==='gem'?'gems':'wood';state[key]+=p.amount;addFloater(`+${p.amount}`,p.x,p.y-20,p.type==='gem'?'#ddb6fa':'#e7d59c');world.pickups.splice(i,1);}
+    }
+    for(let i=world.particles.length-1;i>=0;i--){const p=world.particles[i];p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=35*dt;if(p.life<=0)world.particles.splice(i,1);}
+    for(let i=world.floaters.length-1;i>=0;i--){const f=world.floaters[i];f.life-=dt;f.y-=20*dt;if(f.life<=0)world.floaters.splice(i,1);}
+    if(player.hp<=0){player.hp=0;finishGame(false);return;}
+    if(world.enemies.length===0&&state.intermission<=0){
+      if(state.wave===5){finishGame(true);return;}
+      state.intermission=5;state.lastCountdown=0;player.hp=Math.min(100,player.hp+35);notify('ผ่านระลอกแล้ว · พลังชีวิต +35');
+    }
+  }
+
+  /** Painter's algorithm gives trees, zombies and player consistent depth. */
+  function render(t){
+    ctx.clearRect(0,0,W,H);ctx.drawImage(ground,0,0); // draws a procedural canvas cache
+    drawCampfire(ctx,fire.x,fire.y,t,true);
+    // Ambient motes make the forest feel alive without any external assets.
+    for(let i=0;i<17;i++){
+      const x=(i*113.7+Math.sin(t*.25+i)*13)%W,y=200+(i*69.9)%440;
+      const a=.1+(Math.sin(t*1.2+i*2)+1)*.15;
+      ellipse(ctx,x,y,1,1,`rgba(220,224,145,${a})`);
+    }
+    for(const p of world.pickups){
+      const bob=reducedMotion?0:Math.sin(t*3+p.phase)*2;
+      ellipse(ctx,p.x,p.y+4,10,4,'#12251b66');
+      ctx.fillStyle=gradient(ctx,p.x,p.y-3,22,p.type==='gem'?'#cf89ed22':'#ead48c1a','#e8d28100');ctx.fillRect(p.x-22,p.y-25,44,44);
+      drawResource(ctx,p.type,p.x,p.y-4+bob,.65);
+    }
+    // Subtle ring anchors the red-haired survivor in the clearing.
+    ctx.save();ctx.strokeStyle='#cbd5aa32';ctx.lineWidth=1.2;ctx.beginPath();ctx.ellipse(player.x,player.y+1,24,10,0,0,TAU);ctx.stroke();ctx.restore();
+    const layers=world.trees.map(tree=>({y:tree.y,draw:()=>drawTree(ctx,tree,t)}));
+    for(const e of world.enemies)layers.push({y:e.y,draw:()=>drawEnemy(ctx,e,t)});
+    layers.push({y:player.y,draw:()=>{drawPlayer(ctx,player.x,player.y,t,player.moving&&!state.paused);drawAttackVFX(ctx,player.x,player.y,player.angle);}});
+    layers.push({y:fire.y,draw:()=>drawCampfire(ctx,fire.x,fire.y,t)});
+    layers.sort((a,b)=>a.y-b.y);for(const layer of layers)layer.draw();
+    for(const p of world.particles){ctx.globalAlpha=clamp(p.life*2,0,1);ellipse(ctx,p.x,p.y,p.size,p.size,p.color);}ctx.globalAlpha=1;
+    for(const f of world.floaters){ctx.globalAlpha=clamp(f.life/.3,0,1);label(ctx,f.text,f.x,f.y,11,f.color);}ctx.globalAlpha=1;
+    // Cinematic vignette is intentionally weak in the playable clearing.
+    const vignette=ctx.createRadialGradient(225,410,100,225,410,470);vignette.addColorStop(0,'#06151000');vignette.addColorStop(.65,'#0615100d');vignette.addColorStop(1,'#03120da8');ctx.fillStyle=vignette;ctx.fillRect(0,0,W,H);
+    if(!state.started){label(ctx,'สำรวจป่า · เก็บไม้ · รอดให้ครบห้าระลอก',225,625,11,'#d4d3b4ba');}
+  }
+
+  function updateHUD(){
+    hud.gems.textContent=state.gems;hud.coins.textContent=state.coins;hud.wood.textContent=state.wood;
+    hud.wave.innerHTML=`ระลอก <strong>${state.wave}</strong> <span>/ 5</span>`;
+    hud.monsters.innerHTML=state.intermission>0?'ผ่านระลอกแล้ว · <b>พักฟื้น</b>':`เหลือศัตรู <b>${world.enemies.length}</b> ตัว`;
+    hud.segments.forEach((segment,i)=>{segment.style.width=i<state.wave-1?'100%':i===state.wave-1?`${Math.max(8,state.waveKills/state.waveTotal*100)}%`:'0%';});
+    const cost=getBuildRequirement(fire.upgrades),near=dist(player,fire)<=160;
+    hud.build.hidden=!near||fire.upgrades>=3||state.ended;
+    hud.build.disabled=state.wood<cost||state.paused||!state.started;
+    hud.build.classList.toggle('ready',state.wood>=cost);
+    hud.cost.textContent=`${state.wood}/${cost}`;
+    $('buildTitle').textContent=fire.upgrades?'อัปเกรดกองไฟ':'สร้างกองไฟ';
+    hud.build.setAttribute('aria-label',`อัปเกรดกองไฟ ใช้ไม้ ${cost} ท่อน มีอยู่ ${state.wood} ท่อน`);
+    hud.build.title=state.wood<cost?`เก็บไม้อีก ${cost-state.wood} ท่อน`:'คลิกหรือกด B เพื่ออัปเกรด';
+    $('fireStatus').textContent=`กองไฟ ระดับ ${fire.upgrades+1}`;
+    $('playStatus').textContent=state.ended?'จบการเอาชีวิตรอด':state.paused?'พักเกมแล้ว':state.started?`รอดชีวิต ${formatTime(state.time)}`:'ลากจอยเพื่อเริ่มเอาชีวิตรอด';
+    if(toastUntil&&visualTime>toastUntil){$('toast').classList.remove('visible');toastUntil=0;}
+  }
+  function frame(ms){
+    const dt=Math.min((ms-lastTime)/1000||0,.04);lastTime=ms;
+    // Pause freezes ambient animation too; no hidden simulation while in menus.
+    if(!state.paused&&!state.ended)visualTime+=dt;
+    update(dt);render(visualTime);
+    hudTimer+=dt;if(hudTimer>.1){updateHUD();hudTimer=0;}
+    requestAnimationFrame(frame);
+  }
+
+  // Pointer Events support one mouse, pen or finger without separate handlers.
+  const joystick=$('joystick'),stick=$('stick');
+  function moveStick(event){
+    const rect=joystick.getBoundingClientRect(),scale=rect.width/110;
+    let x=(event.clientX-rect.left-rect.width/2)/scale,y=(event.clientY-rect.top-rect.height/2)/scale;
+    const d=Math.hypot(x,y),radius=34;if(d>radius){x=x/d*radius;y=y/d*radius;}
+    input.x=x/radius;input.y=y/radius;stick.style.transform=`translate(${x}px,${y}px)`;
+  }
+  function clearInput(){
+    if(input.pointer!==null&&joystick.hasPointerCapture(input.pointer))joystick.releasePointerCapture(input.pointer);
+    input.pointer=null;input.x=0;input.y=0;input.keys.clear();stick.style.transform='';joystick.classList.remove('active');
+  }
+  joystick.addEventListener('pointerdown',event=>{
+    if(state.paused||state.ended||input.pointer!==null)return;
+    event.preventDefault();input.pointer=event.pointerId;joystick.setPointerCapture(event.pointerId);joystick.classList.add('active');moveStick(event);
+  });
+  joystick.addEventListener('pointermove',event=>{if(event.pointerId===input.pointer)moveStick(event);});
+  for(const type of ['pointerup','pointercancel','lostpointercapture'])joystick.addEventListener(type,event=>{if(event.pointerId===input.pointer)clearInput();});
+  const moveKeys=new Set(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright']);
+  addEventListener('keydown',event=>{
+    const key=event.key.toLowerCase();
+    if($('helpDialog').open||$('endDialog').open)return;
+    if(key==='escape'||key===' '){
+      // Preserve native Space activation when a real button has focus.
+      if(key===' '&&event.target instanceof HTMLButtonElement)return;
+      event.preventDefault();if(!event.repeat)togglePause();return;
+    }
+    if(state.paused)return;
+    if(moveKeys.has(key)){event.preventDefault();input.keys.add(key);}
+    if(key==='b'&&!event.repeat)buildFire();
+  });
+  addEventListener('keyup',event=>input.keys.delete(event.key.toLowerCase()));
+  function setPaused(paused){state.paused=paused;clearInput();updateHUD();}
+  function togglePause(){
+    if(state.ended||$('helpDialog').open)return;
+    if($('pauseDialog').open)$('pauseDialog').close();else {setPaused(true);$('pauseDialog').showModal();}
+  }
+  $('pauseButton').addEventListener('click',togglePause);
+  $('resumeButton').addEventListener('click',()=>$('pauseDialog').close());
+  $('pauseDialog').addEventListener('close',()=>setPaused(false));
+  $('pauseDialog').addEventListener('cancel',event=>{event.preventDefault();$('pauseDialog').close();});
+  $('helpButton').addEventListener('click',()=>{if(state.ended)return;setPaused(true);$('helpDialog').showModal();});
+  $('closeHelp').addEventListener('click',()=>$('helpDialog').close());
+  $('helpDialog').addEventListener('close',()=>setPaused(false));
+  $('buildButton').addEventListener('click',buildFire);
+  function retry(){for(const id of ['pauseDialog','endDialog','helpDialog'])if($(id).open)$(id).close();resetGame();canvas.focus({preventScroll:true});}
+  $('restartButton').addEventListener('click',retry);$('retryButton').addEventListener('click',retry);
+  // Leaving the browser cannot leave a movement key or pointer stuck down.
+  function pauseOnLeave(){clearInput();if(state.started&&!state.paused&&!state.ended){setPaused(true);$('pauseDialog').showModal();}}
+  addEventListener('blur',pauseOnLeave);document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseOnLeave();});
+  // Escape on the result screen keeps the result open until the player retries.
+  $('endDialog').addEventListener('cancel',event=>event.preventDefault());
+
+  for(const [id,type] of [['gemIcon','gem'],['coinIcon','coin'],['woodIcon','wood'],['buildWoodIcon','wood']]){
+    const c=$(id).getContext('2d');c.scale(2,2);drawResource(c,type,14.5,14.5,.85);
+  }
+  $('balanceRows').innerHTML=Array.from({length:5},(_,i)=>{const w=getWaveConfig(i+1);return `<tr><td>ระลอก ${i+1}</td><td>${w.count}</td><td>${w.speed.toFixed(1)}</td><td>${w.hp}</td></tr>`;}).join('');
+  resetGame();requestAnimationFrame(frame);
+  </script>
+</body>
+</html>
