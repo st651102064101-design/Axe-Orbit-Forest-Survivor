@@ -4,7 +4,7 @@ const html=fs.readFileSync(path.resolve(__dirname,'../emberwood.html'),'utf8');
 const context=vm.createContext({window:{},console,Math,Set,Map,structuredClone});
 vm.runInContext(html.match(/<script id="game-logic">([\s\S]*?)<\/script>/)[1],context);
 const {GameEngine,VERSION}=context.window.EmberwoodGame;
-const game=()=>new GameEngine({seed:45,config:{enemySpeed:0,contactDamage:0,axeDamage:0}});
+const game=()=>new GameEngine({seed:45,config:{enemySpeed:0,contactDamage:0,axeDamage:0,orbitBase:0}});
 const cues=g=>Array.from(g.drainEvents().filter(e=>e.type==='sound'),e=>e.name);
 test('combat and inventory emit distinct audio feedback without charging resources',()=>{
   const g=game();g.start();g.drainEvents();const e=g.state.enemies[0];g.damage(e,1);assert.ok(cues(g).includes('hit'));
@@ -25,14 +25,16 @@ test('mini shot outcomes and rewards provide visual reward data and sound once',
   const mini=g.snapshot().miniGame;assert.ok(Array.isArray(mini.rewards));assert.ok(mini.rewards.some(r=>r.type==='coin'&&r.amount>0));assert.ok(cues(g).some(c=>c==='miniWin'||c==='miniEnd'));
   const before=g.state.coins;g.step(.05);assert.equal(g.state.coins,before);assert.equal(cues(g).length,0);
 });
-test('2.3 accepts existing 2.0 / 2.1 (schema 2) saves and clears new optional reward decorations safely',()=>{
-  assert.equal(VERSION,'2.3.0');
+test('3.0 accepts existing 2.0 / 2.1 (schema 2) saves and clears new optional reward decorations safely',()=>{
+  assert.equal(VERSION,'3.0.0');
   for(const version of ['2.0.0','2.1.0']){
     const g=game(),save=g.exportSave();save.schema=2;save.version=version;delete save.state.miniRewards;
-    for(const key of ['combo','milestoneSeen','milestoneRequest','enemyShots','moves','emotion'])delete save.state[key];delete save.state.perks.haste;delete save.state.player.facing;
-    for(const e of save.state.enemies)for(const key of ['family','baseHp','baseSpeed','baseDamage','clock','clock2','armed','facing','blocked','windup','charge','blink','blinkX','blinkY','summoned','stage','split'])delete e[key];
+    for(const key of ['combo','milestoneSeen','milestoneRequest','enemyShots','moves','emotion','arsenal'])delete save.state[key];delete save.state.perks.haste;delete save.state.player.facing;
+    for(const id of ['sword','staff','hammer','dagger','magic','gun','shield'])delete save.state.weapons[id];
+    for(const e of save.state.enemies)for(const key of ['family','baseHp','baseSpeed','baseDamage','clock','clock2','armed','facing','blocked','windup','charge','blink','blinkX','blinkY','summoned','stage','split','ringReady'])delete e[key];
     const h=game();assert.equal(h.importSave(save),true,version);assert.equal(h.state.bagWood,g.state.bagWood);
-    const out=h.exportSave();assert.equal(out.version,'2.3.0');assert.equal(out.schema,4);assert.equal(out.state.moves.charge,0);assert.equal(out.state.perks.haste,0);assert.equal(out.state.milestoneSeen,1);
+    const out=h.exportSave();assert.equal(out.version,'3.0.0');assert.equal(out.schema,5);assert.equal(out.state.moves.charge,0);assert.equal(out.state.perks.haste,0);assert.equal(out.state.milestoneSeen,1);
+    assert.equal(out.state.weapons.sword,1);assert.ok(out.state.arsenal.count>=1);
   }
 });
 test('an accurate target hit sounds correct even when previous misses keep total score at zero',()=>{

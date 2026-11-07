@@ -7,7 +7,7 @@ const context=vm.createContext({window:{},console,Math,Set,Map,structuredClone})
 vm.runInContext(html.match(/<script id="game-logic">([\s\S]*?)<\/script>/)[1],context);
 const {GameEngine,CONFIG}=context.window.EmberwoodGame;
 const plain=v=>JSON.parse(JSON.stringify(v));
-const game=(config={})=>new GameEngine({seed:11,config:{enemySpeed:0,contactDamage:0,axeDamage:10,...config}});
+const game=(config={})=>new GameEngine({seed:11,config:{enemySpeed:0,contactDamage:0,axeDamage:10,orbitBase:0,...config}});
 const advance=(g,time,dt=1/60)=>{for(let i=0;i<Math.ceil(time/dt);i++)g.step(dt);};
 /** Running game on a given day with a hand-placed set of enemies (dx, dy relative to the player).
     A motionless, harmless enemy far below keeps the day from ending while a test runs. */
@@ -78,11 +78,12 @@ test('the hero shows emotions and poses that match what is happening',()=>{
   b.finish(false);assert.equal(b.snapshot().player.emotion,'sad');const w=scene(1,[]);w.finish(true);assert.equal(w.snapshot().player.pose,'victory');assert.equal(w.snapshot().player.emotion,'happy');
 });
 
-test('schema 4 saves keep an active dash and storm; 2.2 saves migrate',()=>{
+test('current saves keep an active dash and storm; 2.2 saves migrate',()=>{
   const g=scene(40,[[70,0]]);g.setInput(1,0);g.dash();g.state.moves.charge=1;g.special();g.step(.05);
-  const save=g.exportSave();assert.equal(save.schema,4);const h=game();assert.equal(h.importSave(save),true);
+  const save=g.exportSave();assert.equal(save.schema,5);const h=game();assert.equal(h.importSave(save),true);
   assert.ok(h.state.moves.dash);assert.ok(h.state.moves.special);advance(h,CONFIG.specialTime+.2);assert.equal(h.state.moves.dash,null);assert.equal(h.state.moves.special,null);
-  const old=plain(save);old.schema=3;old.version='2.2.0';delete old.state.moves;delete old.state.emotion;delete old.state.player.facing;
+  const old=plain(save);old.schema=3;old.version='2.2.0';delete old.state.moves;delete old.state.emotion;delete old.state.player.facing;delete old.state.arsenal;
+  for(const id of ['sword','staff','hammer','dagger','magic','gun','shield'])delete old.state.weapons[id];for(const e of old.state.enemies)delete e.ringReady;
   const k=game();assert.equal(k.importSave(old),true);assert.equal(k.state.moves.charge,0);assert.equal(k.state.player.facing,1);
   for(const bad of [{charge:2},{dash:{fromX:NaN}},{special:{t:0,duration:1,tick:0,level:3}}]){const broken=plain(save);Object.assign(broken.state.moves,bad);assert.equal(game().importSave(broken),false,JSON.stringify(bad));}
 });

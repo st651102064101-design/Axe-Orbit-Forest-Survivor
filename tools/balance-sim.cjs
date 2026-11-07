@@ -3,7 +3,8 @@
 // 100-day campaign with the shipped CONFIG (no test shortcuts) and report how far
 // they get. Usage:
 //   node tools/balance-sim.cjs [bot=human] [seeds=3] [weapon=axe] [maxDay=100]
-// SIM_CONFIG='{"specialKills":40}' overrides CONFIG values for a tuning run.
+// SIM_CONFIG='{"specialKills":40}' overrides CONFIG values for a tuning run. A weapon that unlocks later
+// (sword, staff, hammer, dagger, magic, gun, shield) is equipped on its day; the axe is used until then.
 // Bots: idle (never moves after starting), camper (stands at the build site),
 // human (decides every 0.3 s with aim noise), smart (decides every frame). Both use the
 // dash and special buttons once they unlock (days 20 and 40).
@@ -57,7 +58,8 @@ function play(bot,seed,weapon='axe',maxDay=100,config={}){
   while(!['won','lost'].includes(g.state.phase)&&g.state.wave<=maxDay&&t<6*3600){
     const s=g.state;
     if(s.milestoneRequest)g.ackMilestone({requestId:s.milestoneRequest.requestId});
-    if(s.dayChoice){const q=s.dayChoice,pick=PERK_ORDER.find(id=>q.options.some(o=>o.id===id));g.chooseDayReward({requestId:q.requestId,choiceId:pick});dayLog.push({day:s.wave,hp:Math.round(s.player.hp),time:Math.round(t)});if(s.wave>=maxDay)break;}
+    if(s.equipped!==weapon&&g.weaponUnlocked(weapon))g.equipWeapon(weapon);
+    if(s.dayChoice){const q=s.dayChoice,pick=PERK_ORDER.find(id=>q.options.some(o=>o.id===id));g.chooseDayReward({requestId:q.requestId,choiceId:pick});dayLog.push({day:s.wave,hp:Math.round(s.player.hp),time:Math.round(t),arsenal:Math.floor(s.arsenal.count)});if(s.wave>=maxDay)break;}
     if(s.buildRequest){const type=['cannon','flame','archer'][towerTurn++%3];g.chooseTower({...s.buildRequest,towerType:s.towers[0]?.type||type});}
     while(s.coins>=g.weaponCost(s.equipped).coins&&s.gems>=g.weaponCost(s.equipped).gems&&s.weapons[s.equipped]<10)if(!g.upgradeWeapon(s.equipped))break;
     let move=[0,0];
@@ -77,7 +79,8 @@ if(require.main===module){
   for(let i=1;i<=Number(seeds);i++){
     const r=play(bot,i,weapon,Number(maxDay),JSON.parse(process.env.SIM_CONFIG||'{}'));
     const curve=r.dayLog.filter(d=>d.day%10===0).map(d=>`d${d.day}:${d.hp}hp`).join(' ');
-    console.log(`${r.bot.padEnd(6)} seed ${r.seed} ${r.weapon.padEnd(5)} ${r.result.padEnd(4)} day ${String(r.day).padStart(3)}  ${String(r.minutes).padStart(5)} min  minHP ${String(r.minHp).padStart(3)}  hits ${String(r.hits).padStart(4)}  kills ${String(r.kills).padStart(4)}  weapon L${r.weaponLevel}  tower ${r.tower}  speed x${r.speed}  ${curve}`);
+    const tiers=[10,100,1000,5000,10000].map(n=>`${n}@d${(r.dayLog.find(d=>d.arsenal>=n)||{day:'-'}).day}`).join(' ');
+    console.log(`${r.bot.padEnd(6)} seed ${r.seed} ${r.weapon.padEnd(5)} ${r.result.padEnd(4)} day ${String(r.day).padStart(3)}  ${String(r.minutes).padStart(5)} min  minHP ${String(r.minHp).padStart(3)}  hits ${String(r.hits).padStart(4)}  kills ${String(r.kills).padStart(4)}  weapon L${r.weaponLevel}  tower ${r.tower}  speed x${r.speed}  ${curve}  weapons ${tiers}`);
   }
 }
 module.exports={play};

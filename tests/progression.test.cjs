@@ -7,7 +7,7 @@ const context=vm.createContext({window:{},console,Math,Set,Map,structuredClone})
 vm.runInContext(html.match(/<script id="game-logic">([\s\S]*?)<\/script>/)[1],context);
 const {GameEngine,CONFIG}=context.window.EmberwoodGame;
 const plain=v=>JSON.parse(JSON.stringify(v));
-const game=(config={})=>new GameEngine({seed:7,config:{enemySpeed:0,contactDamage:0,axeDamage:0,...config}});
+const game=(config={})=>new GameEngine({seed:7,config:{enemySpeed:0,contactDamage:0,axeDamage:0,orbitBase:0,...config}});
 const advance=(g,time,dt=1/60)=>{for(let i=0;i<Math.ceil(time/dt);i++)g.step(dt);};
 /** A lone enemy of a given family placed relative to the player. */
 function lone(g,variant,dx,dy,extra={}){
@@ -147,7 +147,7 @@ test('the scene changes every 20 days and the snapshot reports it',()=>{
 
 test('current saves round-trip the 2.2 state and reject malformed enemy shots',()=>{
   const g=game({contactDamage:5});g.start();g.state.combo.stacks=4;g.state.perks.haste=.08;const e=lone(g,'archer',170,0,{clock:0});g.step(.05);
-  const save=g.exportSave();assert.equal(save.schema,4);assert.equal(save.state.enemyShots.length,1);
+  const save=g.exportSave();assert.equal(save.schema,5);assert.equal(save.state.enemyShots.length,1);
   const h=game();assert.equal(h.importSave(save),true);assert.equal(h.state.combo.stacks,g.state.combo.stacks);assert.equal(h.state.perks.haste,.08);assert.equal(h.state.enemyShots.length,1);
   for(const bad of [{kind:'laser'},{vx:NaN},{ttl:0},{damage:-1}]){const broken=plain(save);Object.assign(broken.state.enemyShots[0],bad);assert.equal(game().importSave(broken),false,JSON.stringify(bad));}
   const wrongFamily=plain(save);wrongFamily.state.enemies[0].family='dragon';assert.equal(game().importSave(wrongFamily),false);

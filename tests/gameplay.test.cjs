@@ -6,7 +6,7 @@ const script=html.match(/<script id="game-logic">([\s\S]*?)<\/script>/)[1];
 const scope=vm.createContext({window:{},console,Math,Set,Map,structuredClone});
 vm.runInContext(script,scope,{filename:'emberwood-gameplay.js'});
 const plain=v=>JSON.parse(JSON.stringify(v));
-function game(config={}){assert.equal(typeof scope.window.EmberwoodGame?.GameEngine,'function','GameEngine must implement the gameplay handoff');return new scope.window.EmberwoodGame.GameEngine({seed:42,config:{enemySpeed:0,contactDamage:0,axeDamage:0,...config}});}
+function game(config={}){assert.equal(typeof scope.window.EmberwoodGame?.GameEngine,'function','GameEngine must implement the gameplay handoff');return new scope.window.EmberwoodGame.GameEngine({seed:42,config:{enemySpeed:0,contactDamage:0,axeDamage:0,orbitBase:0,...config}});}
 function advance(g,seconds){for(let i=0;i<Math.ceil(seconds*60);i++)g.step(1/60);}
 function enemy(id,x,y,hp=100){return {id,x,y,hp,maxHp:hp,speed:0,alive:true,phase:0,flash:0,axeReadyAt:-100,vx:0,vy:0,burn:null};}
 function ready(g){g.start();g.state.player.x=g.state.site.x;g.state.player.y=g.state.site.y;advance(g,.7);assert.equal(g.state.phase,'choosing');return plain(g.state.buildRequest);}

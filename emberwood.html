@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#262c24">
-  <meta name="description" content="Emberwood 2.3.0 — เอาชีวิตรอด 100 วัน อัปเกรดอาวุธ สร้างป้อม ฝึกยิงเป้า หลบกระสุน และดวลสวนกลับ เล่นได้ใน HTML ไฟล์เดียว">
+  <meta name="description" content="Emberwood 3.0.0: เอาชีวิตรอด 100 วัน อัปเกรดอาวุธ สร้างป้อม ฝึกยิงเป้า หลบกระสุน และดวลสวนกลับ เล่นได้ใน HTML ไฟล์เดียว">
   <title>Emberwood · ปกป้องแสงไฟสุดท้าย</title>
   <style>
     :root { color-scheme:dark; --ink:#151b16; --cyan:#65edf3; --green:#8cff22; --thai:"Leelawadee UI",Tahoma,"Segoe UI",sans-serif; --hud-y:clamp(28px,7.3dvh,70px); }
@@ -527,7 +527,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
 .milestone-stop { display:flex; flex-direction:column; align-items:center; gap:2px; width:74px; font-size:16px; font-weight:800; color:#e9f5d5; }
 .milestone-stop canvas { width:64px; height:58px; border-radius:12px; border:2px solid #6f9a52; }
 @media (max-width:340px) { .milestone-item { grid-template-columns:96px minmax(0,1fr); } .milestone-item canvas { width:96px; height:88px; } .milestone-item b { font-size:22px; } .milestone-stop { width:62px; } .milestone-stop canvas { width:54px; height:50px; } }
-@media (orientation:landscape) and (max-height:500px) { #comboCounter { top:calc(var(--hud-y) + 62px + env(safe-area-inset-top)); font-size:28px; } #speedBadge { top:calc(var(--hud-y) + 70px + env(safe-area-inset-top)); height:34px; font-size:19px; } #speedBadge canvas { width:28px; height:28px; } }
+@media (orientation:landscape) and (max-height:500px) { #comboCounter { top:calc(var(--hud-y) + 100px + env(safe-area-inset-top)); font-size:28px; } #speedBadge { top:calc(var(--hud-y) + 70px + env(safe-area-inset-top)); height:34px; font-size:19px; } #speedBadge canvas { width:28px; height:28px; } }
 /* 2.3: two big skill buttons (dash, special) above the equipment buttons, on the thumb side opposite the usual joystick. */
 #skillButtons { position:absolute; right:max(12px,env(safe-area-inset-right)); bottom:calc(84px + env(safe-area-inset-bottom)); display:flex; gap:12px; align-items:flex-end; }
 .skill-button { position:relative; width:78px; height:78px; padding:0; border:0; border-radius:50%; background:#ffffff1f; display:grid; place-items:center; touch-action:none; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; cursor:pointer; box-shadow:0 4px 0 #0a0608aa; transition:transform .08s; }
@@ -546,6 +546,39 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
 @keyframes skill-denied { 25% { transform:translateX(-5px); } 75% { transform:translateX(5px); } }
 @media (orientation:landscape) and (max-height:500px) { #skillButtons { bottom:calc(72px + env(safe-area-inset-bottom)); gap:10px; } .skill-button { width:66px; height:66px; } .skill-button canvas { width:42px; height:42px; margin-top:-10px; } .skill-label { font-size:14px; bottom:6px; } }
 @media (max-width:340px) { #skillButtons { gap:8px; right:8px; bottom:calc(80px + env(safe-area-inset-bottom)); } .skill-button { width:68px; height:68px; } .skill-button canvas { width:44px; height:44px; margin-top:-10px; } .skill-label { font-size:14px; bottom:6px; } }
+/* 3.0: weapon count badge, tier banner, the weapon menu's tier bar and locked weapon cards. */
+#arsenalBadge { position:absolute; pointer-events:none; right:max(9px,env(safe-area-inset-right)); top:calc(var(--hud-y) + 112px + env(safe-area-inset-top)); height:38px; display:flex; align-items:center; gap:3px; padding:0 11px 0 4px; border:2px solid #9fb6d8; border-radius:19px; background:#1d2a44e0; color:#e6f0ff; font-size:20px; font-weight:900; font-variant-numeric:tabular-nums; }
+#arsenalBadge canvas { width:30px; height:30px; }
+#arsenalBadge[data-tier="3"], #arsenalBadge[data-tier="4"] { border-color:#ffd86a; color:#fff3c4; background:#3b2e10e0; }
+#arsenalBadge[data-tier="5"] { border-color:#d9b8ff; color:#f3e8ff; background:#2a1640e6; }
+#tierBanner { position:absolute; left:50%; top:calc(var(--hud-y) + 150px + env(safe-area-inset-top)); transform:translateX(-50%) scale(.6); opacity:0; display:flex; align-items:center; gap:10px; padding:8px 18px 8px 8px; border:3px solid #ffd86a; border-radius:20px; background:linear-gradient(#5a3f12f2,#2e1f08f2); color:#fff3c4; pointer-events:none; transition:opacity .25s,transform .25s; white-space:nowrap; z-index:2; }
+#tierBanner.visible { opacity:1; transform:translateX(-50%) scale(1); }
+#tierBanner canvas { width:64px; height:64px; flex:none; }
+#tierBanner b { display:block; font-size:24px; }
+#tierBanner span { font-size:18px; color:#ffe9a3; }
+.arsenal-bar { margin:10px 0 4px; padding:10px; border:2px solid #6f9a52; border-radius:14px; background:#173c2d; }
+.arsenal-bar-head { display:flex; justify-content:space-between; align-items:baseline; gap:8px; font-weight:900; font-size:18px; }
+.arsenal-bar-head b { font-size:20px; color:#fff3c4; }
+.arsenal-steps { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:4px; margin-top:8px; }
+.arsenal-step { display:flex; flex-direction:column; align-items:center; gap:2px; font-size:13px; font-weight:800; color:#c9dfb5; opacity:.5; }
+.arsenal-step canvas { width:100%; max-width:56px; aspect-ratio:1; height:auto; border-radius:10px; background:#0f2a1f; }
+.arsenal-step.is-reached { opacity:1; color:#ffe9a3; }
+.arsenal-step.is-current canvas { box-shadow:0 0 0 3px #ffd86a; }
+.arsenal-progress { height:8px; border-radius:4px; background:#0f2a1f; margin-top:8px; overflow:hidden; }
+.arsenal-progress i { display:block; height:100%; width:0; background:linear-gradient(90deg,#ffd86a,#ff9a3a); }
+.campaign-weapon-card.is-locked { filter:saturate(.35); }
+.campaign-weapon-card.is-locked .campaign-stats, .campaign-weapon-card.is-locked .campaign-level-pips, .campaign-weapon-card.is-locked .campaign-visual-costs, .campaign-weapon-card.is-locked .campaign-weapon-actions, .campaign-weapon-card.is-locked .campaign-upgrade-note { display:none; }
+.campaign-lock-day { display:inline-block; margin-top:4px; padding:2px 10px; border-radius:10px; background:#0f2a1f; color:#ffe9a3; font-weight:900; }
+@media (orientation:landscape) and (max-height:500px) { #arsenalBadge { top:calc(var(--hud-y) + 110px + env(safe-area-inset-top)); height:32px; font-size:17px; } #arsenalBadge canvas { width:24px; height:24px; } #tierBanner { top:calc(var(--hud-y) + 100px + env(safe-area-inset-top)); } #tierBanner canvas { width:48px; height:48px; } #tierBanner b { font-size:20px; } }
+@media (max-width:340px) { .arsenal-step { font-size:11px; } }
+#tierBanner.visible ~ #comboCounter { visibility:hidden; }
+/* Narrow phones: speed, weapon count and combo stack down the right and centre; the tier banner sits below the inventory. */
+@media (max-width:400px) and (orientation:portrait) {
+  #speedBadge { top:calc(var(--hud-y) + 94px + env(safe-area-inset-top)); height:36px; font-size:18px; padding:0 8px 0 3px; } #speedBadge canvas { width:26px; height:26px; }
+  #arsenalBadge { top:calc(var(--hud-y) + 136px + env(safe-area-inset-top)); height:34px; font-size:16px; padding:0 8px 0 3px; } #arsenalBadge canvas { width:24px; height:24px; }
+  #comboCounter { top:calc(var(--hud-y) + 178px + env(safe-area-inset-top)); font-size:30px; }
+  #tierBanner { top:calc(var(--hud-y) + 198px + env(safe-area-inset-top)); padding:6px 12px 6px 6px; gap:6px; } #tierBanner canvas { width:44px; height:44px; } #tierBanner b { font-size:18px; } #tierBanner span { font-size:14px; }
+}
 
   </style>
 </head>
@@ -561,7 +594,9 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       <div id="statusBadge" class="outlined" aria-label="สถานะ 2">2</div>
       <div id="monsterCount" class="outlined">เหลือศัตรู <b>9</b> ตัว</div>
       <div id="speedBadge" class="outlined" title="ความเร็วโจมตี" aria-label="ความเร็วโจมตี ×1.0"><canvas id="speedIcon" width="68" height="68" aria-hidden="true"></canvas><span id="speedValue">×1.0</span></div>
+      <div id="tierBanner" role="status" aria-live="polite"><canvas id="tierArt" width="128" height="128" aria-hidden="true"></canvas><div><b id="tierTitle" class="outlined">อาวุธ 10 ชิ้น!</b><span id="tierText">วงหมุนเร็วขึ้น</span></div></div>
       <div id="comboCounter" class="outlined" hidden><span id="comboValue">3</span><small>คอมโบ</small></div>
+      <div id="arsenalBadge" class="outlined" data-tier="0" aria-label="อาวุธในวง 1 ชิ้น" hidden><canvas id="arsenalIcon" width="60" height="60" aria-hidden="true"></canvas><span id="arsenalValue">1</span></div>
       <div class="inventory" aria-label="ทรัพยากรในกระเป๋า">
         <div class="resource outlined" title="อัญมณีสีม่วง"><canvas id="gemIcon" width="68" height="68" aria-hidden="true"></canvas><span id="gems" aria-label="อัญมณี">0</span></div>
         <div class="resource outlined" title="เหรียญทอง"><canvas id="coinIcon" width="68" height="68" aria-hidden="true"></canvas><span id="coins" aria-label="เหรียญทอง">3</span></div>
@@ -608,7 +643,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
     <button class="close-small" id="closeSettings" aria-label="ปิดการตั้งค่า">×</button>
     <h2 id="settingsHeading">พักข้างกองไฟ</h2>
     <canvas id="pauseArt" width="480" height="168" aria-hidden="true"></canvas>
-    <p class="sr-only">เกมหยุดอยู่ · รุ่น 2.3.0</p>
+    <p class="sr-only">เกมหยุดอยู่ · รุ่น 3.0.0</p>
     <div class="milestone-road-wrap"><b class="milestone-road-title">ของใหม่ที่รออยู่</b><div id="pauseRoad" class="milestone-road" role="list" aria-label="ของใหม่ที่รออยู่"></div></div>
     <button class="ui-button picture-button" id="resumeButton"><canvas data-pictogram="play" width="96" height="96" aria-hidden="true"></canvas>เล่นต่อ</button>
     <button class="ui-button picture-button secondary" id="helpButton"><canvas data-pictogram="hand" width="96" height="96" aria-hidden="true"></canvas>วิธีเล่น</button>
@@ -657,11 +692,12 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
     <div class="welcome-tools"><button id="welcomeHelp" class="ui-button secondary picture-button"><canvas data-pictogram="hand" width="96" height="96" aria-hidden="true"></canvas>วิธีเล่น</button><button id="welcomeSoundButton" class="ui-button secondary picture-button" aria-pressed="false"><canvas data-pictogram="music" width="96" height="96" aria-hidden="true"></canvas><span id="welcomeSoundLabel">เปิดเสียง</span></button></div>
     <div class="campaign-start-actions"><button id="campaignResume" class="ui-button" hidden>เดินทางต่อ</button><button id="campaignNew" class="ui-button secondary">ออกเดินทาง</button></div>
     <div id="campaignNewConfirm" class="campaign-confirm" hidden><p id="campaignNewConfirmText">เริ่มใหม่จะแทนที่ความคืบหน้าที่บันทึกไว้</p><div class="campaign-confirm-actions"><button id="campaignConfirmNew" class="ui-button">ยืนยันเริ่มใหม่</button><button id="campaignKeepSave" class="ui-button secondary">เก็บการเดินทางเดิม</button></div></div>
-    <span class="campaign-version" id="campaignStartVersion">รุ่น 2.3.0</span>
+    <span class="campaign-version" id="campaignStartVersion">รุ่น 3.0.0</span>
   </dialog>
   <dialog id="weaponDialog" class="campaign-dialog" data-campaign-dialog aria-labelledby="campaignWeaponHeading">
     <div class="campaign-heading-row"><div><div class="campaign-eyebrow">พร้อมลุย!</div><h2 id="campaignWeaponHeading" tabindex="-1">คลังอาวุธ</h2></div><button class="close-small campaign-close" id="campaignCloseWeapons" aria-label="ปิดคลังอาวุธ">×</button></div>
     <div class="campaign-resource-row" aria-label="ทรัพยากรที่มี"><span class="campaign-resource"><canvas data-campaign-resource="coin" width="52" height="52" aria-hidden="true"></canvas><span><span id="campaignWeaponCoins">0</span> เหรียญ</span></span><span class="campaign-resource"><canvas data-campaign-resource="gem" width="52" height="52" aria-hidden="true"></canvas><span><span id="campaignWeaponGems">0</span> อัญมณี</span></span></div>
+    <div id="campaignArsenal" class="arsenal-bar" aria-label="วงอาวุธ"><div class="arsenal-bar-head"><span>วงอาวุธรอบตัว</span><b id="campaignArsenalCount">1 ชิ้น</b></div><div id="campaignArsenalSteps" class="arsenal-steps" role="list"></div><div class="arsenal-progress" aria-hidden="true"><i id="campaignArsenalFill"></i></div></div>
     <div id="campaignWeaponCards" class="campaign-cards"></div><p class="small-note">เปลี่ยนฟรี · อัปเกรดให้เก่งขึ้น</p><button id="campaignWeaponsDone" class="ui-button secondary">กลับสู่ป่า</button>
   </dialog>
   <dialog id="miniHubDialog" class="campaign-dialog" data-campaign-dialog aria-labelledby="campaignMiniHubHeading">
@@ -739,7 +775,15 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
     bossDown:cue([note(196,.25,.08),note(262,.25,.07,.1),note(392,.48,.06,.2)],.8),
     spin:cue([note(170,.2,.06,0,560,'triangle'),note(560,.16,.035,.09,240,'triangle')],.12,.05,1800,.18),
     dash:cue([note(260,.15,.06,0,920,'triangle')],.2,.065,2400,.15),
-    special:cue([note(392,.3,.07),note(587,.32,.06,.07),note(784,.4,.055,.14),note(1175,.55,.05,.22,1568)],1,.03,3200,.35)
+    special:cue([note(392,.3,.07),note(587,.32,.06,.07),note(784,.4,.055,.14),note(1175,.55,.05,.22,1568)],1,.03,3200,.35),
+    sword:cue([note(300,.1,.06,0,120,'triangle')],.08,.05,2600,.08),
+    staff:cue([note(660,.18,.045,0,990),note(990,.14,.03,.06,1320)],.1),
+    hammer:cue([note(110,.22,.1,0,55,'triangle')],.12,.07,500,.18),
+    dagger:cue([note(520,.06,.05,0,300,'triangle')],.05,.03,3000,.05),
+    magic:cue([note(880,.12,.045,0,440,'sawtooth')],.1,.04,4000,.12),
+    gun:cue([note(900,.05,.05,0,300,'square')],.06,.06,3500,.06),
+    shield:cue([note(240,.12,.07,0,160,'triangle'),note(720,.1,.03,.02,600)],.1,.03),
+    tierUp:cue([note(523,.16,.07),note(784,.16,.065,.08),note(1047,.2,.06,.16),note(1568,.5,.05,.26)],1)
   });
   const SCORES=Object.freeze({
     menu:{beat:.61,root:261.63,steps:[0,7,12,9,4,7,2,4]},
@@ -915,9 +959,16 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
 (()=>{
   'use strict';
   const WEAPONS=[
-    {id:'axe',name:'ขวานวงเหวี่ยง',short:'ขวาน',description:'เหวี่ยงรอบตัว',fullDescription:'เหวี่ยงรอบตัว รับมือศัตรูที่เข้ามาล้อม'},
-    {id:'spear',name:'หอกทะลวง',short:'หอก',description:'แทงทะลุแนว',fullDescription:'แทงเป็นแนวตรง เข้าถึงศัตรูจากระยะกลาง'},
-    {id:'bow',name:'ธนูนักล่า',short:'ธนู',description:'ยิงไกล',fullDescription:'ยิงจากระยะไกล รักษาระยะให้ปลอดภัย'}
+    {id:'axe',name:'ขวานวงเหวี่ยง',short:'ขวาน',description:'เหวี่ยงรอบตัว',fullDescription:'เหวี่ยงรอบตัว รับมือศัตรูที่เข้ามาล้อม',starter:true},
+    {id:'spear',name:'หอกทะลวง',short:'หอก',description:'แทงทะลุแนว',fullDescription:'แทงเป็นแนวตรง เข้าถึงศัตรูจากระยะกลาง',starter:true},
+    {id:'bow',name:'ธนูนักล่า',short:'ธนู',description:'ยิงไกล',fullDescription:'ยิงจากระยะไกล รักษาระยะให้ปลอดภัย',starter:true},
+    {id:'sword',name:'ดาบผู้กล้า',short:'ดาบ',description:'ฟันโค้งข้างหน้า',fullDescription:'ฟันเป็นวงโค้งด้านหน้า โดนหลายตัวพร้อมกัน'},
+    {id:'staff',name:'คทาเวทมนตร์',short:'คทา',description:'ลูกแสงตามเป้า',fullDescription:'ยิงลูกแสงตามเป้า แตกเป็นวงโดนตัวข้าง ๆ'},
+    {id:'hammer',name:'ค้อนยักษ์',short:'ค้อน',description:'ทุบรอบตัว',fullDescription:'ทุบพื้นโดนทุกตัวรอบตัว แล้วกระเด็นออกไป'},
+    {id:'dagger',name:'มีดสั้นคู่',short:'มีดสั้น',description:'แทงไว 2 ครั้ง',fullDescription:'แทงตัวที่ใกล้ที่สุด 2 ครั้งอย่างรวดเร็ว'},
+    {id:'magic',name:'คัมภีร์สายฟ้า',short:'คัมภีร์',description:'สายฟ้าโยง',fullDescription:'สายฟ้ากระโดดโดนศัตรู 3 ตัวต่อกัน'},
+    {id:'gun',name:'ปืนพก',short:'ปืน',description:'ยิงไว ยิงไกล',fullDescription:'ยิงกระสุนเร็วจากระยะไกล'},
+    {id:'shield',name:'โล่ผู้พิทักษ์',short:'โล่',description:'กระแทก กันธนู',fullDescription:'กระแทกศัตรูด้านหน้าให้กระเด็น และกันลูกธนูที่ยิงมาด้านหน้า'}
   ];
   const MINIS=[
     {id:'targets',title:'ยิงเป้า',description:'แตะเป้า · 20 วิ.',help:'แตะกลางเป้า',fullHelp:'แตะหรือคลิกกลางเป้าให้แม่นที่สุด'},
@@ -960,7 +1011,8 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
     let campaignToken='',miniToken='',weaponArtId='',dragPointer=null,dragOrigin=null,dragVector={x:0,y:0},lastMove='',rewardToken='';
     function show(name,focusId){const dialog=dialogs[name];if(!dialog.open){dialog.showModal();onMenuState(name,true);}if(focusId)$(focusId).focus({preventScroll:true});}
     function close(name){if(dialogs[name].open)dialogs[name].close();}
-    function drawWeapon(canvas,id){const ctx=canvas.getContext('2d');ctx.setTransform(canvas.width/92,0,0,canvas.height/88,0,0);ctx.clearRect(0,0,92,88);circle(ctx,46,43,36,'#ffdb6730','#d9bb6555');circle(ctx,46,43,28,'#d4ee7040');if(typeof art.drawWeaponIcon==='function')art.drawWeaponIcon(ctx,id,46,44,1.55);}
+    /** Weapon art; a locked weapon is a dark silhouette until its day comes. */
+    function drawWeapon(canvas,id,locked=false){const ctx=canvas.getContext('2d');ctx.setTransform(canvas.width/92,0,0,canvas.height/88,0,0);ctx.clearRect(0,0,92,88);circle(ctx,46,43,36,'#ffdb6730','#d9bb6555');circle(ctx,46,43,28,'#d4ee7040');if(typeof art.drawWeaponIcon==='function')art.drawWeaponIcon(ctx,id,46,44,1.55);if(locked){ctx.globalCompositeOperation='source-atop';ctx.fillStyle='#0b1a12';ctx.fillRect(0,0,92,88);ctx.globalCompositeOperation='source-over';}}
     function createArt(className,width=184,height=176){const canvas=make('canvas',className);canvas.width=width;canvas.height=height;canvas.setAttribute('aria-hidden','true');return canvas;}
     function drawIcon(canvas,kind){const c=canvas.getContext('2d');c.setTransform(canvas.width/48,0,0,canvas.height/48,0,0);c.clearRect(0,0,48,48);if(['coin','gem','wood'].includes(kind)&&typeof art.drawResource==='function')art.drawResource(c,kind,24,24,1.1);else if(typeof art.drawPictogram==='function')art.drawPictogram(c,kind,24,24,.9);else if(kind==='check'){circle(c,24,24,21,'#baf27b','#24462b');line(c,13,24,21,32,'#274c2d',5);line(c,21,32,36,15,'#274c2d',5);}else drawChoiceIcon(canvas,kind);}
     function icon(kind,className='campaign-inline-icon'){const canvas=createArt(className,96,96);drawIcon(canvas,kind);return canvas;}
@@ -975,7 +1027,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       for(let i=0;i<9;i++){const x=i*37+8,y=110+i%3*3;line(c,x,y,x+3,y-5,'#b8d478',2);}
     }
     function chooseWeapon(id){selectedWeapon=id;for(const [weaponId,record]of startCards){const active=weaponId===id;record.card.classList.toggle('is-selected',active);record.card.setAttribute('aria-pressed',String(active));record.check.hidden=!active;setText(record.state,active?'เลือกแล้ว':'เลือก');}}
-    for(const weapon of WEAPONS){
+    for(const weapon of WEAPONS.filter(w=>w.starter)){
       const card=make('button','campaign-card');card.type='button';card.dataset.startWeapon=weapon.id;card.setAttribute('aria-label',`${weapon.name} ${weapon.fullDescription}`);
       const canvas=createArt('campaign-card-art'),copy=make('span','campaign-card-copy'),title=make('span','campaign-card-title',weapon.short),description=make('span','campaign-card-description',weapon.description),state=make('span','campaign-card-state'),check=icon('check','campaign-selected-art');
       copy.append(title,description,state);card.append(canvas,copy,check);card.addEventListener('click',()=>chooseWeapon(weapon.id));$('campaignStartChoices').append(card);startCards.set(weapon.id,{card,state,canvas,check});drawWeapon(canvas,weapon.id);
@@ -993,13 +1045,13 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
     function newWeaponCard(weapon){
       const card=make('article','campaign-card campaign-weapon-card');card.dataset.weaponId=weapon.id;
       const canvas=createArt('campaign-card-art'),copy=make('div','campaign-card-copy'),title=make('h3','campaign-card-title'),state=make('span','campaign-card-state'),check=icon('check','campaign-selected-art');
-      copy.append(title,state);const stats=make('div','campaign-stats'),values=[],statCells=[];
+      const lock=make('span','campaign-lock-day');lock.hidden=true;copy.append(title,state,lock);const stats=make('div','campaign-stats'),values=[],statCells=[];
       for(const [kind,label]of [['damage','พลังโจมตี'],['range','ระยะโจมตี'],['time','จังหวะโจมตี']]){const cell=make('span','campaign-stat'),value=make('b');cell.append(icon(kind),value);cell.setAttribute('title',label);stats.append(cell);values.push(value);statCells.push(cell);}
       const pips=make('div','campaign-level-pips');pips.setAttribute('role','img');for(let i=0;i<10;i++)pips.append(make('span','campaign-level-pip'));
       const actions=make('div','campaign-weapon-actions'),equip=make('button','ui-button secondary','สวมใส่'),upgrade=make('button','ui-button','อัปเกรด'),note=make('div','campaign-upgrade-note');
       const costs=make('div','campaign-visual-costs'),coinCost=make('span','campaign-cost'),gemCost=make('span','campaign-cost'),coinValue=make('b'),gemValue=make('b');coinCost.append(icon('coin'),coinValue);gemCost.append(icon('gem'),gemValue);costs.append(coinCost,gemCost);
       equip.type=upgrade.type='button';equip.addEventListener('click',()=>emit('weapon:equip',{weaponId:weapon.id}));upgrade.addEventListener('click',()=>emit('weapon:upgrade',{weaponId:weapon.id}));
-      actions.append(equip,upgrade);card.append(canvas,copy,stats,pips,costs,actions,note,check);$('campaignWeaponCards').append(card);drawWeapon(canvas,weapon.id);const record={card,title,state,values,statCells,pips,equip,upgrade,note,check,costs,coinValue,gemValue,gemCost};weaponCards.set(weapon.id,record);return record;
+      actions.append(equip,upgrade);card.append(canvas,copy,stats,pips,costs,actions,note,check);$('campaignWeaponCards').append(card);drawWeapon(canvas,weapon.id);const record={card,canvas,title,state,lock,locked:false,values,statCells,pips,equip,upgrade,note,check,costs,coinValue,gemValue,gemCost};weaponCards.set(weapon.id,record);return record;
     }
     function updateCampaign(){
       if(!campaign)return;
@@ -1011,21 +1063,34 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       for(const weapon of weapons){
         const record=weaponCards.get(weapon.id)||newWeaponCard(weapon),selected=weapon.selected||campaign.equipped===weapon.id;
         const maxed=weapon.level>=weapon.maxLevel,cost=weapon.upgradeCost||{};
-        record.card.classList.toggle('is-selected',selected);record.check.hidden=!selected;setText(record.title,WEAPONS.find(item=>item.id===weapon.id)?.short||weapon.name);setText(record.state,`ระดับ ${weapon.level}`);
+        const locked=weapon.unlocked===false;record.card.classList.toggle('is-locked',locked);record.lock.hidden=!locked;setText(record.lock,`มาวันที่ ${weapon.day}`);if(record.locked!==locked){record.locked=locked;drawWeapon(record.canvas,weapon.id,locked);}
+        record.card.classList.toggle('is-selected',selected);record.check.hidden=!selected;setText(record.title,WEAPONS.find(item=>item.id===weapon.id)?.short||weapon.name);setText(record.state,locked?'ยังไม่ปลด':`ระดับ ${weapon.level}`);
         const statValues=[Math.round(weapon.damage*10)/10,Math.round(weapon.range*10)/10,`${Number(weapon.interval).toFixed(1)} วิ.`],statLabels=['พลังโจมตี','ระยะโจมตี','จังหวะโจมตี'];
         for(const [index,value]of statValues.entries()){setText(record.values[index],value);record.statCells[index].setAttribute('aria-label',`${statLabels[index]} ${value}`);}
         for(const [index,pip]of Array.from(record.pips.children).entries())pip.classList.toggle('is-filled',index<weapon.level);record.pips.setAttribute('aria-label',`ระดับ ${weapon.level} จาก ${weapon.maxLevel}`);
-        record.equip.disabled=!!selected;setText(record.equip,selected?'ใช้อยู่':'ใช้');record.equip.setAttribute('aria-label',`${selected?'กำลังใช้':'สวมใส่'} ${weapon.name}`);record.upgrade.disabled=maxed||!weapon.canUpgrade;
+        record.equip.disabled=!!selected||locked;setText(record.equip,selected?'ใช้อยู่':'ใช้');record.equip.setAttribute('aria-label',`${selected?'กำลังใช้':'สวมใส่'} ${weapon.name}`);record.upgrade.disabled=maxed||!weapon.canUpgrade||locked;
         setText(record.upgrade,maxed?'เต็มแล้ว':'เพิ่มพลัง');record.upgrade.setAttribute('aria-label',`อัปเกรด ${weapon.name}`);
         const price=`${cost.coins||0} เหรียญ${cost.gems?` · ${cost.gems} อัญมณี`:''}`;
         setText(record.coinValue,cost.coins||0);setText(record.gemValue,cost.gems||0);record.gemCost.hidden=!cost.gems;record.costs.hidden=maxed;record.costs.setAttribute('aria-label',`ค่าอัปเกรด ${price}`);
         setText(record.note,maxed?'เต็มแล้ว':weapon.canUpgrade?'':'ของยังไม่พอ');record.note.setAttribute('aria-label',maxed?'พัฒนาอาวุธถึงระดับสูงสุดแล้ว':`ค่าอัปเกรด ${price}${weapon.canUpgrade?'':' ทรัพยากรยังไม่พอ'}`);
       }
+      updateArsenal(campaign.arsenal);
       const available=!!campaign.miniAvailable&&!campaign.miniUsedToday;
       setText($('campaignMiniHUDStatus'),available?'1 ครั้ง/วัน':campaign.miniUsedToday?'พรุ่งนี้มาใหม่':'พักก่อน');
       setText($('campaignMiniAvailability'),available?'เล่นได้ 1 ครั้ง/วัน':campaign.miniUsedToday?'วันนี้เล่นแล้ว · พรุ่งนี้มาใหม่':'พักก่อน');
       for(const record of miniCards.values()){record.card.disabled=!available;setText(record.state,available?'เล่น':campaign.miniUsedToday?'วันนี้เล่นแล้ว':'พักก่อน');}
       const over=campaign.phase==='won'||campaign.phase==='lost';$('campaignWeaponsButton').disabled=over;$('campaignMiniButton').disabled=over;
+    }
+    /** Weapon-menu bar: the six orbit tiers (1 to 10,000), the ones reached, and progress to the next. */
+    let arsenalSteps=null;
+    function updateArsenal(ar){
+      if(!ar||!Array.isArray(ar.tiers))return;const tiers=ar.tiers,tier=Math.max(0,Math.min(tiers.length-1,ar.tier|0)),count=Math.max(0,ar.count|0);
+      if(!arsenalSteps)arsenalSteps=tiers.map((need,i)=>{const node=make('div','arsenal-step'),canvas=createArt('',112,112);node.setAttribute('role','listitem');node.setAttribute('aria-label',`${need.toLocaleString('en-US')} ชิ้น`);node.append(canvas,make('span','',need.toLocaleString('en-US')));$('campaignArsenalSteps').append(node);
+        if(typeof art.drawTierArt==='function'){const c=canvas.getContext('2d');c.setTransform(112/64,0,0,112/64,0,0);art.drawTierArt(c,i,32,32,.95);}return node;});
+      arsenalSteps.forEach((node,i)=>{node.classList.toggle('is-reached',i<=tier);node.classList.toggle('is-current',i===tier);});
+      const next=tiers[tier+1],cur=tiers[tier],frac=next?Math.min(1,Math.max(0,Math.log10(Math.max(1,count)/cur)/Math.log10(next/cur))):1;
+      $('campaignArsenalFill').style.width=`${Math.round(frac*100)}%`;setText($('campaignArsenalCount'),`${count.toLocaleString('en-US')} ชิ้น`);
+      $('campaignArsenal').setAttribute('aria-label',`วงอาวุธ ${count} ชิ้น ขั้น ${tier+1} จาก ${tiers.length}${next?` อีก ${Math.max(0,next-count)} ชิ้นถึงขั้นถัดไป`:''}`);
     }
     function miniActive(type){return dialogs.miniGame.open&&mini&&!mini.finished&&(!type||mini.type===type);}
     function sendMove(force=false){
@@ -1105,7 +1170,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       $('campaignMiniResult').hidden=!mini.finished;$('campaignMiniCancelNote').hidden=!!mini.finished;setText($('campaignMiniExit'),mini.finished?'รับรางวัล':'หยุดเล่น');setText($('campaignMiniCancelNote'),'หยุด = ใช้สิทธิ์วันนี้');$('campaignMiniExit').classList.toggle('secondary',!mini.finished);
       setText($('campaignMiniResultTitle'),mini.success?'ฝึกสำเร็จ':'จบการฝึก');setText($('campaignMiniReward'),mini.rewardText||'');
       const rewards=Array.isArray(mini.rewards)?mini.rewards.filter(item=>['coin','gem','wood','health'].includes(item.type)&&Number.isFinite(item.amount)):[],nextRewards=JSON.stringify(rewards);
-      if(nextRewards!==rewardToken){rewardToken=nextRewards;rewardIcons.replaceChildren();for(const reward of rewards){const chip=make('span','campaign-reward-chip');chip.append(icon(reward.type==='health'?'heart':reward.type),make('b','',`+${reward.amount}`));chip.setAttribute('aria-label',`${{coin:'เหรียญ',gem:'อัญมณี',wood:'ไม้',health:'พลังชีวิต'}[reward.type]} ${reward.amount}`);rewardIcons.append(chip);}}
+      if(nextRewards!==rewardToken){rewardToken=nextRewards;rewardIcons.replaceChildren();for(const reward of rewards){const chip=make('span','campaign-reward-chip');chip.append(icon(reward.type==='health'?'heart':reward.type==='weapons'?'swords':reward.type),make('b','',`+${reward.amount}`));chip.setAttribute('aria-label',`${{coin:'เหรียญ',gem:'อัญมณี',wood:'ไม้',health:'พลังชีวิต',weapons:'อาวุธ'}[reward.type]} ${reward.amount}`);rewardIcons.append(chip);}}
       rewardIcons.hidden=!rewards.length;$('campaignMiniReward').hidden=!!rewards.length;
       if(mini.finished&&(keys.size||touchDirections.size||dragPointer!==null))resetMiniInput();paintMini();
     }
@@ -1123,8 +1188,15 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       if(scene==='snow')for(let i=0;i<16;i++)circle(c,(i*29)%132+3,(i*17)%110+4,i%2?1.6:2.4,'#ffffff');
       if(item.kind==='scene'){for(const [x,s]of [[20,1],[116,.8]]){line(c,x,112,x,112-30*s,'#5d4630',5*s);for(let n=0;n<3;n++){c.beginPath();c.moveTo(x-16*s+n*3*s,112-10*s-n*10*s);c.lineTo(x,112-44*s-n*3*s);c.lineTo(x+16*s-n*3*s,112-10*s-n*10*s);c.closePath();c.fillStyle=scene==='snow'?'#dfeef5':'#2e5a3f';c.fill();}}return;}
       if(item.kind==='move'||item.kind==='effect'){drawHeroMilestone(c,item);return;}
+      if(item.kind==='weapon'){drawWeaponMilestone(c,item);return;}
       if(typeof art.drawEnemy!=='function')return;const boss=item.kind==='boss';
       c.save();c.translate(68,110);c.scale(boss?.82:1.22,boss?.82:1.22);art.drawEnemy(c,{x:0,y:0,variant:boss?'boss':item.id,family:boss?item.id:null,hp:1,phase:1,moving:false,scale:1,facing:Math.PI/2,stage:1},0);c.restore();
+    }
+    /** A new weapon glows in front of the scene. */
+    function drawWeaponMilestone(c,item){
+      const g=c.createRadialGradient(68,62,6,68,62,60);g.addColorStop(0,'#fff3c4dd');g.addColorStop(1,'#fff3c400');c.fillStyle=g;c.fillRect(0,0,136,124);
+      if(typeof art.drawWeaponIcon==='function')art.drawWeaponIcon(c,item.id,68,64,1.35);
+      for(const [x,y]of [[24,26],[112,32],[106,98],[28,92]]){line(c,x-5,y,x+5,y,'#fff6c8',2);line(c,x,y-5,x,y+5,'#fff6c8',2);}
     }
     /** New moves and powers show the hero using them. */
     function drawHeroMilestone(c,item){
@@ -1133,6 +1205,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       else if(id==='dash')Object.assign(hero,{pose:'dash',emotion:'angry',dash:{fromX:-62,fromY:0}});
       else if(id==='special'||id==='special2')Object.assign(hero,{pose:'special',emotion:'angry',special:{progress:.4,level:id==='special2'?2:1}});
       c.save();c.translate(id==='dash'?84:68,113);c.scale(.95,.95);
+      if(id==='aura'){const g=c.createRadialGradient(0,-40,8,0,-40,76);g.addColorStop(0,'#ffe58acc');g.addColorStop(1,'#ffe58a00');c.fillStyle=g;c.fillRect(-82,-122,164,164);}
       if(id==='spin'&&typeof art.drawEffect==='function')art.drawEffect(c,{type:'spin',x:0,y:-26,radius:64,progress:.3},0);
       if(id==='crown'&&typeof art.drawResource==='function'){art.drawResource(c,'coin',-46,-14,.75);art.drawResource(c,'gem',48,-24,.75);art.drawResource(c,'coin',40,-2,.6);}
       art.drawPlayer(c,hero,.3);c.restore();
@@ -1148,7 +1221,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       if(dialogs.miniGame.open&&mini){const nextMiniToken=JSON.stringify(mini);if(nextMiniToken!==miniToken){miniToken=nextMiniToken;updateMini();}}
     }
     function openStartMenu(options={}){
-      startOptions={...options};chooseWeapon(WEAPONS.some(w=>w.id===options.selectedWeapon)?options.selectedWeapon:'axe');$('campaignResume').hidden=!options.hasSave;$('campaignNewConfirm').hidden=true;
+      startOptions={...options};chooseWeapon(WEAPONS.some(w=>w.starter&&w.id===options.selectedWeapon)?options.selectedWeapon:'axe');$('campaignResume').hidden=!options.hasSave;$('campaignNewConfirm').hidden=true;
       setText($('campaignResume'),`เล่นต่อ · วันที่ ${options.saveDay||1}`);setText($('campaignNew'),options.hasSave?'เริ่มใหม่':'ไปกันเลย!');setText($('campaignNewConfirmText'),`เริ่มใหม่? ความคืบหน้าวันที่ ${options.saveDay||1} จะหายไป`);setText($('campaignStartVersion'),`รุ่น ${options.version||campaign?.version||'2.0.0'}`);show('start','campaignStartHeading');
     }
     function openWeaponMenu(){updateCampaign();show('weapon','campaignWeaponHeading');}
@@ -1160,7 +1233,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       const c=canvas.getContext('2d');c.setTransform(canvas.width/48,0,0,canvas.height/48,0,0);circle(c,24,24,22,'#244a31','#709250');
       const resource={coins:'coin',coin:'coin',gems:'gem',gem:'gem',wood:'wood'}[icon];
       if(resource&&typeof art.drawResource==='function'){art.drawResource(c,resource,24,24,.9);return;}
-      const pictogram={heal:'heart',heart:'heart',health:'heart',armor:'shield',shield:'shield',speed:'speed',attack:'damage',damage:'damage',sword:'damage',range:'range',time:'time',star:'star'}[icon];
+      const pictogram={heal:'heart',heart:'heart',health:'heart',armor:'shield',shield:'shield',speed:'speed',attack:'damage',damage:'damage',sword:'damage',range:'range',time:'time',star:'star',swords:'swords'}[icon];
       if(pictogram&&typeof art.drawPictogram==='function'){art.drawPictogram(c,pictogram,24,24,.8);return;}
       if(icon==='heal'||icon==='heart'||icon==='health'){c.beginPath();c.moveTo(24,36);c.bezierCurveTo(5,25,10,12,19,16);c.quadraticCurveTo(24,18,24,21);c.quadraticCurveTo(26,12,33,16);c.bezierCurveTo(43,22,36,29,24,36);c.fillStyle='#e69282';c.fill();}
       else if(icon==='axe'&&typeof art.drawWeaponIcon==='function'){art.drawWeaponIcon(c,'axe',24,24,.7);}
@@ -1219,7 +1292,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
     const listeners=new Set(),towerArtCache=new Map(), input={x:0,y:0,keys:new Set(),pointer:null};
     let model=null,visualTime=0,lastFrame=0,hudElapsed=0,toastDeadline=0,menuRequest=null,pending=false,lastHUDToken='',lastSiteLabel='',lastAudioToken='',audioElapsed=0;
     const dialogs=[$('buildDialog'),$('settingsDialog'),$('helpDialog'),$('resultDialog'),$('startDialog'),$('weaponDialog'),$('miniHubDialog'),$('miniGameDialog'),$('dayChoiceDialog'),$('milestoneDialog')];
-    let lastSpeed=null,lastCombo=0,lastMovesToken='';
+    let lastSpeed=null,lastCombo=0,lastMovesToken='',lastArsenalToken='',tierDeadline=0;
     function emit(type,detail={}){const event=Object.freeze({type,...detail});for(const fn of listeners)fn(event);}
     function blocked(){return dialogs.some(d=>d.open);}
     function rng(seed){let v=seed>>>0;return()=>{v=(v*1664525+1013904223)>>>0;return v/4294967296;};}
@@ -1517,10 +1590,64 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       c.save();c.translate(x,y);c.rotate(angle);c.scale(scale,scale);box(c,-31,-2.5,59,5,2,'#7d7256','#353b30',1.6);box(c,-21,-3,7,7,1,'#9d967e','#353b30',1);
       const g=c.createLinearGradient(12,-25,33,19);g.addColorStop(0,'#bfc9c8');g.addColorStop(.6,'#93a3aa');g.addColorStop(1,'#657981');poly(c,[[12,-9],[15,-22],[32,-29],[39,-21],[36,17],[25,20],[15,12]],g,'#3b4a4d',2.6);poly(c,[[32,-29],[39,-21],[36,17],[30,18],[32,-19]],'#c5ceca');c.restore();
     }
+    /** Every weapon drawn pointing right (+x), about 80 units long, centred on the origin. Orbit blades,
+        held weapons and the newer icons share it. */
+    function drawWeaponShape(c,id){
+      c.save();c.lineCap='round';c.lineJoin='round';
+      if(id==='axe')drawAxe(c,-4,0,0,.95);
+      else if(id==='spear'){box(c,-40,-2,66,4,2,'#96704b','#333e32',1.5);poly(c,[[22,-7],[44,0],[22,7],[27,0]],'#b6d7d9','#3a5557',2);box(c,18,-5,7,10,1,'#d6ac59','#6a5932',1);}
+      else if(id==='bow'){c.strokeStyle='#d4a66a';c.lineWidth=6;c.beginPath();c.arc(-14,0,34,-1.1,1.1);c.stroke();c.strokeStyle='#f1e5c8';c.lineWidth=1.5;c.beginPath();c.moveTo(1,-30);c.lineTo(1,30);c.stroke();c.strokeStyle='#8b7460';c.lineWidth=3;c.beginPath();c.moveTo(-24,0);c.lineTo(34,0);c.stroke();poly(c,[[26,-6],[41,0],[26,6]],'#b7d4d5','#415451',1.5);}
+      else if(id==='sword'){box(c,-40,-3.5,15,7,2.5,'#4a2b1c','#1e130c',1.5);ellipse(c,-42,0,3.6,3.6,'#e2b23a','#6b4a12',1.2);box(c,-26,-11,6,22,2.5,'#e2b23a','#6b4a12',1.5);poly(c,[[-20,-5.5],[32,-4.5],[44,0],[32,4.5],[-20,5.5]],'#e3e9ec','#4a565c',1.8);c.globalAlpha=.75;c.strokeStyle='#ff3b4f';c.lineWidth=1.8;c.beginPath();c.moveTo(-16,0);c.lineTo(36,0);c.stroke();c.globalAlpha=1;}
+      else if(id==='staff'){box(c,-40,-2.5,58,5,2.5,'#7a5434','#3a2616',1.4);for(const x of [-30,-10])box(c,x,-3.5,4,7,1,'#e2b23a');c.fillStyle=glow(c,30,0,18,'#d68cffcc','#d68cff00');c.beginPath();c.arc(30,0,18,0,TAU);c.fill();poly(c,[[18,-7],[24,-3],[24,3],[18,7]],'#e2b23a','#6b4a12',1.2);ellipse(c,30,0,8.5,8.5,'#b45cff','#4b1f7a',1.8);ellipse(c,27.5,-2.5,2.6,2.6,'#f3dcff');}
+      else if(id==='hammer'){box(c,-40,-3,52,6,2.5,'#7a5434','#3a2616',1.4);box(c,-34,-4,10,8,2,'#3a2c22');box(c,10,-17,24,34,4,'#9aa4ab','#3a444a',2.2);box(c,10,-3,24,6,1,'#e2b23a','#6b4a12',1);box(c,30,-15,6,30,2,'#c6ced3','#3a444a',1.4);}
+      else if(id==='dagger'){box(c,-22,-3,12,6,2,'#4a2b1c','#1e130c',1.3);box(c,-11,-8,4,16,2,'#c9ccd2','#4a4e55',1.2);poly(c,[[-7,-4],[16,-3],[26,0],[16,3],[-7,4]],'#e3e9ec','#4a565c',1.6);}
+      else if(id==='magic'){c.rotate(-.12);box(c,-17,-21,34,42,4,'#5b2d8a','#25103d',2.2);box(c,-17,-21,6,42,2,'#3d1d60');for(const [x,y]of [[-15,-19],[13,-19],[-15,17],[13,17]])box(c,x,y,4,4,1,'#e2b23a');poly(c,[[3,-14],[-6,2],[1,2],[-3,15],[9,-2],[2,-2],[7,-14]],'#ffe24a','#7a5a10',1.4);}
+      else if(id==='gun'){box(c,-8,-9,40,9,3,'#3a3f48','#16191e',1.8);box(c,24,-11,10,4,1.5,'#3a3f48','#16191e',1.2);box(c,-8,-5,32,3,1,'#e2b23a');c.save();c.translate(-4,0);c.rotate(.35);box(c,-6,-2,11,22,3,'#6b4428','#2b1a0e',1.6);c.restore();box(c,2,-2,6,8,2,'#16191e');}
+      else if(id==='shield'){poly(c,[[-17,-21],[17,-21],[19,-4],[0,24],[-19,-4]],'#c9d2d8','#3a444a',2.4);poly(c,[[-12,-16],[12,-16],[13,-4],[0,17],[-13,-4]],'#c62a3c','#5a0d16',1.4);star(c,0,-3,7);}
+      c.restore();
+    }
+    const weaponSprites=new Map();
+    /** Cached 96 x 96 sprite of a weapon pointing right; orbit blades blit these instead of redrawing paths every frame. */
+    function weaponSprite(id){
+      let sprite=weaponSprites.get(id);if(sprite)return sprite;sprite=document.createElement('canvas');sprite.width=96;sprite.height=96;
+      const c=sprite.getContext('2d');c.translate(48,48);c.scale(.95,.95);drawWeaponShape(c,id);weaponSprites.set(id,sprite);return sprite;
+    }
+    /** Orbiting weapon rings (3.0). Blades on the far side of the hero are drawn before him, the rest after. */
+    function drawOrbit(c,p,t,front){
+      const o=p.orbit;if(!o||!Array.isArray(o.rings))return;const cx=p.x,cy=p.y-26;
+      for(const ring of o.rings){const n=ring.blades?.length||0;if(!n)continue;
+        if(!front){c.save();c.strokeStyle=o.tier>=3?'rgba(255,216,106,.22)':'rgba(236,241,234,.15)';c.lineWidth=o.tier>=1?9:5;c.beginPath();c.arc(cx,cy,ring.radius,0,TAU);c.stroke();c.restore();}
+        for(let i=0;i<n;i++){const a=ring.angle+i*TAU/n,sin=Math.sin(a);if((sin>=0)!==front)continue;
+          c.save();c.translate(cx+Math.cos(a)*ring.radius,cy+sin*ring.radius);c.rotate(a);c.drawImage(weaponSprite(ring.blades[i]),-22,-22,44,44);c.restore();}
+      }
+    }
+    /** Ground layer of the orbit: magic circle (1,000+), god aura (5,000+) and the weapon universe (10,000). */
+    function drawOrbitGround(c,p,t){
+      const o=p.orbit;if(!o||o.tier<3)return;const cx=p.x,cy=p.y-26;c.save();
+      if(o.aura){const r=o.aura.radius,purple=o.tier>=5;c.fillStyle=glow(c,cx,cy,r,purple?'#d9b8ff44':'#ffe27a44',purple?'#d9b8ff00':'#ffe27a00');c.beginPath();c.arc(cx,cy,r,0,TAU);c.fill();
+        const k=clamp(o.aura.pulse||0,0,1);c.globalAlpha=(1-k)*.8;c.strokeStyle=purple?'#e9d6ff':'#ffe27a';c.lineWidth=4;c.beginPath();c.arc(cx,cy,r*(.3+.7*k),0,TAU);c.stroke();c.globalAlpha=1;}
+      const r=150,a=reducedMotion?0:t*.4;c.globalAlpha=.55;c.strokeStyle='#ffd86a';c.lineWidth=2.5;c.beginPath();c.arc(cx,cy,r,0,TAU);c.stroke();c.lineWidth=1.4;c.beginPath();c.arc(cx,cy,r*.84,0,TAU);c.stroke();
+      c.translate(cx,cy);c.rotate(a);c.beginPath();for(let i=0;i<8;i++){const b=i*TAU/8;c.moveTo(Math.cos(b)*r*.84,Math.sin(b)*r*.84);c.lineTo(Math.cos(b+TAU*3/8)*r*.84,Math.sin(b+TAU*3/8)*r*.84);}c.stroke();
+      for(let i=0;i<16;i++){const b=-a*2+i*TAU/16;ellipse(c,Math.cos(b)*r*.92,Math.sin(b)*r*.92,2.2,2.2,'#fff2b0');}
+      c.restore();
+      if(o.tier>=5){c.save();for(let i=0;i<28;i++){const b=i*2.39996+t*.15,d=60+(i*37)%140;c.globalAlpha=.35+.5*Math.abs(Math.sin(t*2+i));ellipse(c,cx+Math.cos(b)*d,cy+Math.sin(b)*d,1.6,1.6,i%3?'#ffffff':'#d9b8ff');}c.restore();}
+    }
+    /** Picture of an orbit tier (64 x 64 box) for the weapon menu bar and the tier banner. */
+    function drawTierArt(c,tier,x,y,scale=1){
+      c.save();c.translate(x,y);c.scale(scale,scale);
+      if(tier>=4){c.fillStyle=glow(c,0,0,32,tier>=5?'#d9b8ffaa':'#ffe27aaa',tier>=5?'#d9b8ff00':'#ffe27a00');c.beginPath();c.arc(0,0,32,0,TAU);c.fill();}
+      if(tier>=3){c.strokeStyle='#ffd86a';c.lineWidth=1.6;c.beginPath();c.arc(0,0,29,0,TAU);c.stroke();}
+      const rings=tier===0?[[0,1]]:tier===1?[[14,8]]:tier===2?[[10,6],[21,10]]:[[9,6],[17,9],[25,12]];
+      for(const [r,n]of rings){if(r){c.strokeStyle='#ffffff40';c.lineWidth=1;c.beginPath();c.arc(0,0,r,0,TAU);c.stroke();}
+        for(let i=0;i<n;i++){const a=i*TAU/n-.4,size=r?13:34;c.save();c.translate(Math.cos(a)*r,Math.sin(a)*r);c.rotate(a);c.drawImage(weaponSprite('sword'),-size/2,-size/2,size,size);c.restore();}}
+      if(tier>=5)for(let i=0;i<10;i++){const a=i*2.4;ellipse(c,Math.cos(a)*(8+i*2.3),Math.sin(a)*(8+i*2.3),1.2,1.2,'#fff');}
+      c.restore();
+    }
     function drawWeaponIcon(c,id,x,y,scale=1){
       if(id==='axe'){drawAxe(c,x,y,-.65,scale);return;}
       c.save();c.translate(x,y);c.scale(scale,scale);c.lineCap='round';
       if(id==='spear'){c.rotate(-.65);box(c,-35,-2,65,4,2,'#96704b','#333e32',1.5);poly(c,[[22,-3],[43,0],[22,8],[27,0]],'#b6d7d9','#3a5557',2);box(c,17,-5,7,10,1,'#d6ac59','#6a5932',1);}
+      else if(id!=='bow'){if(!['magic','shield'].includes(id))c.rotate(-.65);drawWeaponShape(c,id);}
       else{c.strokeStyle='#d4a66a';c.lineWidth=6;c.beginPath();c.arc(-14,0,34,-1.1,1.1);c.stroke();c.strokeStyle='#f1e5c8';c.lineWidth=1.5;c.beginPath();c.moveTo(1,-30);c.lineTo(1,30);c.stroke();c.strokeStyle='#8b7460';c.lineWidth=3;c.beginPath();c.moveTo(-24,0);c.lineTo(34,0);c.stroke();poly(c,[[26,-6],[41,0],[26,6]],'#b7d4d5','#415451',1.5);}
       c.restore();
     }
@@ -1539,7 +1666,9 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       if(p.weapon&&p.weapon.type!=='axe'){
         const w=p.weapon;if(front!==(Math.sin(w.angle)>=0))return;c.save();c.translate(p.x,p.y-26);c.rotate(w.angle);
         if(w.type==='spear'&&w.flash>0){c.strokeStyle=`rgba(${comboTint(p.combo)},.6)`;c.lineWidth=19;c.beginPath();c.moveTo(26,0);c.lineTo(w.range,0);c.stroke();c.strokeStyle='#fff';c.lineWidth=2;c.stroke();}
-        drawWeaponIcon(c,w.type,w.type==='spear'?45:30,0,w.type==='spear'?1.1:.8);c.restore();return;
+        if(w.type==='spear'||w.type==='bow')drawWeaponIcon(c,w.type,w.type==='spear'?45:30,0,w.type==='spear'?1.1:.8);
+        else{c.translate(30,0);if(w.flash>0&&['sword','hammer','shield'].includes(w.type))c.rotate(-.9*clamp(w.flash/.22,0,1));c.scale(.7,.7);drawWeaponShape(c,w.type);}
+        c.restore();return;
       }
       const angle=p.axe?.animate&&!reducedMotion?t*4.5:(p.axe?.angle||0),isFront=Math.sin(angle)>=0;if(front!==isFront)return;
       c.save();c.translate(p.x,p.y-26);c.rotate(angle);const r=p.axe?.radius||78,g=c.createLinearGradient(-r,-r,r,30),tint=comboTint(p.combo);g.addColorStop(0,`rgba(${tint},0)`);g.addColorStop(.55,`rgba(${tint},.27)`);g.addColorStop(1,`rgba(${tint},.68)`);
@@ -1576,6 +1705,8 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
     function drawProjectile(c,p){
       // Enemy danger reads red: a bomb's landing circle fills up before it explodes; enemy arrows glow red.
       if(p.type==='bomb'){const k=clamp(p.progress||0,0,1),r=p.radius||70;c.save();c.translate(p.x,p.y);c.globalAlpha=.35+.35*k;ellipse(c,0,0,r,r*.62,'#ff3b2f22','#ff4a3a',3);ellipse(c,0,0,r*k,r*.62*k,'#ff3b2f44');c.globalAlpha=1;ellipse(c,0,-(1-k)*90,9,9,'#30303c','#141419',2);c.restore();return;}
+      if(p.type==='orb'){c.save();c.translate(p.x,p.y);c.fillStyle=glow(c,0,0,16,'#d68cffcc','#d68cff00');c.beginPath();c.arc(0,0,16,0,TAU);c.fill();ellipse(c,0,0,7,7,'#b45cff','#f3dcff',2);c.restore();return;}
+      if(p.type==='bullet'){c.save();c.translate(p.x,p.y);c.rotate(p.angle||0);c.strokeStyle='#ffe27a88';c.lineWidth=4;c.beginPath();c.moveTo(-22,0);c.lineTo(0,0);c.stroke();ellipse(c,0,0,4,2.6,'#fff6c8','#b8860b',1);c.restore();return;}
       c.save();c.translate(p.x,p.y);c.rotate(p.angle||0);
       if(p.type==='enemyArrow'){c.strokeStyle='#ff6a5a55';c.lineWidth=7;c.beginPath();c.moveTo(-20,0);c.lineTo(12,0);c.stroke();c.strokeStyle='#5a4030';c.lineWidth=2.4;c.beginPath();c.moveTo(-18,0);c.lineTo(11,0);c.stroke();poly(c,[[18,0],[8,-5],[8,5]],'#d94a3a','#4a1a12',1);poly(c,[[-16,0],[-22,-5],[-22,0],[-16,5]],'#d94a3a');c.restore();return;}
       if(p.type==='arrow'){c.strokeStyle='#9b8968';c.lineWidth=2;c.beginPath();c.moveTo(-18,0);c.lineTo(11,0);c.stroke();poly(c,[[17,0],[7,-4],[7,4]],'#c2c8ba','#4d5745',1);poly(c,[[-16,0],[-21,-5],[-21,0],[-16,5]],'#c4c3a7');}else{c.strokeStyle='#d5aa5b6b';c.lineWidth=3;c.beginPath();c.moveTo(-17,0);c.lineTo(-5,0);c.stroke();ellipse(c,0,0,6,6,'#696957','#2d3529',2);ellipse(c,-1,-2,2,2,'#b3aa7e');}c.restore();}
@@ -1592,6 +1723,21 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
         for(const [width,color,length]of [[18,'#ff334d40',TAU*.92],[8,'#ff8a9a',TAU*.78],[3,'#fff',TAU*.62]]){c.beginPath();c.arc(0,0,r,0,length);c.strokeStyle=color;c.lineWidth=width;c.stroke();}
         for(let i=0;i<5;i++){const a=TAU*.62-i*.32;ellipse(c,Math.cos(a)*r,Math.sin(a)*r,4-i*.6,4-i*.6,'#fff');}
       }
+      else if(e.type==='slash'||e.type==='bash'){
+        // Crescent sword slash (red and white) or a silver shield-bash flash, along the attack direction.
+        const r=e.radius||95,arc=e.arc||2.4,shield=e.type==='bash';c.globalAlpha=1-progress;
+        c.beginPath();c.arc(0,0,r*(.55+.45*progress),-arc/2,arc/2);c.arc(0,0,r*(.3+.3*progress),arc/2,-arc/2,true);c.closePath();c.fillStyle=shield?'#dfe8ffaa':'#ff6a7a99';c.fill();
+        c.strokeStyle=shield?'#fff':'#ffe0e4';c.lineWidth=3;c.beginPath();c.arc(0,0,r*(.55+.45*progress),-arc/2,arc/2);c.stroke();
+      }
+      else if(e.type==='slam'){const r=e.radius||92;c.scale(1,.6);c.globalAlpha=1-progress;c.strokeStyle='#ffe2a0';c.lineWidth=6*(1-progress)+1;c.beginPath();c.arc(0,0,r*(.3+.8*progress),0,TAU);c.stroke();ellipse(c,0,0,r*.5*(1-progress)+1,r*.5*(1-progress)+1,'#c9b28a55');for(let i=0;i<10;i++){const a=i*TAU/10,d=r*(.4+.7*progress);ellipse(c,Math.cos(a)*d,Math.sin(a)*d,4,3,'#a58a62');}}
+      else if(e.type==='stab'){const len=e.length||60;c.globalAlpha=1-progress;c.lineCap='round';c.strokeStyle='#ffffffcc';c.lineWidth=3;for(const dy of [-6,6]){c.beginPath();c.moveTo(20,dy);c.lineTo(len*(.6+.4*progress),dy*.3);c.stroke();}}
+      else if(e.type==='chain'){
+        // Lightning from the hero through each struck enemy; points are world positions, drawn relative to the hero.
+        c.globalAlpha=1-progress;c.lineCap='round';c.lineJoin='round';let fx=0,fy=0;
+        for(const [wx,wy]of e.points||[]){const px=wx-e.x,py=wy-e.y,seg=[[fx,fy]];for(let i=1;i<5;i++){const k=i/5;seg.push([fx+(px-fx)*k+Math.sin(t*40+i*7)*7,fy+(py-fy)*k+Math.cos(t*37+i*5)*7]);}seg.push([px,py]);
+          for(const [w,col]of [[7,'#7f8cff66'],[2.5,'#fffbe0']]){c.strokeStyle=col;c.lineWidth=w;c.beginPath();seg.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke();}fx=px;fy=py;}
+      }
+      else if(e.type==='orbHit'){const r=(e.radius||48)*(.4+progress*.7);c.globalAlpha=1-progress;ellipse(c,0,0,r,r*.7,'#b45cff44','#e3b8ff',3);for(let i=0;i<8;i++){const a=i*TAU/8+progress*2;ellipse(c,Math.cos(a)*r,Math.sin(a)*r*.7,3,3,'#f3dcff');}}
       else if(e.type==='burn'){for(let i=0;i<4;i++){const x=(i-1.5)*6,y=-10-Math.sin(t*10+i)*4;poly(c,[[x-4,y],[x-2,y-8],[x+1,y-18],[x+5,y-6],[x+4,y+2]],'#f6a72cc9');}}
       else {c.globalAlpha=1-progress;const r=(e.radius||30)*(progress+.3);ellipse(c,0,0,r,r*.8,'#e2a63555','#f5ce68',2);for(let i=0;i<7;i++){const a=i*TAU/7;ellipse(c,Math.cos(a)*r,Math.sin(a)*r,3,3,'#ffdc70');}}
       c.restore();
@@ -1617,6 +1763,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       for(const [id,type]of [['gemIcon','gem'],['coinIcon','coin'],['woodIcon','wood']]){const c=$(id).getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,68,68);c.setTransform(2,0,0,2,0,0);drawResource(c,type,17,17,.88);}
       {const c=$('gearArt').getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,88,88);c.setTransform(2,0,0,2,0,0);drawGear(c);}
       {const c=$('speedIcon').getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,68,68);c.setTransform(2,0,0,2,0,0);drawPictogram(c,'speed',17,17,.72);}
+      {const c=$('arsenalIcon').getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,60,60);c.setTransform(2,0,0,2,0,0);drawPictogram(c,'swords',15,15,.6);}
       for(const node of document.querySelectorAll('[data-pictogram]')){const c=node.getContext('2d');c.setTransform(node.width/48,0,0,node.height/48,0,0);c.clearRect(0,0,48,48);drawPictogram(c,node.dataset.pictogram,24,24,.85);}
       for(const [id,kind]of [['guideMove','move'],['guideLoot','loot'],['guideBuild','build'],['guideSkills','skills'],['guideGoal','goal']])drawPictureGuide($(id),kind);
       if(!$('buildDialog').open)return;
@@ -1636,6 +1783,9 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       const speed=Number(h.speed??1);if(speed!==lastSpeed){lastSpeed=speed;const label=`×${speed.toFixed(1)}`;$('speedValue').textContent=label;$('speedBadge').setAttribute('aria-label',`ความเร็วโจมตี ${label}`);}
       const combo=h.combo||0;if(combo!==lastCombo){const counter=$('comboCounter');counter.hidden=combo<3;$('comboValue').textContent=`x${combo}`;counter.classList.toggle('hot',combo>=5&&combo<10);counter.classList.toggle('max',combo>=10);if(combo>lastCombo&&combo>=3){counter.classList.remove('bump');void counter.offsetWidth;counter.classList.add('bump');}lastCombo=combo;}
       syncSkills();
+      // 3.0: weapon count badge (hidden in previews without an orbit).
+      const arsenal=h.arsenal,badge=$('arsenalBadge');if(badge.hidden!==!arsenal)badge.hidden=!arsenal;
+      if(arsenal){const token=`${arsenal.count}|${arsenal.tier}`;if(token!==lastArsenalToken){lastArsenalToken=token;const label=Number(arsenal.count).toLocaleString('en-US');$('arsenalValue').textContent=label;badge.dataset.tier=String(arsenal.tier);badge.setAttribute('aria-label',`อาวุธในวง ${label} ชิ้น`);}}
       const site=model.site,target=$('siteTarget'),hidden=!site||site.visible===false||blocked();if(target.hidden!==hidden)target.hidden=hidden;
       if(site){const p=project({x:site.x,y:site.y-15}),styles={left:`${p.x}px`,top:`${p.y}px`,width:`${Math.max(70,106*p.scale)}px`,height:`${Math.max(66,94*p.scale)}px`};for(const [key,value]of Object.entries(styles))if(target.style[key]!==value)target.style[key]=value;const label=`${site.label||'สร้าง'} สะสมไม้ ${site.deposited} จาก ${site.required} ท่อน`;if(label!==lastSiteLabel){target.setAttribute('aria-label',label);lastSiteLabel=label;}}
       $('moveHint').hidden=blocked()||model.campaign?.phase!=='ready';
@@ -1652,12 +1802,13 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       const vw=view.width/view.scale,vh=view.height/view.scale;ctx.fillStyle=floorPattern;ctx.fillRect(view.left,view.top,vw,vh);
       ctx.fillStyle='#48483530';ctx.beginPath();ctx.ellipse(270,650,235,720,0,0,TAU);ctx.fill();
       drawCampfire(ctx,model.fire,t,true);for(const tower of model.towers||[])drawRange(ctx,tower);drawBuildSite(ctx,model.site);
+      drawOrbitGround(ctx,model.player,t);
       for(const pickup of model.pickups||[]){ellipse(ctx,pickup.x,pickup.y+4,10,4,'#24302555');drawResource(ctx,pickup.type,pickup.x,pickup.y-5+(reducedMotion?0:Math.sin(t*3+(pickup.phase||0))*2),pickup.scale||.6);}
       const layers=[];for(const tree of model.trees||scenery){if(tree.x<view.left-100||tree.x>view.left+vw+100||tree.y<view.top-30||tree.y>view.top+vh+180)continue;layers.push({y:tree.y,draw:()=>drawTree(ctx,tree,t)});}
       for(const enemy of model.enemies||[])layers.push({y:enemy.y,draw:()=>drawEnemy(ctx,enemy,t)});
       for(const tower of model.towers||[])layers.push({y:tower.y,draw:()=>drawTower(ctx,tower,t)});
       layers.push({y:model.fire.y,draw:()=>drawCampfire(ctx,model.fire,t)});
-      layers.push({y:model.player.y,draw:()=>{drawAttackVFX(ctx,model.player,t,false);drawPlayer(ctx,model.player,t);drawAttackVFX(ctx,model.player,t,true);}});
+      layers.push({y:model.player.y,draw:()=>{drawOrbit(ctx,model.player,t,false);drawAttackVFX(ctx,model.player,t,false);drawPlayer(ctx,model.player,t);drawAttackVFX(ctx,model.player,t,true);drawOrbit(ctx,model.player,t,true);}});
       layers.sort((a,b)=>a.y-b.y);for(const layer of layers)layer.draw();
       for(const p of model.projectiles||[])drawProjectile(ctx,p);for(const e of model.effects||[])drawEffect(ctx,e,t);for(const d of model.damageTexts||[])drawDamage(ctx,d);
       ctx.restore();drawScene(ctx,model.scene,t);const vignette=ctx.createRadialGradient(view.width*.5,view.height*.48,Math.min(view.width,view.height)*.22,view.width*.5,view.height*.48,Math.hypot(view.width,view.height)*.58);vignette.addColorStop(0,'#03100700');vignette.addColorStop(.65,'#03100720');vignette.addColorStop(1,'#020c08dd');ctx.fillStyle=vignette;ctx.fillRect(0,0,view.width,view.height);const edge=ctx.createLinearGradient(0,0,0,view.height);edge.addColorStop(0,'#020a0733');edge.addColorStop(.55,'#020a0700');edge.addColorStop(.73,'#020a0715');edge.addColorStop(1,'#010805a6');ctx.fillStyle=edge;ctx.fillRect(0,0,view.width,view.height);
@@ -1680,6 +1831,14 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       c.save();c.translate(90,79);c.scale(.62,.62);drawPlayer(c,{x:0,y:0,pose:'sleep',emotion:'sleep',facing:1},t);c.restore();
     }
     function setBuildPending(value,message='กำลังสร้าง…'){pending=!!value;document.querySelectorAll('.tower-card').forEach(card=>card.disabled=pending);$('buildPending').textContent=pending?message:'';}
+    const TIER_NAMES=['ดาบหมุนรอบตัว','วงหมุนเร็วขึ้น','วงแหวนหลายชั้น','วงเวทใหญ่','ออร่าเทพเจ้า','จักรวาลอาวุธ'];
+    /** Non-blocking banner when the weapon count reaches a new orbit tier (the engine also plays its sound). */
+    function showTierUp(event){
+      const tier=clamp(Math.round(Number(event?.tier)||0),0,TIER_NAMES.length-1),count=Math.max(0,Math.floor(Number(event?.count)||0));
+      $('tierTitle').textContent=`อาวุธ ${count.toLocaleString('en-US')} ชิ้น!`;$('tierText').textContent=TIER_NAMES[tier];
+      const c=$('tierArt').getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,128,128);c.setTransform(2,0,0,2,0,0);drawTierArt(c,tier,32,32,.92);
+      $('tierBanner').classList.add('visible');tierDeadline=performance.now()+3000;
+    }
     function showToast(message){$('toast').textContent=message;$('toast').classList.add('visible');toastDeadline=performance.now()+2400;}
     function showResult(result){$('resultHeading').textContent=result.won?'รอดครบ 100 วัน!':'ลองอีกครั้งนะ!';$('resultDescription').textContent=result.won?'ผู้พิทักษ์ค่ายคนเก่ง':'เปลี่ยนอาวุธ แล้วลองใหม่ได้เลย';const rc=$('resultArt').getContext('2d');rc.setTransform(2,0,0,2,0,0);rc.clearRect(0,0,150,100);if(result.won){rc.fillStyle=glow(rc,80,60,64,'#ffe58a55','#ffe58a00');rc.fillRect(0,0,150,100);drawPictogram(rc,'trophy',30,62,.9);star(rc,124,20,7);star(rc,138,46,5);star(rc,14,22,5);rc.save();rc.translate(90,97);rc.scale(.74,.74);drawPlayer(rc,{x:0,y:0,pose:'victory',emotion:'happy',emote:false,wings:true,crown:true,facing:-1},0);rc.restore();}else{drawPictogram(rc,'heart',34,46,.8);rc.save();rc.translate(94,97);rc.scale(.74,.74);drawPlayer(rc,{x:0,y:0,pose:'idle',emotion:'sad',facing:-1},.4);rc.restore();}$('resultWaves').textContent=result.waves;$('resultKills').textContent=result.kills;$('resultTime').textContent=result.time;if(!$('resultDialog').open){$('resultDialog').showModal();menuChanged('result',true);}}
     for(const dialog of dialogs)dialog.addEventListener('close',()=>{const name=dialog.id.replace('Dialog','');menuChanged(name,false);});
@@ -1762,9 +1921,9 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
     document.addEventListener('visibilitychange',()=>{audio.setActive(!document.hidden);syncAudio();});
     syncAudio();
 
-    function frame(ms){const dt=Math.min((ms-lastFrame)/1000||0,.05);lastFrame=ms;const phase=model?.campaign?.phase;audio.tick(ms/1000,{scene:phase==='won'?'won':phase==='lost'?'lost':model?.miniGame?'mini':blocked()?'menu':(model?.campaign?.day||1)%10===0?'boss':'game',paused:document.hidden});audioElapsed+=dt;if(audioElapsed>.07){syncAudio();audioElapsed=0;}if(!blocked()&&!reducedMotion)visualTime+=dt;render(visualTime);if($('settingsDialog').open)drawPauseArt(ms/1000);hudElapsed+=dt;if(hudElapsed>.15){syncHUD(true);hudElapsed=0;}if(toastDeadline&&ms>toastDeadline){$('toast').classList.remove('visible');toastDeadline=0;}requestAnimationFrame(frame);}
-    const campaignUI=window.EmberwoodCampaignUI.create({emit,onMenuState:menuChanged,isBlocked:blocked,art:{drawWeaponIcon,drawResource,drawPictogram,drawPlayer,drawEnemy,drawCampfire,drawEffect}});
-    window.EmberwoodUI=Object.freeze({...campaignUI,version:1,playSound:name=>audio.play(name),getAudioState:()=>audio.getState(),setSnapshot,getSnapshot:()=>clone(model),getViewport:()=>({...view}),openBuildMenu,closeBuildMenu,closeMenus,openSettings,setBuildPending,showToast,showResult,project,onAction:fn=>{listeners.add(fn);return()=>listeners.delete(fn);},art:Object.freeze({drawPlayer,drawEnemy,drawTree,drawCampfire,drawAxe,drawAttackVFX,drawTower,drawRange,drawProjectile,drawEffect,drawDamage,drawResource,drawWeaponIcon,drawPictogram})});
+    function frame(ms){const dt=Math.min((ms-lastFrame)/1000||0,.05);lastFrame=ms;const phase=model?.campaign?.phase;audio.tick(ms/1000,{scene:phase==='won'?'won':phase==='lost'?'lost':model?.miniGame?'mini':blocked()?'menu':(model?.campaign?.day||1)%10===0?'boss':'game',paused:document.hidden});audioElapsed+=dt;if(audioElapsed>.07){syncAudio();audioElapsed=0;}if(!blocked()&&!reducedMotion)visualTime+=dt;render(visualTime);if($('settingsDialog').open)drawPauseArt(ms/1000);hudElapsed+=dt;if(hudElapsed>.15){syncHUD(true);hudElapsed=0;}if(toastDeadline&&ms>toastDeadline){$('toast').classList.remove('visible');toastDeadline=0;}if(tierDeadline&&ms>tierDeadline){$('tierBanner').classList.remove('visible');tierDeadline=0;}requestAnimationFrame(frame);}
+    const campaignUI=window.EmberwoodCampaignUI.create({emit,onMenuState:menuChanged,isBlocked:blocked,art:{drawWeaponIcon,drawResource,drawPictogram,drawPlayer,drawEnemy,drawCampfire,drawEffect,drawTierArt}});
+    window.EmberwoodUI=Object.freeze({...campaignUI,version:1,playSound:name=>audio.play(name),getAudioState:()=>audio.getState(),setSnapshot,getSnapshot:()=>clone(model),getViewport:()=>({...view}),openBuildMenu,closeBuildMenu,closeMenus,openSettings,setBuildPending,showToast,showTierUp,showResult,project,onAction:fn=>{listeners.add(fn);return()=>listeners.delete(fn);},art:Object.freeze({drawPlayer,drawEnemy,drawTree,drawCampfire,drawAxe,drawAttackVFX,drawTower,drawRange,drawProjectile,drawEffect,drawDamage,drawResource,drawWeaponIcon,drawWeaponShape,drawOrbit,drawOrbitGround,drawTierArt,drawPictogram})});
     fit();requestAnimationFrame(frame);
   })();
   </script>
@@ -2057,8 +2216,29 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
     const TAU=Math.PI*2,clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
     const copy=value=>typeof structuredClone==='function'?structuredClone(value):JSON.parse(JSON.stringify(value));
     const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
-    const TYPES=['cannon','archer','flame'],WEAPONS=['axe','spear','bow'],VERSION='2.3.0',SAVE_VERSIONS=['2.0.0','2.1.0','2.2.0','2.3.0'];
-    const WEAPON_NAMES={axe:'ขวานวงเหวี่ยง',spear:'หอกทะลวง',bow:'ธนูนักล่า'};
+    const TYPES=['cannon','archer','flame'],WEAPONS=['axe','spear','bow','sword','staff','hammer','dagger','magic','gun','shield'],VERSION='3.0.0',SAVE_VERSIONS=['2.0.0','2.1.0','2.2.0','2.3.0','3.0.0'];
+    const WEAPON_NAMES={axe:'ขวานวงเหวี่ยง',spear:'หอกทะลวง',bow:'ธนูนักล่า',sword:'ดาบผู้กล้า',staff:'คทาเวทมนตร์',hammer:'ค้อนยักษ์',dagger:'มีดสั้นคู่',magic:'คัมภีร์สายฟ้า',gun:'ปืนพก',shield:'โล่ผู้พิทักษ์'};
+    // ASSUMPTION (3.0): axe, spear and bow stay the starting weapons because every existing save has them;
+    // the reference hero's sword arrives on day 5 and the other six follow every 10 days.
+    const WEAPON_DAYS=Object.freeze({axe:1,spear:1,bow:1,sword:5,staff:15,hammer:25,dagger:35,magic:45,gun:55,shield:65});
+    // Level-1 stats (the axe reads CONFIG.axe*). Every weapon levels the same way: damage x1.25, interval x0.95
+    // and +3 range per level. ASSUMPTION (3.0): single-target damage per second at level 1 is 13-18 except the
+    // short-reach dagger; area weapons trade it for hitting several enemies.
+    const WEAPON_BASE=Object.freeze({
+      spear:{damage:16,interval:.9,range:145},bow:{damage:14,interval:1.05,range:280,speed:450},
+      sword:{damage:13,interval:.75,range:95,arc:2.4},staff:{damage:20,interval:1.25,range:260,speed:320,splash:48},
+      hammer:{damage:24,interval:1.6,range:92,knockback:34},dagger:{damage:7,interval:.42,range:72,hits:2},
+      magic:{damage:15,interval:1.1,range:240,jumps:2,jumpRange:130,falloff:.8},gun:{damage:9,interval:.5,range:300,speed:760},
+      shield:{damage:14,interval:1,range:82,arc:1.75,knockback:40,guard:1.9}
+    });
+    /** Weapon-count tiers of the orbit: one blade, a faster ring, two rings, three rings and a magic circle, god aura, weapon universe. */
+    const ARSENAL_TIERS=Object.freeze([1,10,100,1000,5000,10000]);
+    /** How many of n evenly spaced blades sweep across angle theta while their ring turns from `start` by `delta`
+        radians (either direction, even more than a full turn). Exact, so a fast ring cannot skip an enemy. */
+    function bladeHits(start,delta,n,theta){
+      if(!(n>0)||!delta)return 0;const gap=TAU/n,sweep=Math.abs(delta),u=(((delta>0?theta-start:start-theta)%gap)+gap)%gap;
+      return u<sweep?Math.ceil((sweep-u)/gap):0;
+    }
     const DAY_REWARDS=[
       {id:'attack',title:'ลับคมอาวุธ',description:'เพิ่มพลังโจมตีอาวุธทุกชนิด 5% (สูงสุด 100%)',icon:'axe'},
       {id:'health',title:'ร่างกายแกร่งขึ้น',description:'พลังชีวิตสูงสุด +10 และฟื้นฟู 30 หน่วย',icon:'health'},
@@ -2066,7 +2246,8 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       {id:'supply',title:'เสบียงสำรอง',description:'รับไม้ 20 ท่อนและเหรียญตามวันที่รอดชีวิต',icon:'wood'},
       {id:'speed',title:'ฝีเท้าคล่องตัว',description:'เคลื่อนที่เร็วขึ้น 3% (สูงสุด 25%)',icon:'speed'},
       {id:'heal',title:'พักรักษาแผล',description:'ฟื้นพลังชีวิต 50% และรับอัญมณี 2 เม็ด',icon:'health'},
-      {id:'haste',title:'มือไว',description:'ความเร็วโจมตี +4% (สูงสุด +40%)',icon:'haste'}
+      {id:'haste',title:'มือไว',description:'ความเร็วโจมตี +4% (สูงสุด +40%)',icon:'haste'},
+      {id:'arsenal',title:'คลังอาวุธ',description:'อาวุธเข้าวงเพิ่ม 8 ชิ้นต่อวันที่รอด',icon:'swords'}
     ];
     // ASSUMPTION (2.2): a new enemy family every 10 days from day 25. Older
     // families keep appearing, and the newest wins when two patterns collide.
@@ -2092,20 +2273,20 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
     const sceneFor=day=>SCENES.find(([from])=>day>=from)[1];
     // ASSUMPTION (2.2): "something new every 5 days" schedule, designed for pacing.
     const MILESTONES=Object.freeze({
-      5:[{kind:'enemy',id:'runner',title:'ซอมบี้วิ่งเร็ว',text:'วิ่งเร็ว แต่ตัวบาง'}],
+      5:[{kind:'weapon',id:'sword',title:'ดาบผู้กล้า',text:'ฟันโค้งข้างหน้า โดนหลายตัว'},{kind:'enemy',id:'runner',title:'ซอมบี้วิ่งเร็ว',text:'วิ่งเร็ว แต่ตัวบาง'}],
       10:[{kind:'move',id:'spin',title:'โจมตีหมุน',text:'วิ่งไปตีไป ครั้งที่ 4 หมุนฟันรอบตัว'},{kind:'boss',id:'giant',title:'บอสยักษ์',text:'บอสมาทุก 10 วัน'},{kind:'scene',id:'night',title:'คืนมืด',text:'หิ่งห้อยออกมาแล้ว'}],
-      15:[{kind:'enemy',id:'brute',title:'ซอมบี้เกราะ',text:'ตัวใหญ่ ทนทาน'}],
+      15:[{kind:'weapon',id:'staff',title:'คทาเวทมนตร์',text:'ลูกแสงตามเป้า แตกเป็นวง'},{kind:'enemy',id:'brute',title:'ซอมบี้เกราะ',text:'ตัวใหญ่ ทนทาน'}],
       20:[{kind:'move',id:'dash',title:'พุ่งโจมตี',text:'กดปุ่มลม พุ่งทะลุศัตรู'},{kind:'boss',id:'horned',title:'บอสเขาโค้ง',text:'ตัวแดง = จะพุ่งชน!'}],
-      25:[{kind:'enemy',id:'bat',title:'ค้างคาว',text:'บินข้ามป้อมได้'}],
+      25:[{kind:'weapon',id:'hammer',title:'ค้อนยักษ์',text:'ทุบพื้น กระเด็นรอบตัว'},{kind:'enemy',id:'bat',title:'ค้างคาว',text:'บินข้ามป้อมได้'}],
       30:[{kind:'effect',id:'wings',title:'ปีกพลัง',text:'วิ่งเร็ว พุ่งไกลขึ้น'},{kind:'boss',id:'batlord',title:'ราชาค้างคาว',text:'เรียกค้างคาวมาช่วย'}],
-      35:[{kind:'enemy',id:'bomber',title:'ซอมบี้ระเบิด',text:'วงแดง = รีบหนี!'}],
+      35:[{kind:'weapon',id:'dagger',title:'มีดสั้นคู่',text:'แทงไวมาก 2 ครั้ง'},{kind:'enemy',id:'bomber',title:'ซอมบี้ระเบิด',text:'วงแดง = รีบหนี!'}],
       40:[{kind:'move',id:'special',title:'สกิลพิเศษ',text:'ดาวเต็มแล้วกดเลย!'},{kind:'boss',id:'bomblord',title:'บอสระเบิด',text:'โยนระเบิด ดูวงแดง'},{kind:'scene',id:'snow',title:'ป่าหิมะ',text:'หิมะตกแล้ว'}],
-      45:[{kind:'enemy',id:'archer',title:'ซอมบี้นักธนู',text:'ยิงไกล หลบลูกธนู'}],
+      45:[{kind:'weapon',id:'magic',title:'คัมภีร์สายฟ้า',text:'สายฟ้าโยง 3 ตัว'},{kind:'enemy',id:'archer',title:'ซอมบี้นักธนู',text:'ยิงไกล หลบลูกธนู'}],
       50:[{kind:'effect',id:'crown',title:'มงกุฎราชา',text:'เหรียญ อัญมณี ×1.5'},{kind:'boss',id:'king',title:'ราชาซอมบี้',text:'เรียกลูกน้องวิ่งเร็ว'}],
-      55:[{kind:'enemy',id:'shield',title:'ซอมบี้ถือโล่',text:'ตีด้านข้างหรือหลัง'}],
+      55:[{kind:'weapon',id:'gun',title:'ปืนพก',text:'ยิงไว ยิงไกล'},{kind:'enemy',id:'shield',title:'ซอมบี้ถือโล่',text:'ตีด้านข้างหรือหลัง'}],
       60:[{kind:'boss',id:'archchief',title:'หัวหน้านักธนู',text:'ยิงทีละ 5 ดอก'},{kind:'scene',id:'crimson',title:'จันทร์สีแดง',text:'คืนพิเศษสีแดง'}],
-      65:[{kind:'enemy',id:'slime',title:'สไลม์แตกตัว',text:'ตายแล้วแยกเป็น 2'}],
-      70:[{kind:'boss',id:'slimetitan',title:'สไลม์ยักษ์',text:'แตกเป็นสไลม์ใหญ่'}],
+      65:[{kind:'weapon',id:'shield',title:'โล่ผู้พิทักษ์',text:'กระแทกหน้า กันลูกธนู'},{kind:'enemy',id:'slime',title:'สไลม์แตกตัว',text:'ตายแล้วแยกเป็น 2'}],
+      70:[{kind:'effect',id:'aura',title:'ออร่าเทพเจ้า',text:'แสงทองทำร้ายศัตรูรอบตัว'},{kind:'boss',id:'slimetitan',title:'สไลม์ยักษ์',text:'แตกเป็นสไลม์ใหญ่'}],
       75:[{kind:'enemy',id:'ghost',title:'ผีป่า',text:'ลอยทะลุป้อมได้'}],
       80:[{kind:'move',id:'special2',title:'สกิลพิเศษขั้น 2',text:'พายุอาวุธแรงและนานขึ้น'},{kind:'boss',id:'ghostlord',title:'ราชาผี',text:'วาร์ปมาใกล้ ๆ'},{kind:'scene',id:'stars',title:'ฟ้าดาว',text:'ดาวเต็มฟ้า'}],
       85:[{kind:'enemy',id:'shaman',title:'หมอผีซอมบี้',text:'รักษาเพื่อน ตีมันก่อน!'}],
@@ -2136,6 +2317,14 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       // ASSUMPTION (2.3): moves and effects unlock on milestone days. Spin is automatic
       // (every 4th attack); dash and the special skill use the two big buttons.
       unlocks:Object.freeze({spin:10,dash:20,wings:30,special:40,crown:50,special2:80}),
+      // ASSUMPTION (3.0): the weapon count grows by 1 + 0.042 x (day - 1) per kill and 3 x day per boss; the human
+      // bots pass 10 / 100 / 1,000 / 5,000 / 10,000 on days 1 / 8 / 30 / 65 / 88 (plan: about 2 / 10 / 30 / 65 / 90). Orbit blades hit for
+      // orbitBase x 1.25^(best weapon level - 1) x (0.15 + 0.15 log10(count)), at most once per ring per 0.4 s.
+      // A stronger early orbit (6 x (0.4 + ...)) let a motionless bot beat the day-10 boss in 2 of 3 runs.
+      // Day 70 grants the god aura even below 5,000 weapons. orbitBase 0 turns the orbit off (older tests).
+      arsenalPerKill:1,arsenalGrowth:.042,arsenalBoss:3,arsenalPerk:8,arsenalMini:3,
+      orbitBase:5,orbitFloor:.15,orbitLog:.15,orbitRadii:Object.freeze([56,98,140]),orbitSpeeds:Object.freeze([3.4,-2.6,2]),orbitCaps:Object.freeze([8,14,20]),orbitBand:24,orbitCooldown:.4,
+      orbitAuraDay:70,auraRadius:150,auraRadius2:190,auraEvery:.5,auraDamage:.6,
       // ASSUMPTION (2.3): the spin hits for 0.6x weapon damage. At 1.2x the running spin made spear and bow
       // runs nearly hit-free (about 90 hits per 100 days against about 380 without it); 0.6x keeps its knockback.
       spinEvery:4,spinRadius:115,spinDamage:.6,spinKnockback:18,
@@ -2162,7 +2351,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
           player:{x:245,y:500,hp:this.config.playerHP,maxHp:this.config.playerHP,weaponCooldown:0,aim:0,attackFlash:0,angle:0,moving:false,flash:0,hurtUntil:0,facing:1},
           camera:{x:270,y:500,zoom:1},fire:{x:216,y:830,lightRadius:145},
           site:{id:'site-1',x:216,y:650,buildX:216,buildY:650,deposited:this.config.initialDeposit,required:30,level:0,towerId:null},
-          equipped:'axe',weapons:{axe:1,spear:1,bow:1},perks:{attack:0,armor:0,speed:0,haste:0},dayChoice:null,miniUsedToday:false,miniRewardPaid:false,miniRewardText:'',miniRewards:[],buildRequest:null,enemies:[],towers:[],pickups:[],projectiles:[],effects:[],damageTexts:[],
+          equipped:'axe',weapons:Object.fromEntries(WEAPONS.map(id=>[id,1])),arsenal:{count:1,by:Object.fromEntries(WEAPONS.map(id=>[id,0])),tier:0,auraClock:0},perks:{attack:0,armor:0,speed:0,haste:0},dayChoice:null,miniUsedToday:false,miniRewardPaid:false,miniRewardText:'',miniRewards:[],buildRequest:null,enemies:[],towers:[],pickups:[],projectiles:[],effects:[],damageTexts:[],
           combo:{stacks:0,lastHit:-100},milestoneSeen:0,milestoneRequest:null,enemyShots:[],
           moves:{attacks:0,dash:null,dashReadyAt:0,charge:0,special:null,lastSpin:-100},emotion:{kind:null,until:0}};
         this.spawnWave(1);return this.getState();
@@ -2232,7 +2421,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       }
       makeEnemy(variant,x,y,base,family=null){
         const v=VARIANTS[variant],hp=base.hp*v.hp*(family==='emperor'?1.3:1),phase=this.random()*6;
-        return {id:this.id('enemy'),x,y,hp,maxHp:hp,speed:base.speed*v.speed,damage:base.damage*v.damage,variant,family,armor:v.armor,alive:true,phase,flash:0,axeReadyAt:-100,burn:null,vx:0,vy:0,
+        return {id:this.id('enemy'),x,y,hp,maxHp:hp,speed:base.speed*v.speed,damage:base.damage*v.damage,variant,family,armor:v.armor,alive:true,phase,flash:0,axeReadyAt:-100,ringReady:[-100,-100,-100],burn:null,vx:0,vy:0,
           baseHp:base.hp,baseSpeed:base.speed,baseDamage:base.damage,clock:1+phase%2,clock2:4,armed:0,facing:0,blocked:0,windup:0,charge:0,blink:0,blinkX:x,blinkY:y,summoned:0,stage:1,split:false};
       }
       pushFromTower(actor,tower){
@@ -2245,10 +2434,11 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
         if(!enemy.alive||amount<=0)return;const s=this.state,c=this.config;
         if(enemy.variant==='shield'&&from){const toward=Math.atan2(from.y-enemy.y,from.x-enemy.x),off=Math.abs(Math.atan2(Math.sin(toward-enemy.facing),Math.cos(toward-enemy.facing)));if(off<c.shieldArc){amount*=1-c.shieldBlock;enemy.blocked=.25;}}
         amount*=1-(enemy.armor||0);enemy.hp=Math.max(0,enemy.hp-amount);enemy.flash=.15;this.sound('hit');
-        s.damageTexts.push({text:`−${Math.round(amount)}`,x:enemy.x,y:enemy.y-60,age:0,ttl:.7});
+        if(source!=='orbit')s.damageTexts.push({text:`−${Math.round(amount)}`,x:enemy.x,y:enemy.y-60,age:0,ttl:.7});
         if(source==='player')this.addCombo();
         if(enemy.hp>0){if(enemy.family==='emperor'&&enemy.stage===1&&enemy.hp<=enemy.maxHp*.5)this.emperorRage(enemy);return;}
         enemy.alive=false;enemy.burn=null;this.sound(enemy.variant==='boss'?'bossDown':'enemyDown');s.kills++;s.waveKills++;
+        this.gainArsenal(c.arsenalPerKill+c.arsenalGrowth*(s.wave-1)+(enemy.variant==='boss'?c.arsenalBoss*s.wave:0));
         if(this.unlocked('special')&&!s.moves.special)s.moves.charge=Math.min(1,s.moves.charge+1/c.specialKills+1e-9);
         s.xp++;const threshold=3+s.level*3;if(s.xp>=threshold){s.xp-=threshold;s.level++;this.sound('levelUp');this.setEmotion('happy',1);this.event('toast',{message:`ระดับ ${s.level}`});}
         const loot=enemy.variant==='golden'?3:1;
@@ -2340,7 +2530,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
         for(const shot of s.enemyShots){shot.age+=dt;
           if(shot.kind==='bomb'){if(shot.age>=shot.ttl)this.explode(shot.x,shot.y,shot.radius,shot.damage);else keep.push(shot);continue;}
           if(shot.age>=shot.ttl)continue;shot.x+=shot.vx*dt;shot.y+=shot.vy*dt;
-          if(Math.hypot(p.x-shot.x,p.y-26-shot.y)<=18){this.hurtPlayer(shot.damage);continue;}
+          if(Math.hypot(p.x-shot.x,p.y-26-shot.y)<=18){if(this.shieldBlocks(shot)){this.sound('parry');s.effects.push({type:'impact',x:shot.x,y:shot.y,radius:14,age:0,ttl:.25});continue;}this.hurtPlayer(shot.damage);continue;}
           if(shot.x>-20&&shot.x<560&&shot.y>60&&shot.y<1260)keep.push(shot);
         }
         s.enemyShots=keep;
@@ -2352,15 +2542,17 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
         p.x+=this.input.x*speed*dt;p.y+=this.input.y*speed*dt;
         for(const tower of s.towers)this.pushFromTower(p,tower);this.boundPlayer();
       }
+      /** A weapon is usable from its unlock day (axe, spear and bow from day 1). */
+      weaponUnlocked(id){return WEAPONS.includes(id)&&this.state.wave>=WEAPON_DAYS[id];}
       weaponStats(id=this.state.equipped){
         if(!WEAPONS.includes(id))return null;const c=this.config,l=this.state.weapons[id]-1;
-        const base=id==='axe'?{damage:c.axeDamage,interval:c.axePeriod,range:c.axeRadius}:id==='spear'?{damage:16,interval:.9,range:145}:{damage:14,interval:1.05,range:280,speed:450};
+        const base=id==='axe'?{damage:c.axeDamage,interval:c.axePeriod,range:c.axeRadius}:WEAPON_BASE[id];
         return {...base,damage:base.damage*Math.pow(1.25,l)*(1+this.state.perks.attack),interval:Math.max(c.minAttackInterval,base.interval*Math.pow(.95,l)/this.attackSpeed()),range:base.range+l*3};
       }
       weaponCost(id){const l=this.state.weapons[id];return {coins:25*l*l,gems:l>=5?l-3:0};}
-      equipWeapon(id){if(!WEAPONS.includes(id)||['won','lost','choosing','day-choice'].includes(this.state.phase)||this.miniGame)return false;this.state.equipped=id;return true;}
+      equipWeapon(id){if(!this.weaponUnlocked(id)||['won','lost','choosing','day-choice'].includes(this.state.phase)||this.miniGame)return false;this.state.equipped=id;return true;}
       upgradeWeapon(id){
-        const s=this.state;if(!WEAPONS.includes(id)||s.weapons[id]>=10||['won','lost','choosing','day-choice'].includes(s.phase)||this.miniGame)return false;
+        const s=this.state;if(!this.weaponUnlocked(id)||s.weapons[id]>=10||['won','lost','choosing','day-choice'].includes(s.phase)||this.miniGame)return false;
         const cost=this.weaponCost(id);if(s.coins<cost.coins||s.gems<cost.gems)return false;
         s.coins-=cost.coins;s.gems-=cost.gems;s.weapons[id]++;this.sound('upgrade');this.event('toast',{message:`${WEAPON_NAMES[id]} ระดับ ${s.weapons[id]}`});return true;
       }
@@ -2375,13 +2567,68 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
         p.weaponCooldown=Math.max(0,p.weaponCooldown-dt);if(p.weaponCooldown>0)return;
         const targets=s.enemies.filter(e=>e.alive&&Math.hypot(e.x-p.x,e.y-p.y)<=stats.range).sort((a,b)=>distance(a,p)-distance(b,p));if(!targets.length)return;
         const target=targets[0];p.aim=Math.atan2(target.y-p.y,target.x-p.x);p.weaponCooldown=stats.interval;p.attackFlash=.22;this.sound(s.equipped);this.countAttack();if(Math.abs(Math.cos(p.aim))>.2)p.facing=Math.sign(Math.cos(p.aim));
-        if(s.equipped==='spear'){
+        this.weaponAttack(s.equipped,stats,targets,target);
+      }
+      /** One attack of a targeted weapon; `targets` are the enemies in range, nearest first. */
+      weaponAttack(id,stats,targets,target){
+        const s=this.state,p=s.player,aim=p.aim,cx=p.x,cy=p.y-26;
+        const inArc=(e,arc)=>{const a=Math.atan2(e.y-28-cy,e.x-cx);return Math.abs(Math.atan2(Math.sin(a-aim),Math.cos(a-aim)))<=arc/2;};
+        const push=(e,force)=>{const dx=e.x-p.x,dy=e.y-p.y,d=Math.hypot(dx,dy)||1;e.x+=dx/d*force;e.y+=dy/d*force;};
+        if(id==='spear'){
           for(const e of targets){const dx=e.x-p.x,dy=e.y-p.y,along=dx*Math.cos(p.aim)+dy*Math.sin(p.aim),across=Math.abs(-dx*Math.sin(p.aim)+dy*Math.cos(p.aim));if(along>=0&&along<=stats.range&&across<22)this.damage(e,stats.damage,'player',p);}
-        }else{
+        }
+        else if(id==='bow'){
           // ASSUMPTION (2.2): the bow gains an extra arrow at levels 4, 7 and 10, each on a different target.
           const arrows=1+Math.floor((s.weapons.bow-1)/3);
           for(const aim of targets.slice(0,arrows))s.projectiles.push({id:this.id('player-arrow'),type:'arrow',owner:'player',x:p.x,y:p.y-26,targetId:aim.id,damage:stats.damage,radius:0,speed:stats.speed,age:0,ttl:2,angle:Math.atan2(aim.y-p.y,aim.x-p.x)});
         }
+        else if(id==='sword'||id==='shield'){for(const e of targets)if(inArc(e,stats.arc)){this.damage(e,stats.damage,'player',p);if(stats.knockback)push(e,stats.knockback);}s.effects.push({type:id==='sword'?'slash':'bash',x:cx,y:cy,angle:aim,radius:stats.range,arc:stats.arc,age:0,ttl:id==='sword'?.22:.28});}
+        else if(id==='hammer'){for(const e of targets){this.damage(e,stats.damage,'player',p);push(e,stats.knockback);}s.effects.push({type:'slam',x:p.x,y:p.y,radius:stats.range,age:0,ttl:.38});}
+        else if(id==='dagger'){for(let i=0;i<stats.hits;i++)this.damage(target,stats.damage,'player',p);s.effects.push({type:'stab',x:cx,y:cy,angle:aim,length:Math.min(stats.range,distance(target,p)+12),age:0,ttl:.16});}
+        else if(id==='magic'){
+          // Chain lightning: the target, then up to `jumps` more, each the nearest unhit enemy near the last one.
+          const hit=[target],points=[[target.x,target.y-28]];let from=target,amount=stats.damage;this.damage(target,amount,'player',p);
+          for(let j=0;j<stats.jumps;j++){let next=null,best=stats.jumpRange;for(const e of s.enemies){if(!e.alive||hit.includes(e))continue;const d=distance(e,from);if(d<=best){best=d;next=e;}}if(!next)break;amount*=stats.falloff;hit.push(next);points.push([next.x,next.y-28]);this.damage(next,amount,'player',from);from=next;}
+          s.effects.push({type:'chain',x:cx,y:cy,points,age:0,ttl:.26});
+        }
+        else{const type=id==='staff'?'orb':'bullet';s.projectiles.push({id:this.id('player-'+type),type,owner:'player',x:cx,y:cy,targetId:target.id,damage:stats.damage,radius:stats.splash||0,speed:stats.speed,age:0,ttl:2,angle:aim});}
+      }
+      /** The shield turns away enemy arrows that come at the hero's front (where it last struck). */
+      shieldBlocks(shot){const s=this.state;if(s.equipped!=='shield'||!this.weaponUnlocked('shield'))return false;const back=Math.atan2(-shot.vy,-shot.vx),aim=s.player.aim;return Math.abs(Math.atan2(Math.sin(back-aim),Math.cos(back-aim)))<=WEAPON_BASE.shield.guard;}
+      /** Weapon count: grows from kills, bosses, the arsenal reward and practice. Gains go to the equipped weapon's share of the orbit. */
+      gainArsenal(amount){
+        const s=this.state,a=s.arsenal;if(!(amount>0))return;a.count=Math.min(1e6,a.count+amount);a.by[s.equipped]+=amount;
+        const tier=this.tierOf(a.count);if(tier>a.tier){a.tier=tier;this.sound('tierUp');this.setEmotion('happy',1.5);this.event('tier',{tier,count:Math.floor(a.count)});}
+      }
+      tierOf(count){let tier=0;ARSENAL_TIERS.forEach((need,i)=>{if(count>=need)tier=i;});return tier;}
+      orbitTier(){return Math.max(this.tierOf(this.state.arsenal.count),this.state.wave>=this.config.orbitAuraDay?4:0);}
+      /** Rings this frame: radius, turn speed, angle (from elapsed time) and blade count, inner ring first. */
+      orbitRings(){
+        const s=this.state,c=this.config,tier=this.orbitTier(),mul=[1,1.35,1.35,1.5,1.5,1.8][tier],ringCount=tier>=3?3:tier>=2?2:1,rings=[];let left=Math.max(1,Math.floor(s.arsenal.count));
+        for(let r=0;r<ringCount&&left>0;r++){const blades=Math.min(c.orbitCaps[r],left),speed=c.orbitSpeeds[r]*mul;left-=blades;rings.push({radius:c.orbitRadii[r],speed,angle:speed*s.elapsed+r*.9,blades});}
+        return rings;
+      }
+      orbitDamage(){const s=this.state,c=this.config,best=Math.max(...WEAPONS.map(id=>s.weapons[id]));return c.orbitBase*Math.pow(1.25,best-1)*(1+s.perks.attack)*(c.orbitFloor+c.orbitLog*Math.log10(Math.max(1,s.arsenal.count)));}
+      /** Orbit rings hit every enemy in their band that a blade sweeps across this frame (bladeHits), once per ring per orbitCooldown; tier 4+ adds the aura pulse. */
+      updateOrbit(dt){
+        const s=this.state,c=this.config,p=s.player,cx=p.x,cy=p.y-26;if(s.phase!=='running'||!(c.orbitBase>0))return;
+        const damage=this.orbitDamage();
+        this.orbitRings().forEach((ring,r)=>{const delta=ring.speed*dt,start=ring.angle-delta;
+          for(const e of s.enemies){const ready=e.ringReady||(e.ringReady=[-100,-100,-100]);if(!e.alive||s.elapsed<ready[r])continue;const dx=e.x-cx,dy=e.y-28-cy,d=Math.hypot(dx,dy);if(Math.abs(d-ring.radius)>c.orbitBand)continue;
+            if(!bladeHits(start,delta,ring.blades,Math.atan2(dy,dx)))continue;ready[r]=s.elapsed+c.orbitCooldown;this.damage(e,damage,'orbit',{x:cx,y:cy+28});}});
+        const tier=this.orbitTier(),a=s.arsenal;if(tier<4)return;a.auraClock+=dt;if(a.auraClock<c.auraEvery)return;a.auraClock%=c.auraEvery;
+        const radius=tier>=5?c.auraRadius2:c.auraRadius;for(const e of s.enemies)if(e.alive&&Math.hypot(e.x-cx,e.y-28-cy)<=radius)this.damage(e,damage*c.auraDamage,'orbit',{x:cx,y:cy+28});
+      }
+      /** Blade weapon types for the orbit, spread in proportion to the weapons each type collected (the equipped one always shows). */
+      bladeTypes(total){
+        const s=this.state,a=s.arsenal,shares=WEAPONS.filter(id=>a.by[id]>0).map(id=>({id,quota:0,used:0,weight:a.by[id]}));if(!shares.length)return Array(total).fill(s.equipped);
+        const sum=shares.reduce((t,x)=>t+x.weight,0),out=[];for(const x of shares)x.quota=x.weight/sum*total;
+        for(let i=0;i<total;i++){let pick=shares[0];for(const x of shares)if(x.quota-x.used>pick.quota-pick.used)pick=x;pick.used++;out.push(pick.id);}
+        if(total&&!out.includes(s.equipped))out[0]=s.equipped;return out;
+      }
+      orbitView(){
+        const s=this.state,c=this.config,tier=this.orbitTier(),rings=this.orbitRings(),types=this.bladeTypes(rings.reduce((t,r)=>t+r.blades,0));let k=0;
+        return {tier,count:Math.floor(s.arsenal.count),rings:rings.map(r=>({radius:r.radius,angle:r.angle,blades:types.slice(k,k+=r.blades)})),aura:tier>=4?{radius:tier>=5?c.auraRadius2:c.auraRadius,pulse:s.arsenal.auraClock/c.auraEvery}:null};
       }
       updateBurn(){
         const now=this.state.elapsed;for(const e of this.state.enemies){if(!e.alive||!e.burn)continue;const burn=e.burn;
@@ -2455,7 +2702,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
           const dx=target.x-shot.x,dy=target.y-28-shot.y,d=Math.hypot(dx,dy),travel=shot.speed*dt;shot.angle=Math.atan2(dy,dx);
           if(d<=travel+12){
             const source=shot.owner==='player'?'player':'tower',from={x:shot.x,y:shot.y+28};
-            if(shot.type==='cannon'){for(const e of s.enemies)if(e.alive&&distance(e,target)<=shot.radius)this.damage(e,shot.damage,source,from);s.effects.push({type:'impact',x:target.x,y:target.y-28,radius:shot.radius,age:0,ttl:.4});}
+            if(shot.type==='cannon'||shot.type==='orb'){for(const e of s.enemies)if(e.alive&&distance(e,target)<=shot.radius)this.damage(e,shot.damage,source,from);s.effects.push({type:shot.type==='orb'?'orbHit':'impact',x:target.x,y:target.y-28,radius:shot.radius,age:0,ttl:.4});}
             else this.damage(target,shot.damage,source,from);
           }else{shot.x+=dx/d*travel;shot.y+=dy/d*travel;keep.push(shot);}
         }s.projectiles=keep;
@@ -2488,12 +2735,15 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       chooseDayReward(choice){
         const s=this.state,q=s.dayChoice;if(s.phase!=='day-choice'||!q||choice?.requestId!==q.requestId||!q.options.some(o=>o.id===choice.choiceId))return false;
         const p=s.player;
-        switch(choice.choiceId){case'attack':s.perks.attack=Math.min(1,s.perks.attack+.05);break;case'health':p.maxHp=Math.min(this.config.maxHpCap,p.maxHp+10);p.hp=Math.min(p.maxHp,p.hp+30);break;case'armor':s.perks.armor=Math.min(8,s.perks.armor+1);break;case'speed':s.perks.speed=Math.min(.25,s.perks.speed+.03);break;case'supply':s.bagWood+=20;s.coins+=20+s.wave*2;break;case'heal':p.hp=Math.min(p.maxHp,p.hp+p.maxHp*.5);s.gems+=2;break;case'haste':s.perks.haste=Math.round(Math.min(this.config.hasteMax,s.perks.haste+this.config.hasteStep)*100)/100;break;}
+        switch(choice.choiceId){case'attack':s.perks.attack=Math.min(1,s.perks.attack+.05);break;case'health':p.maxHp=Math.min(this.config.maxHpCap,p.maxHp+10);p.hp=Math.min(p.maxHp,p.hp+30);break;case'armor':s.perks.armor=Math.min(8,s.perks.armor+1);break;case'speed':s.perks.speed=Math.min(.25,s.perks.speed+.03);break;case'supply':s.bagWood+=20;s.coins+=20+s.wave*2;break;case'heal':p.hp=Math.min(p.maxHp,p.hp+p.maxHp*.5);s.gems+=2;break;case'haste':s.perks.haste=Math.round(Math.min(this.config.hasteMax,s.perks.haste+this.config.hasteStep)*100)/100;break;case'arsenal':this.gainArsenal(this.config.arsenalPerk*s.wave);break;}
         s.dayChoice=null;this.sound('confirm');s.phase='intermission';s.intermission=this.config.intermission;p.hp=Math.min(p.maxHp,p.hp+this.config.intermissionHeal);this.event('day:close');return true;
       }
       /** "Something new" card for a milestone day. Shown once per save; the day waits until it is acknowledged. */
       openMilestone(day){
         const s=this.state,items=MILESTONES[day];if(!items||s.milestoneSeen>=day||s.milestoneRequest)return false;
+        // ASSUMPTION (3.0): a newly unlocked weapon starts two levels below the best older weapon, so trying it is not a step back.
+        const best=Math.max(...WEAPONS.filter(id=>WEAPON_DAYS[id]<day).map(id=>s.weapons[id]));
+        for(const item of items)if(item.kind==='weapon')s.weapons[item.id]=Math.max(s.weapons[item.id],Math.min(10,best-2));
         s.milestoneRequest={requestId:`${this.run}-milestone-${++this.requestSerial}`,day,items:copy(items)};this.input={x:0,y:0};s.player.moving=false;
         this.sound('milestone');this.event('milestone:open',{request:copy(s.milestoneRequest)});return true;
       }
@@ -2531,10 +2781,10 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       }
       payMiniReward(){
         const s=this.state,result=this.miniGame?.getResult();if(!result||s.miniRewardPaid)return;
-        s.miniRewardPaid=true;this.sound(result.success?'miniWin':'miniEnd');s.miniRewards=[];const q=result.quality,bonus=Math.floor(s.wave/5),coins=Math.round(8+q*(30+bonus)),wood=Math.round(4+q*(15+bonus));
-        if(this.miniGame.snapshot().type==='targets'){const gems=q>=.6?2:0;s.coins+=coins;s.gems+=gems;s.miniRewards=[{type:'coin',amount:coins},{type:'gem',amount:gems}];s.miniRewardText=`ได้รับ ${coins} เหรียญ และ ${gems} อัญมณี`;}
+        s.miniRewardPaid=true;this.sound(result.success?'miniWin':'miniEnd');s.miniRewards=[];const q=result.quality,bonus=Math.floor(s.wave/5),coins=Math.round(8+q*(30+bonus)),wood=Math.round(4+q*(15+bonus)),weapons=Math.round(q*this.config.arsenalMini*s.wave);
+        if(this.miniGame.snapshot().type==='targets'){const gems=q>=.6?2:0;s.coins+=coins;s.gems+=gems;this.gainArsenal(weapons);s.miniRewards=[{type:'coin',amount:coins},{type:'gem',amount:gems},{type:'weapons',amount:weapons}];s.miniRewardText=`ได้รับ ${coins} เหรียญ ${gems} อัญมณี และอาวุธ ${weapons} ชิ้น`;}
         else if(this.miniGame.snapshot().type==='dodge'){const heal=Math.round(s.player.maxHp*.25*q);s.player.hp=Math.min(s.player.maxHp,s.player.hp+heal);s.bagWood+=wood;s.miniRewards=[{type:'wood',amount:wood},{type:'health',amount:heal}];s.miniRewardText=`ได้รับไม้ ${wood} ท่อน และฟื้นพลังชีวิต ${heal}`;}
-        else{s.coins+=coins;s.bagWood+=wood;s.miniRewards=[{type:'coin',amount:coins},{type:'wood',amount:wood}];s.miniRewardText=`ได้รับ ${coins} เหรียญ และไม้ ${wood} ท่อน`;}
+        else{s.coins+=coins;s.bagWood+=wood;this.gainArsenal(weapons);s.miniRewards=[{type:'coin',amount:coins},{type:'wood',amount:wood},{type:'weapons',amount:weapons}];s.miniRewardText=`ได้รับ ${coins} เหรียญ ไม้ ${wood} ท่อน และอาวุธ ${weapons} ชิ้น`;}
         this.event('save');
       }
       closeMiniGame(id){if(!this.miniGame||id!==this.miniGame.snapshot().id)return false;this.payMiniReward();this.miniGame=null;this.input={x:0,y:0};this.event('mini:close');return true;}
@@ -2552,38 +2802,55 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
         s.moves={attacks:0,dash:null,dashReadyAt:0,charge:0,special:null,lastSpin:-100};s.emotion={kind:null,until:0};if(s.player&&typeof s.player==='object')s.player.facing=1;
         d.schema=4;
       }
-      exportSave(){return copy({schema:4,version:VERSION,seed:this.seed,randomState:this.randomState,serial:this.serial,requestSerial:this.requestSerial,run:this.run,depositClock:this.depositClock,state:this.state,mini:this.miniGame?.serialize()||null});}
+      /** Schema 4 (2.3) saves gain the 3.0 armory: the new weapons at level 1 and a weapon count earned back from past kills. */
+      migrateSave4(d){
+        const s=d.state,c=this.config;if(!s||typeof s!=='object')return;
+        if(s.weapons&&typeof s.weapons==='object')for(const id of WEAPONS)if(s.weapons[id]===undefined)s.weapons[id]=1;
+        const kills=Number.isInteger(s.kills)?s.kills:0,wave=Number.isInteger(s.wave)?s.wave:1,count=1+kills*(c.arsenalPerKill+c.arsenalGrowth*(wave-1)/2);
+        s.arsenal={count,by:Object.fromEntries(WEAPONS.map(id=>[id,id===s.equipped?count-1:0])),tier:this.tierOf(count),auraClock:0};
+        for(const e of Array.isArray(s.enemies)?s.enemies:[])if(e&&typeof e==='object')e.ringReady=[-100,-100,-100];
+        d.schema=5;
+      }
+      exportSave(){return copy({schema:5,version:VERSION,seed:this.seed,randomState:this.randomState,serial:this.serial,requestSerial:this.requestSerial,run:this.run,depositClock:this.depositClock,state:this.state,mini:this.miniGame?.serialize()||null});}
       importSave(data){
         // Validate before touching live state. Saves are local data, never code.
         try{
           const d=copy(data),s=d?.state,n=(v,min=0,max=1e9)=>Number.isFinite(v)&&v>=min&&v<=max,int=(v,min=0,max=1e9)=>Number.isInteger(v)&&n(v,min,max);
-          if(![2,3,4].includes(d?.schema)||!SAVE_VERSIONS.includes(d.version)||!s||!['ready','running','intermission','choosing','day-choice','won','lost'].includes(s.phase)||!int(s.wave,1,this.config.waves))return false;
+          if(![2,3,4,5].includes(d?.schema)||!SAVE_VERSIONS.includes(d.version)||!s||!['ready','running','intermission','choosing','day-choice','won','lost'].includes(s.phase)||!int(s.wave,1,this.config.waves))return false;
           const allFinite=v=>typeof v==='number'?Number.isFinite(v):Array.isArray(v)?v.every(allFinite):v&&typeof v==='object'?Object.values(v).every(allFinite):true;
-          if(d.schema===2)this.migrateSave2(d);if(d.schema===3)this.migrateSave3(d);
+          if(d.schema===2)this.migrateSave2(d);if(d.schema===3)this.migrateSave3(d);if(d.schema===4)this.migrateSave4(d);
           if(!allFinite(d)||!n(s.elapsed)||!int(s.kills)||!int(s.waveKills)||!int(s.waveTotal,1,300)||!n(s.intermission)||!int(s.bagWood)||!int(s.coins)||!int(s.gems)||!n(s.spentWood)||!n(s.xp)||!int(s.level,1)||!WEAPONS.includes(s.equipped))return false;
           if(!s.weapons||!WEAPONS.every(id=>int(s.weapons[id],1,10))||!s.perks||!n(s.perks.attack,0,1)||!n(s.perks.speed,0,.25)||!n(s.perks.armor,0,8)||typeof s.miniUsedToday!=='boolean'||typeof s.miniRewardPaid!=='boolean')return false;
           if(!s.player||!n(s.player.maxHp,1,1200)||!n(s.player.hp,0,s.player.maxHp)||!n(s.player.x,25,515)||!n(s.player.y,100,1220)||!n(s.player.angle)||!n(s.player.weaponCooldown)||!n(s.player.attackFlash)||!n(s.player.hurtUntil)||!n(s.player.flash)||!Number.isFinite(s.player.aim))return false;
           const point=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y),site=s.site;
           if(!point(s.camera)||!n(s.camera.zoom,.1,4)||!point(s.fire)||!n(s.fire.lightRadius,1,500)||!point(site)||site.id!=='site-1'||!n(site.buildX)||!n(site.buildY)||!int(site.level,0,10)||!int(site.required,1,1000)||!int(site.deposited,0,site.required))return false;
           for(const key of ['enemies','towers','pickups','projectiles','effects','damageTexts'])if(!Array.isArray(s[key])||s[key].length>10000)return false;
-          if(!s.enemies.every(e=>point(e)&&typeof e.id==='string'&&n(e.hp)&&n(e.maxHp,1)&&n(e.speed)&&typeof e.alive==='boolean'&&VARIANT_IDS.includes(e.variant)&&n(e.damage)&&n(e.armor,0,1)&&n(e.phase)&&Number.isFinite(e.axeReadyAt)&&Number.isFinite(e.vx)&&Number.isFinite(e.vy)&&(!e.burn||(n(e.burn.until)&&n(e.burn.nextTick)&&n(e.burn.damage)&&n(e.burn.interval,.01)))))return false;
+          if(!s.enemies.every(e=>point(e)&&typeof e.id==='string'&&n(e.hp)&&n(e.maxHp,1)&&n(e.speed)&&typeof e.alive==='boolean'&&VARIANT_IDS.includes(e.variant)&&n(e.damage)&&n(e.armor,0,1)&&n(e.phase)&&Number.isFinite(e.axeReadyAt)&&Array.isArray(e.ringReady)&&e.ringReady.length===3&&e.ringReady.every(v=>Number.isFinite(v))&&Number.isFinite(e.vx)&&Number.isFinite(e.vy)&&(!e.burn||(n(e.burn.until)&&n(e.burn.nextTick)&&n(e.burn.damage)&&n(e.burn.interval,.01)))))return false;
           if(!s.towers.every(t=>point(t)&&typeof t.id==='string'&&TYPES.includes(t.type)&&int(t.level,1,10)&&n(t.cooldown)))return false;
           if(!s.enemies.every(e=>(e.family===null||BOSS_FAMILIES.includes(e.family))&&n(e.armed,0,1)&&[e.baseHp,e.baseSpeed,e.baseDamage,e.clock,e.clock2,e.facing,e.blocked,e.windup,e.charge,e.blink,e.blinkX,e.blinkY,e.summoned].every(v=>Number.isFinite(v))&&[1,2].includes(e.stage)&&typeof e.split==='boolean'))return false;
           if(!s.combo||!n(s.combo.stacks,0,this.config.comboMax)||!Number.isFinite(s.combo.lastHit)||!n(s.perks.haste,0,this.config.hasteMax+1e-9)||!int(s.milestoneSeen,0,this.config.waves)||!Array.isArray(s.enemyShots)||s.enemyShots.length>500)return false;
           if(!s.enemyShots.every(q=>point(q)&&typeof q.id==='string'&&['arrow','bomb'].includes(q.kind)&&Number.isFinite(q.vx)&&Number.isFinite(q.vy)&&n(q.damage)&&n(q.radius,0,500)&&n(q.age)&&n(q.ttl,.01,30)))return false;
+          const a=s.arsenal;if(!a||!n(a.count,1,1e6)||!a.by||!WEAPONS.every(id=>n(a.by[id],0,1e6))||!int(a.tier,0,ARSENAL_TIERS.length-1)||!n(a.auraClock,0,60))return false;
           const m=s.moves,emotions=[null,'happy','angry','surprised','sad','sleep','greet'];
           if(!m||!int(m.attacks)||!Number.isFinite(m.dashReadyAt)||!n(m.charge,0,1)||!Number.isFinite(m.lastSpin)||!s.emotion||!emotions.includes(s.emotion.kind)||!Number.isFinite(s.emotion.until)||![-1,1].includes(s.player.facing))return false;
           if(m.dash!==null&&(!m.dash||typeof m.dash!=='object'||![m.dash.fromX,m.dash.fromY,m.dash.toX,m.dash.toY].every(v=>Number.isFinite(v))||!n(m.dash.t,0,this.config.dashTime)||!Array.isArray(m.dash.hits)||!m.dash.hits.every(h=>typeof h==='string')))return false;
           if(m.special!==null&&(!m.special||typeof m.special!=='object'||!n(m.special.t)||!n(m.special.duration,.1,60)||!Number.isFinite(m.special.tick)||![1,2].includes(m.special.level)))return false;
           if(s.milestoneRequest!==null&&(!s.milestoneRequest||typeof s.milestoneRequest!=='object'||!int(s.milestoneRequest.day,1,this.config.waves)||!MILESTONES[s.milestoneRequest.day]||s.phase!=='running'))return false;
           if(!s.pickups.every(t=>point(t)&&typeof t.id==='string'&&['wood','coin','gem'].includes(t.type)&&int(t.amount,1)))return false;
-          if(!s.projectiles.every(t=>point(t)&&typeof t.id==='string'&&typeof t.targetId==='string'&&['arrow','cannon'].includes(t.type)&&n(t.damage)&&n(t.radius)&&n(t.speed,1)&&n(t.age)&&n(t.ttl,.01)&&Number.isFinite(t.angle)))return false;
-          if(!s.effects.every(t=>point(t)&&['flame','impact','explosion','heal','spin'].includes(t.type)&&n(t.age)&&n(t.ttl,.01)&&(t.type!=='flame'?n(t.radius,.01,1000):n(t.length,.01,1000)&&n(t.width,.01,500)&&Number.isFinite(t.angle)))||!s.damageTexts.every(t=>point(t)&&typeof t.text==='string'&&t.text.length<100&&n(t.age)&&n(t.ttl,.01)))return false;
+          if(!s.projectiles.every(t=>point(t)&&typeof t.id==='string'&&typeof t.targetId==='string'&&['arrow','cannon','orb','bullet'].includes(t.type)&&n(t.damage)&&n(t.radius)&&n(t.speed,1)&&n(t.age)&&n(t.ttl,.01)&&Number.isFinite(t.angle)))return false;
+          const effectOk=t=>{if(!point(t)||!n(t.age)||!n(t.ttl,.01))return false;switch(t.type){
+            case'flame':return n(t.length,.01,1000)&&n(t.width,.01,500)&&Number.isFinite(t.angle);
+            case'stab':return n(t.length,.01,1000)&&Number.isFinite(t.angle);
+            case'chain':return Array.isArray(t.points)&&t.points.length<=8&&t.points.every(q=>Array.isArray(q)&&q.length===2&&q.every(v=>Number.isFinite(v)));
+            case'slash':case'bash':return n(t.radius,.01,1000)&&Number.isFinite(t.angle)&&n(t.arc,0,7);
+            case'impact':case'explosion':case'heal':case'spin':case'slam':case'orbHit':return n(t.radius,.01,1000);
+            default:return false;}};
+          if(!s.effects.every(effectOk)||!s.damageTexts.every(t=>point(t)&&typeof t.text==='string'&&t.text.length<100&&n(t.age)&&n(t.ttl,.01)))return false;
           if(!int(d.randomState,0,4294967295)||!int(d.serial)||!int(d.requestSerial)||!int(d.run,1)||!n(d.depositClock)||!Number.isFinite(d.seed))return false;
           if(s.phase==='choosing'&&(!s.buildRequest||s.buildRequest.siteId!==site.id||!['running','intermission'].includes(s.buildRequest.resumePhase)||site.deposited!==site.required))return false;
           if(s.phase==='day-choice'&&(!s.dayChoice||s.dayChoice.day!==s.wave||!Array.isArray(s.dayChoice.options)||s.dayChoice.options.length!==3||new Set(s.dayChoice.options.map(o=>o.id)).size!==3||!s.dayChoice.options.every(o=>DAY_REWARDS.some(r=>r.id===o.id))))return false;
           if((s.phase!=='choosing'&&s.buildRequest)||(s.phase!=='day-choice'&&s.dayChoice))return false;
-          if(s.miniRewards!==undefined&&(!Array.isArray(s.miniRewards)||s.miniRewards.length>3||!s.miniRewards.every(r=>r&&['coin','gem','wood','health'].includes(r.type)&&int(r.amount))))return false;
+          if(s.miniRewards!==undefined&&(!Array.isArray(s.miniRewards)||s.miniRewards.length>3||!s.miniRewards.every(r=>r&&['coin','gem','wood','health','weapons'].includes(r.type)&&int(r.amount))))return false;
           s.miniRewards=s.miniRewards||[];let mini=null;const newRun=Math.max(this.run,d.run)+1;
           if(d.mini){if(!s.miniUsedToday||!['running','intermission'].includes(s.phase))return false;d.mini.id=`${newRun}-resume-mini-${d.serial}`;mini=window.EmberwoodMiniGames.CombatMiniGame.restore(d.mini);if(d.mini.day!==s.wave)return false;mini.setInput(0,0);}
           this.run=newRun;this.seed=d.seed;this.randomState=d.randomState;this.serial=d.serial;this.requestSerial=d.requestSerial;this.depositClock=d.depositClock;this.state=s;this.miniGame=mini;this.pauses=new Set();this.input={x:0,y:0};s.player.moving=false;this.events=[];
@@ -2600,7 +2867,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
         if(!dt)return;
         if(this.miniGame){if([...this.pauses].every(p=>p==='miniGame')){const hp=this.miniGame.snapshot().player?.hp;this.miniGame.update(dt);if(hp!==undefined&&this.miniGame.snapshot().player?.hp<hp)this.sound('dodgeHit');this.payMiniReward();}return;}
         if(this.pauses.size||['ready','choosing','day-choice','won','lost'].includes(s.phase)||s.milestoneRequest)return;
-        s.elapsed+=dt;this.updateCombo(dt);this.updateEffects(dt);if(!this.updateDash(dt))this.movePlayer(dt);this.updateSpecial(dt);this.updateBurn();this.updateAxe(dt);
+        s.elapsed+=dt;this.updateCombo(dt);this.updateEffects(dt);if(!this.updateDash(dt))this.movePlayer(dt);this.updateSpecial(dt);this.updateBurn();this.updateAxe(dt);this.updateOrbit(dt);
         if(s.phase==='running'){this.moveEnemies(dt);if(s.phase==='lost')return;this.updateTowers(dt);this.updateProjectiles(dt);}
         s.enemies=s.enemies.filter(e=>e.alive);this.collectPickups(dt);
         if(s.phase==='running'&&s.enemies.length===0){if(s.wave===this.config.waves){this.finish(true);return;}this.requestDayChoice();return;}
@@ -2609,10 +2876,11 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       }
       snapshot(){
         const s=this.state,c=this.config,site=s.site;
-        return {scene:sceneFor(s.wave),campaign:{version:VERSION,day:s.wave,totalDays:c.waves,phase:s.phase,scene:sceneFor(s.wave),milestones:this.upcomingMilestones(),equipped:s.equipped,resources:{coins:s.coins,gems:s.gems,wood:s.bagWood},miniAvailable:!s.miniUsedToday&&!this.miniGame&&!s.dayChoice&&!s.buildRequest&&!['won','lost'].includes(s.phase),miniUsedToday:s.miniUsedToday,weapons:WEAPONS.map(id=>{const cost=this.weaponCost(id);return {id,name:WEAPON_NAMES[id],level:s.weapons[id],maxLevel:10,...this.weaponStats(id),upgradeCost:cost,canUpgrade:s.weapons[id]<10&&s.coins>=cost.coins&&s.gems>=cost.gems,selected:s.equipped===id};})},miniGame:this.miniGame?{...this.miniGame.snapshot(),rewardText:s.miniRewardText,rewards:copy(s.miniRewards||[])}:null,hud:{day:s.wave,totalDays:c.waves,wave:s.wave,totalWaves:c.waves,remaining:s.enemies.filter(e=>e.alive).length,gems:s.gems,coins:s.coins,wood:s.bagWood,progress:s.xp/(3+s.level*3),badge:s.level,speed:Math.round(this.attackSpeed()*10)/10,combo:Math.floor(s.combo.stacks),
+        return {scene:sceneFor(s.wave),campaign:{version:VERSION,day:s.wave,totalDays:c.waves,phase:s.phase,scene:sceneFor(s.wave),milestones:this.upcomingMilestones(),equipped:s.equipped,resources:{coins:s.coins,gems:s.gems,wood:s.bagWood},miniAvailable:!s.miniUsedToday&&!this.miniGame&&!s.dayChoice&&!s.buildRequest&&!['won','lost'].includes(s.phase),miniUsedToday:s.miniUsedToday,weapons:WEAPONS.map(id=>{const cost=this.weaponCost(id),unlocked=this.weaponUnlocked(id);return {id,name:WEAPON_NAMES[id],level:s.weapons[id],maxLevel:10,...this.weaponStats(id),upgradeCost:cost,unlocked,day:WEAPON_DAYS[id],canUpgrade:unlocked&&s.weapons[id]<10&&s.coins>=cost.coins&&s.gems>=cost.gems,selected:s.equipped===id};}),arsenal:{count:Math.floor(s.arsenal.count),tier:this.orbitTier(),tiers:[...ARSENAL_TIERS]}},miniGame:this.miniGame?{...this.miniGame.snapshot(),rewardText:s.miniRewardText,rewards:copy(s.miniRewards||[])}:null,hud:{day:s.wave,totalDays:c.waves,wave:s.wave,totalWaves:c.waves,remaining:s.enemies.filter(e=>e.alive).length,gems:s.gems,coins:s.coins,wood:s.bagWood,progress:s.xp/(3+s.level*3),badge:s.level,speed:Math.round(this.attackSpeed()*10)/10,combo:Math.floor(s.combo.stacks),
+            arsenal:{count:Math.floor(s.arsenal.count),tier:this.orbitTier()},
             moves:{dash:{unlocked:this.unlocked('dash'),day:c.unlocks.dash,ready:this.unlocked('dash')?Math.floor(clamp(1-(s.moves.dashReadyAt-s.elapsed)/c.dashCooldown,0,1)*20)/20:0,active:!!s.moves.dash},
               special:{unlocked:this.unlocked('special'),day:c.unlocks.special,charge:Math.floor(s.moves.charge*20)/20,active:!!s.moves.special,level:this.unlocked('special2')?2:1}}},
-          camera:{...s.camera},player:{x:s.player.x,y:s.player.y,hp:s.player.hp/s.player.maxHp,moving:s.player.moving,flash:s.player.flash,combo:Math.floor(s.combo.stacks),...this.heroView(),axe:{angle:s.player.angle,animate:false,radius:this.weaponStats().range},weapon:{type:s.equipped,angle:s.player.aim,flash:s.player.attackFlash,range:this.weaponStats().range}},fire:{...s.fire},
+          camera:{...s.camera},player:{x:s.player.x,y:s.player.y,hp:s.player.hp/s.player.maxHp,moving:s.player.moving,flash:s.player.flash,combo:Math.floor(s.combo.stacks),...this.heroView(),orbit:this.orbitView(),axe:{angle:s.player.angle,animate:false,radius:this.weaponStats().range},weapon:{type:s.equipped,angle:s.player.aim,flash:s.player.attackFlash,range:this.weaponStats().range}},fire:{...s.fire},
           site:{id:site.id,x:site.x,y:site.y,label:site.level?'อัปเกรด':'สร้าง',appearance:site.level?'upgrade':'build',deposited:site.deposited,required:site.required,visible:site.level<c.maxTowerLevel,showLabel:distance(s.player,site)>38},
           enemies:s.enemies.filter(e=>e.alive).map(e=>({id:e.id,x:e.x,y:e.y,hp:e.hp/e.maxHp,flash:e.flash,moving:Math.hypot(e.vx,e.vy)>1,phase:e.phase,variant:e.variant,family:e.family||null,armed:e.armed||0,facing:e.facing||0,blocked:(e.blocked||0)>0,windup:(e.windup||0)>0,charging:(e.charge||0)>0,stage:e.stage||1,
             scale:(VARIANTS[e.variant]||VARIANTS.normal).scale*(e.family==='emperor'?1.25:e.family==='slimetitan'?1.15:1)})),
@@ -2623,7 +2891,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
             ...s.enemies.filter(e=>e.alive&&e.blink>0).map(e=>({type:'warp',x:e.blinkX,y:e.blinkY,progress:clamp(1-e.blink/.8,0,1)}))],damageTexts:s.damageTexts.map(e=>({...e,progress:e.age/e.ttl}))};
       }
     }
-    window.EmberwoodGame=Object.freeze({GameEngine,CONFIG,VERSION});
+    window.EmberwoodGame=Object.freeze({GameEngine,CONFIG,VERSION,WEAPONS,WEAPON_DAYS,ARSENAL_TIERS,bladeHits});
     if(!window.EmberwoodUI||typeof document==='undefined')return;
     const params=new URLSearchParams(location.search);if(params.has('preview')&&params.get('runtime')!=='logic')return;
     const UI=window.EmberwoodUI,engine=new GameEngine(),SAVE_KEY=params.get('playtest')==='1'?'emberwood.playtest.v2':'emberwood.campaign.v2';let previous=0,pumping=false,active=false,saveElapsed=0,storageWarning=false,saved=null;
@@ -2645,6 +2913,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
         else if(event.type==='day:close')UI.closeDayChoice();
         else if(event.type==='milestone:open')UI.openMilestone(event.request);
         else if(event.type==='milestone:close')UI.closeMilestone();
+        else if(event.type==='tier')UI.showTierUp?.(event);
         else if(event.type==='mini:open')UI.openMiniGame(engine.snapshot().miniGame);
         else if(event.type==='mini:close')UI.closeMiniGame();
         else if(event.type==='result'){UI.closeMenus();UI.showResult(event.result);}
