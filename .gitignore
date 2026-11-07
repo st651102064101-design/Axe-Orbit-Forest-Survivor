@@ -1,0 +1,10 @@
+# Deploy packages and temp clones made by other tools (each has its own .git)
+sites/
+tmp-*/
+
+# Local backups of earlier versions; git history replaces them
+handoff/
+
+# Local editor/preview configuration and test harness scratch files
+.claude/
+_harness.js
