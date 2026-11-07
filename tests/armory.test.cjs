@@ -131,7 +131,7 @@ test('orbit blades show weapon types in proportion to what each weapon collected
 
 test('schema 5 saves keep the armory; 2.3 saves gain it; broken armory data is rejected',()=>{
   const g=scene(45,[[100,0],[200,0]],{orbitBase:6});g.equipWeapon('magic');g.gainArsenal(1500);g.step(1/60);
-  const save=g.exportSave();assert.equal(save.schema,5);assert.equal(save.version,'3.0.0');const h=game();assert.equal(h.importSave(save),true);
+  const save=g.exportSave();assert.equal(save.schema,5);assert.equal(save.version,'3.1.0');const h=game();assert.equal(h.importSave(save),true);
   assert.equal(h.state.arsenal.count,g.state.arsenal.count);assert.equal(h.state.equipped,'magic');assert.ok(h.state.effects.some(e=>e.type==='chain'));
   const old=plain(save);old.schema=4;old.version='2.3.0';delete old.state.arsenal;for(const id of ['sword','staff','hammer','dagger','magic','gun','shield'])delete old.state.weapons[id];for(const e of old.state.enemies)delete e.ringReady;old.state.equipped='axe';old.state.effects=[];old.state.kills=200;
   const k=game();assert.equal(k.importSave(old),true);assert.equal(k.state.weapons.gun,1);assert.ok(Math.abs(k.state.arsenal.count-(1+200*(1+CONFIG.arsenalGrowth*44/2)))<1e-9,'past kills count');assert.equal(k.state.arsenal.by.axe,k.state.arsenal.count-1);assert.ok(k.state.enemies.every(e=>e.ringReady.length===3));

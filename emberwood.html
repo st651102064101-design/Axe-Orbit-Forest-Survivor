@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#262c24">
-  <meta name="description" content="Emberwood 3.0.0: เอาชีวิตรอด 100 วัน อัปเกรดอาวุธ สร้างป้อม ฝึกยิงเป้า หลบกระสุน และดวลสวนกลับ เล่นได้ใน HTML ไฟล์เดียว">
+  <meta name="description" content="Emberwood 3.1.0: เอาชีวิตรอด 100 วัน อัปเกรดอาวุธ สร้างป้อม ฝึกยิงเป้า หลบกระสุน และดวลสวนกลับ เล่นได้ใน HTML ไฟล์เดียว">
   <title>Emberwood · ปกป้องแสงไฟสุดท้าย</title>
   <style>
     :root { color-scheme:dark; --ink:#151b16; --cyan:#65edf3; --green:#8cff22; --thai:"Leelawadee UI",Tahoma,"Segoe UI",sans-serif; --hud-y:clamp(28px,7.3dvh,70px); }
@@ -508,7 +508,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
 /* 2.2: attack speed badge, combo counter, milestone card and the "coming next" road. */
 #speedBadge { position:absolute; pointer-events:none; right:max(9px,env(safe-area-inset-right)); top:calc(var(--hud-y) + 64px + env(safe-area-inset-top)); height:42px; display:flex; align-items:center; gap:2px; padding:0 11px 0 4px; border:2px solid #e9c357; border-radius:21px; background:#3b2e10e0; color:#ffeaa6; font-size:22px; font-weight:900; font-variant-numeric:tabular-nums; }
 #speedBadge canvas { width:34px; height:34px; }
-#comboCounter { position:absolute; pointer-events:none; left:50%; top:calc(var(--hud-y) + 100px + env(safe-area-inset-top)); transform:translateX(-50%); display:flex; align-items:baseline; gap:6px; font-size:36px; font-weight:900; color:#fff3b0; white-space:nowrap; }
+#comboCounter { position:absolute; pointer-events:none; left:50%; top:calc(var(--hud-y) + 116px + env(safe-area-inset-top)); transform:translateX(-50%); display:flex; align-items:baseline; gap:6px; font-size:36px; font-weight:900; color:#fff3b0; white-space:nowrap; }
 #comboCounter small { font-size:19px; }
 #comboCounter.hot { color:#ffbf52; }
 #comboCounter.max { color:#ff7360; }
@@ -529,7 +529,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
 @media (max-width:340px) { .milestone-item { grid-template-columns:96px minmax(0,1fr); } .milestone-item canvas { width:96px; height:88px; } .milestone-item b { font-size:22px; } .milestone-stop { width:62px; } .milestone-stop canvas { width:54px; height:50px; } }
 @media (orientation:landscape) and (max-height:500px) { #comboCounter { top:calc(var(--hud-y) + 100px + env(safe-area-inset-top)); font-size:28px; } #speedBadge { top:calc(var(--hud-y) + 70px + env(safe-area-inset-top)); height:34px; font-size:19px; } #speedBadge canvas { width:28px; height:28px; } }
 /* 2.3: two big skill buttons (dash, special) above the equipment buttons, on the thumb side opposite the usual joystick. */
-#skillButtons { position:absolute; right:max(12px,env(safe-area-inset-right)); bottom:calc(84px + env(safe-area-inset-bottom)); display:flex; gap:12px; align-items:flex-end; }
+#skillButtons { position:absolute; right:max(12px,env(safe-area-inset-right)); bottom:calc(96px + env(safe-area-inset-bottom)); display:flex; gap:12px; align-items:flex-end; }
 .skill-button { position:relative; width:78px; height:78px; padding:0; border:0; border-radius:50%; background:#ffffff1f; display:grid; place-items:center; touch-action:none; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; cursor:pointer; box-shadow:0 4px 0 #0a0608aa; transition:transform .08s; }
 .skill-button::before { content:""; position:absolute; inset:6px; border-radius:50%; background:radial-gradient(circle at 50% 32%,#7a2634,#2a0d14 72%); border:2px solid #14070b; }
 #specialButton::before { background:radial-gradient(circle at 50% 32%,#5d3189,#1d0e33 72%); }
@@ -544,8 +544,8 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
 .skill-button:focus-visible { outline:3px dashed #fff2a8; outline-offset:3px; }
 @keyframes skill-ready { from { filter:drop-shadow(0 0 0 #ffe27a00); } to { filter:drop-shadow(0 0 11px #ffe27a); } }
 @keyframes skill-denied { 25% { transform:translateX(-5px); } 75% { transform:translateX(5px); } }
-@media (orientation:landscape) and (max-height:500px) { #skillButtons { bottom:calc(72px + env(safe-area-inset-bottom)); gap:10px; } .skill-button { width:66px; height:66px; } .skill-button canvas { width:42px; height:42px; margin-top:-10px; } .skill-label { font-size:14px; bottom:6px; } }
-@media (max-width:340px) { #skillButtons { gap:8px; right:8px; bottom:calc(80px + env(safe-area-inset-bottom)); } .skill-button { width:68px; height:68px; } .skill-button canvas { width:44px; height:44px; margin-top:-10px; } .skill-label { font-size:14px; bottom:6px; } }
+@media (orientation:landscape) and (max-height:500px) { #skillButtons { bottom:calc(86px + env(safe-area-inset-bottom)); gap:10px; } .skill-button { width:66px; height:66px; } .skill-button canvas { width:42px; height:42px; margin-top:-10px; } .skill-label { font-size:14px; bottom:6px; } }
+@media (max-width:340px) { #skillButtons { gap:8px; right:8px; bottom:calc(92px + env(safe-area-inset-bottom)); } .skill-button { width:68px; height:68px; } .skill-button canvas { width:44px; height:44px; margin-top:-10px; } .skill-label { font-size:14px; bottom:6px; } }
 /* 3.0: weapon count badge, tier banner, the weapon menu's tier bar and locked weapon cards. */
 #arsenalBadge { position:absolute; pointer-events:none; right:max(9px,env(safe-area-inset-right)); top:calc(var(--hud-y) + 112px + env(safe-area-inset-top)); height:38px; display:flex; align-items:center; gap:3px; padding:0 11px 0 4px; border:2px solid #9fb6d8; border-radius:19px; background:#1d2a44e0; color:#e6f0ff; font-size:20px; font-weight:900; font-variant-numeric:tabular-nums; }
 #arsenalBadge canvas { width:30px; height:30px; }
@@ -554,7 +554,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
 #tierBanner { position:absolute; left:50%; top:calc(var(--hud-y) + 150px + env(safe-area-inset-top)); transform:translateX(-50%) scale(.6); opacity:0; display:flex; align-items:center; gap:10px; padding:8px 18px 8px 8px; border:3px solid #ffd86a; border-radius:20px; background:linear-gradient(#5a3f12f2,#2e1f08f2); color:#fff3c4; pointer-events:none; transition:opacity .25s,transform .25s; white-space:nowrap; z-index:2; }
 #tierBanner.visible { opacity:1; transform:translateX(-50%) scale(1); }
 /* When the hero is high on the screen the banner and the combo counter move down, above the bottom buttons, so they never cover him. */
-#tierBanner.low, #comboCounter.low { top:auto; bottom:calc(184px + env(safe-area-inset-bottom)); }
+#tierBanner.low, #comboCounter.low { top:auto; bottom:calc(196px + env(safe-area-inset-bottom)); }
 #tierBanner canvas { width:64px; height:64px; flex:none; }
 #tierBanner b { display:block; font-size:24px; }
 #tierBanner span { font-size:18px; color:#ffe9a3; }
@@ -571,9 +571,87 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
 .campaign-weapon-card.is-locked { filter:saturate(.35); align-self:start; }
 .campaign-weapon-card.is-locked .campaign-stats, .campaign-weapon-card.is-locked .campaign-level-pips, .campaign-weapon-card.is-locked .campaign-visual-costs, .campaign-weapon-card.is-locked .campaign-weapon-actions, .campaign-weapon-card.is-locked .campaign-upgrade-note { display:none; }
 .campaign-lock-day { display:inline-block; margin-top:4px; padding:2px 10px; border-radius:10px; background:#0f2a1f; color:#ffe9a3; font-weight:900; }
-@media (orientation:landscape) and (max-height:500px) { #tierBanner.low, #comboCounter.low { bottom:calc(150px + env(safe-area-inset-bottom)); } #arsenalBadge { top:calc(var(--hud-y) + 110px + env(safe-area-inset-top)); height:32px; font-size:17px; } #arsenalBadge canvas { width:24px; height:24px; } #tierBanner { top:calc(var(--hud-y) + 100px + env(safe-area-inset-top)); } #tierBanner canvas { width:48px; height:48px; } #tierBanner b { font-size:20px; } }
+@media (orientation:landscape) and (max-height:500px) { #tierBanner.low, #comboCounter.low { bottom:calc(164px + env(safe-area-inset-bottom)); } #arsenalBadge { top:calc(var(--hud-y) + 110px + env(safe-area-inset-top)); height:32px; font-size:17px; } #arsenalBadge canvas { width:24px; height:24px; } #tierBanner { top:calc(var(--hud-y) + 100px + env(safe-area-inset-top)); } #tierBanner canvas { width:48px; height:48px; } #tierBanner b { font-size:20px; } }
 @media (max-width:340px) { .arsenal-step { font-size:11px; } }
 #tierBanner.visible ~ #comboCounter { visibility:hidden; }
+/* 3.1 picture-first HUD: icons with numbers instead of sentences, big equipment buttons with a number badge. */
+#waveTitle { display:flex; align-items:center; gap:4px; }
+#waveTitle canvas { width:1.3em; height:1.3em; }
+#monsterCount { display:flex; align-items:center; gap:3px; font-size:clamp(24px,7vw,32px); line-height:1.1; }
+#monsterCount canvas { width:1.35em; height:1.35em; }
+#moveHint { gap:2px; padding:4px 12px; }
+#moveHint canvas { width:60px; height:60px; }
+#moveHint .hint-arrow { width:40px; height:40px; }
+#moveHint .hint-arrow.flip { transform:scaleX(-1); }
+#moveHint .hint-hand { animation:hint-sway 1.1s ease-in-out infinite alternate; }
+.campaign-day-choice { min-height:116px; gap:16px; }
+.campaign-day-choice canvas { width:92px; height:92px; }
+.campaign-day-choice .campaign-card-title { font-size:24px; }
+.campaign-day-choice .campaign-card-description { font-size:36px; }
+@media (min-width:600px) { .campaign-day-options { grid-template-columns:repeat(3,minmax(0,1fr)); } .campaign-day-choice { flex-direction:column; text-align:center; padding:14px 8px; } .campaign-day-choice canvas { width:112px; height:112px; } }
+@media (min-width:600px) and (max-height:500px) { .campaign-day-choice { min-height:0; padding:8px 6px; gap:4px; } .campaign-day-choice canvas { width:72px; height:72px; } .campaign-day-choice .campaign-card-description { font-size:30px; } }
+.milestone-item { position:relative; grid-template-columns:140px minmax(0,1fr); }
+.milestone-item .milestone-tag-icon { position:absolute; left:4px; top:4px; width:40px; height:40px; padding:4px; border-radius:50%; background:#0f2a1fe6; border:2px solid #9fd06c; }
+.milestone-item canvas.milestone-art { width:140px; height:127px; }
+.milestone-item b { font-size:24px; }
+@media (max-width:340px) { .milestone-item { grid-template-columns:104px minmax(0,1fr); } .milestone-item canvas.milestone-art { width:104px; height:94px; } }
+/* 3.1 menus: pictures and numbers, one word per button. */
+.rarities { display:none !important; }
+.tower-card .card-description { display:none; }
+.tower-card .card-title { font-size:26px; }
+@media (max-width:519px) { .tower-card { grid-template-columns:150px 1fr; grid-template-rows:1fr; min-height:140px; } .tower-card .card-art { grid-row:1; width:150px; height:136px; } .tower-card .card-title { grid-row:1; align-self:center; } }
+@media (max-height:600px) and (max-width:519px) { .tower-card { min-height:112px; grid-template-columns:116px 1fr; } .tower-card .card-art { width:116px; height:104px; } }
+.campaign-resource-row { font-size:24px; }
+.arsenal-head-icon canvas { width:36px; height:36px; }
+.arsenal-bar-head b { font-size:24px; }
+.campaign-weapon-card .campaign-card-state { display:none; }
+.campaign-weapon-card .campaign-card-title { font-size:26px; }
+.campaign-weapon-card .campaign-upgrade-note { display:none; }
+.campaign-weapon-card .picture-button { gap:6px; font-size:20px; }
+.campaign-weapon-card .picture-button canvas { width:30px; height:30px; }
+.campaign-visual-costs.is-short b { color:#ff9a8a; }
+.campaign-level-pip { min-width:14px; height:14px; }
+.campaign-lock-day { display:inline-flex; align-items:center; gap:4px; font-size:20px; }
+.campaign-lock-day[hidden] { display:none !important; }
+.campaign-lock-icon { width:26px; height:26px; }
+.campaign-mini-card .campaign-card-description { display:none; }
+.campaign-mini-card .campaign-card-title { font-size:26px; }
+@media (max-width:519px) { .campaign-mini-card { grid-template-columns:104px 1fr; align-items:center; } .campaign-mini-art { width:104px; height:88px; } }
+#campaignWeaponsDone, #campaignMiniHubDone { width:100%; min-height:64px; font-size:24px; }
+/* 3.1 screens: start, pause, help and result lead with pictures. */
+.campaign-start-choices { grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+.campaign-start-choices .campaign-card { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 4px 10px; text-align:center; position:relative; }
+.campaign-start-choices .campaign-card-art { width:100%; max-width:120px; height:auto; aspect-ratio:184/176; margin:0 auto; }
+.campaign-start-choices .campaign-card-copy { display:block; }
+.campaign-start-choices .campaign-card-description, .campaign-start-choices .campaign-card-state { display:none; }
+.campaign-start-choices .campaign-card-title { font-size:24px; }
+.campaign-start-choices .campaign-selected-art { position:absolute; right:4px; top:4px; width:30px; height:30px; }
+.campaign-start-actions { display:grid; gap:10px; margin:12px 0; }
+.start-main { width:100%; min-height:72px; font-size:28px; }
+.campaign-start-actions .picture-button canvas { width:44px; height:44px; }
+.milestone-road-title canvas { width:42px; height:42px; display:inline-block; vertical-align:middle; }
+.welcome-tools { display:flex; justify-content:center; gap:18px; }
+.icon-button { width:64px; height:64px; min-height:64px; padding:6px; border-radius:50%; display:grid; place-items:center; }
+.icon-button canvas { width:40px; height:40px; }
+#settingsDialog > .ui-button { min-height:64px; font-size:24px; }
+.audio-volume canvas { width:30px; height:30px; vertical-align:middle; }
+.guide-tile span { display:none; }
+.guide-tile b { font-size:24px; }
+#resultArt { width:min(240px,100%); height:auto; aspect-ratio:3/2; }
+#pauseRoad { gap:6px; flex-wrap:nowrap; } #pauseRoad .milestone-stop { width:64px; } #pauseRoad .milestone-stop canvas { width:58px; height:53px; }
+@media (max-width:340px) { #pauseRoad { gap:4px; } #pauseRoad .milestone-stop { width:50px; font-size:13px; } #pauseRoad .milestone-stop canvas { width:46px; height:42px; } }
+.result-stats canvas { display:block; width:40px; height:40px; margin:0 auto 2px; }
+.result-stats b { font-size:clamp(22px,7.5vw,30px); }
+.result-stats > div { min-width:0; }
+#retryButton { min-height:68px; font-size:26px; }
+@keyframes hint-sway { from { transform:translateX(-10px) rotate(-10deg); } to { transform:translateX(10px) rotate(10deg); } }
+.campaign-hud { gap:10px; }
+.campaign-hud-button { position:relative; width:66px; height:66px; min-width:66px; min-height:66px; max-width:none; padding:6px; border-radius:18px; }
+.campaign-hud-button canvas { width:52px; height:52px; }
+.campaign-hud-button > span { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+.campaign-hud-button.is-used { filter:saturate(.25) brightness(.8); }
+.hud-badge { position:absolute; right:-8px; top:-8px; min-width:28px; height:28px; padding:0 6px; border-radius:14px; background:#ffd86a; color:#3a2a06; border:2px solid #6b4a12; font:900 16px/24px var(--thai); text-align:center; }
+@media (orientation:landscape) and (max-height:500px) { .campaign-hud-button { width:60px; height:60px; min-width:60px; min-height:60px; } .campaign-hud-button canvas { width:46px; height:46px; } #monsterCount { font-size:22px; } }
 /* Narrow phones: speed, weapon count and combo stack down the right and centre; the tier banner sits below the inventory. */
 @media (max-width:400px) and (orientation:portrait) {
   #speedBadge { top:calc(var(--hud-y) + 94px + env(safe-area-inset-top)); height:36px; font-size:18px; padding:0 8px 0 3px; } #speedBadge canvas { width:26px; height:26px; }
@@ -590,11 +668,11 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
     <div class="hud">
       <div class="top-shade"></div>
       <button id="settingsButton" aria-label="ตั้งค่าและพักเกม" title="ตั้งค่าและพักเกม"><canvas id="gearArt" width="88" height="88" aria-hidden="true"></canvas></button>
-      <div id="waveTitle" class="outlined">วันที่ 1/100</div>
+      <div id="waveTitle" class="outlined" aria-label="วันที่ 1 จาก 100"><canvas data-pictogram="sun" width="96" height="96" aria-hidden="true"></canvas><span id="waveValue">1/100</span></div>
       <canvas id="healthIcon" data-pictogram="heart" width="96" height="96" aria-hidden="true"></canvas>
       <div class="status-track" role="progressbar" aria-label="พลังชีวิต" aria-valuemin="0" aria-valuemax="100" aria-valuenow="32"><i id="statusFill"></i><span id="healthNumber" class="outlined">100%</span></div>
       <div id="statusBadge" class="outlined" aria-label="สถานะ 2">2</div>
-      <div id="monsterCount" class="outlined">เหลือศัตรู <b>9</b> ตัว</div>
+      <div id="monsterCount" class="outlined" aria-label="เหลือศัตรู 9 ตัว"><canvas data-pictogram="zombie" width="96" height="96" aria-hidden="true"></canvas><b id="monsterValue">9</b></div>
       <div id="speedBadge" class="outlined" title="ความเร็วโจมตี" aria-label="ความเร็วโจมตี ×1.0"><canvas id="speedIcon" width="68" height="68" aria-hidden="true"></canvas><span id="speedValue">×1.0</span></div>
       <div id="tierBanner" role="status" aria-live="polite"><canvas id="tierArt" width="128" height="128" aria-hidden="true"></canvas><div><b id="tierTitle" class="outlined">อาวุธ 10 ชิ้น!</b><span id="tierText">วงหมุนเร็วขึ้น</span></div></div>
       <div id="comboCounter" class="outlined" hidden><span id="comboValue">3</span><small>คอมโบ</small></div>
@@ -611,7 +689,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
         <button id="dashButton" class="skill-button locked" aria-label="พุ่งโจมตี มาวันที่ 20"><canvas id="dashArt" width="104" height="104" aria-hidden="true"></canvas><span id="dashLabel" class="skill-label outlined">วัน 20</span></button>
         <button id="specialButton" class="skill-button locked" aria-label="สกิลพิเศษ มาวันที่ 40"><canvas id="specialArt" width="104" height="104" aria-hidden="true"></canvas><span id="specialLabel" class="skill-label outlined">วัน 40</span></button>
       </div>
-      <div id="moveHint" hidden><canvas data-pictogram="hand" width="96" height="96" aria-hidden="true"></canvas><span>ลากเพื่อเดิน</span></div>
+      <div id="moveHint" hidden role="img" aria-label="ลากเพื่อเดิน"><canvas class="hint-arrow flip" data-pictogram="arrow" width="96" height="96" aria-hidden="true"></canvas><canvas class="hint-hand" data-pictogram="hand" width="96" height="96" aria-hidden="true"></canvas><canvas class="hint-arrow" data-pictogram="arrow" width="96" height="96" aria-hidden="true"></canvas></div>
       <div id="toast" role="status" aria-live="polite"></div>
     </div>
   </main>
@@ -622,7 +700,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       <div class="rarities" aria-label="เครื่องหมายสีตามภาพอ้างอิง">
         <span class="rarity gold outlined">เหลือง</span><span class="rarity purple outlined">ม่วง</span><span class="rarity blue outlined">น้ำเงิน</span><span class="rarity green outlined">เขียว</span>
       </div>
-      <div class="build-instruction outlined" id="buildInstruction">แตะรูปที่ชอบ</div>
+      <div class="build-instruction outlined sr-only" id="buildInstruction">แตะรูปที่ชอบ</div>
       <div class="build-cards">
         <button class="tower-card" data-tower="cannon" aria-label="เลือกป้อมปืนใหญ่ ยิงกระสุนสร้างความเสียหายเป็นพื้นที่">
           <span class="card-title">ปืนใหญ่</span><canvas class="card-art" data-art="cannon" width="320" height="292" aria-hidden="true"></canvas>
@@ -643,19 +721,19 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
 
   <dialog id="settingsDialog" aria-labelledby="settingsHeading">
     <button class="close-small" id="closeSettings" aria-label="ปิดการตั้งค่า">×</button>
-    <h2 id="settingsHeading">พักข้างกองไฟ</h2>
+    <h2 id="settingsHeading">พัก</h2>
     <canvas id="pauseArt" width="480" height="168" aria-hidden="true"></canvas>
-    <p class="sr-only">เกมหยุดอยู่ · รุ่น 3.0.0</p>
-    <div class="milestone-road-wrap"><b class="milestone-road-title">ของใหม่ที่รออยู่</b><div id="pauseRoad" class="milestone-road" role="list" aria-label="ของใหม่ที่รออยู่"></div></div>
+    <p class="sr-only">เกมหยุดอยู่ · รุ่น 3.1.0</p>
+    <div class="milestone-road-wrap"><b class="milestone-road-title"><canvas data-pictogram="gift" width="96" height="96" aria-hidden="true"></canvas><span class="sr-only">ของใหม่ที่รออยู่</span></b><div id="pauseRoad" class="milestone-road" role="list" aria-label="ของใหม่ที่รออยู่"></div></div>
     <button class="ui-button picture-button" id="resumeButton"><canvas data-pictogram="play" width="96" height="96" aria-hidden="true"></canvas>เล่นต่อ</button>
     <button class="ui-button picture-button secondary" id="helpButton"><canvas data-pictogram="hand" width="96" height="96" aria-hidden="true"></canvas>วิธีเล่น</button>
     <button class="ui-button picture-button secondary" id="restartButton"><canvas data-pictogram="retry" width="96" height="96" aria-hidden="true"></canvas>เริ่มใหม่</button>
     <section class="audio-settings" aria-labelledby="audioHeading">
-      <h3 id="audioHeading">เสียงของเกม</h3>
+      <h3 id="audioHeading" class="sr-only">เสียงของเกม</h3>
       <div class="audio-toggles"><button id="musicToggle" class="audio-switch" aria-pressed="true"><canvas data-pictogram="music" width="96" height="96" aria-hidden="true"></canvas>เพลง</button><button id="effectsToggle" class="audio-switch" aria-pressed="true"><canvas data-pictogram="sound" width="96" height="96" aria-hidden="true"></canvas>เสียงเล่น</button></div>
-      <label class="audio-volume" for="audioVolume">ความดัง <input id="audioVolume" type="range" min="0" max="100" step="5" value="55" aria-label="ความดังเสียง"><output id="audioVolumeValue">55%</output></label>
+      <label class="audio-volume" for="audioVolume"><canvas data-pictogram="sound" width="96" height="96" aria-hidden="true"></canvas><span class="sr-only">ความดัง</span> <input id="audioVolume" type="range" min="0" max="100" step="5" value="55" aria-label="ความดังเสียง"><output id="audioVolumeValue">55%</output></label>
       <button id="audioTest" class="ui-button secondary picture-button"><canvas data-pictogram="sound" width="96" height="96" aria-hidden="true"></canvas>ลองเสียง</button>
-      <div class="audio-status"><output id="audioStatus" aria-live="polite" data-peak="0">แตะเพื่อเปิดเสียง</output><div id="audioMeter" aria-hidden="true"><i id="audioMeterFill"></i></div></div>
+      <div class="audio-status"><output id="audioStatus" class="sr-only" aria-live="polite" data-peak="0">แตะเพื่อเปิดเสียง</output><div id="audioMeter" aria-hidden="true"><i id="audioMeterFill"></i></div></div>
     </section>
     <div id="visualPreviewControls">
       <p class="small-note">พรีวิวงานภาพ — ยังไม่ได้เชื่อมระบบเกม<br>เลือกดูหน้าจอที่เตรียมไว้ให้ตรวจงานได้ด้านล่าง</p>
@@ -678,33 +756,33 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
     <button class="ui-button picture-button" id="closeHelp"><canvas data-pictogram="play" width="96" height="96" aria-hidden="true"></canvas>เข้าใจแล้ว</button>
   </dialog>
   <dialog id="resultDialog" aria-labelledby="resultHeading">
-    <canvas id="resultArt" width="300" height="200" aria-hidden="true"></canvas><h2 id="resultHeading">แสงไฟยังรอคุณอยู่</h2><p id="resultDescription"></p>
-    <div class="result-stats"><div><b id="resultWaves">0</b><span>วันที่รอดชีวิต</span></div><div><b id="resultKills">0</b><span>ศัตรูที่กำจัด</span></div><div><b id="resultTime">0:00</b><span>เวลารอดชีวิต</span></div></div>
-    <button class="ui-button" id="retryButton">เริ่มใหม่</button>
+    <canvas id="resultArt" width="480" height="320" aria-hidden="true"></canvas><h2 id="resultHeading">แสงไฟยังรอคุณอยู่</h2><p id="resultDescription" class="sr-only"></p>
+    <div class="result-stats"><div><canvas data-pictogram="sun" width="96" height="96" aria-hidden="true"></canvas><b id="resultWaves">0</b><span class="sr-only">วันที่รอดชีวิต</span></div><div><canvas data-pictogram="zombie" width="96" height="96" aria-hidden="true"></canvas><b id="resultKills">0</b><span class="sr-only">ศัตรูที่กำจัด</span></div><div><canvas data-pictogram="time" width="96" height="96" aria-hidden="true"></canvas><b id="resultTime">0:00</b><span class="sr-only">เวลารอดชีวิต</span></div></div>
+    <button class="ui-button picture-button" id="retryButton"><canvas data-pictogram="retry" width="96" height="96" aria-hidden="true"></canvas>เริ่มใหม่</button>
   </dialog>
 
     <nav class="campaign-hud" id="campaignHUD" aria-label="อุปกรณ์และการฝึก">
-    <button id="campaignWeaponsButton" class="campaign-hud-button" aria-label="เปิดคลังอาวุธ"><canvas id="campaignWeaponHUDArt" width="64" height="64" aria-hidden="true"></canvas><span>อาวุธ<span id="campaignEquippedLabel">ขวาน · ระดับ 1</span></span></button>
-    <button id="campaignMiniButton" class="campaign-hud-button" aria-label="เปิดลานฝึก"><canvas id="campaignMiniHUDArt" width="64" height="64" aria-hidden="true"></canvas><span>ลานฝึก<span id="campaignMiniHUDStatus">วันละ 1 ครั้ง</span></span></button>
+    <button id="campaignWeaponsButton" class="campaign-hud-button" aria-label="เปิดคลังอาวุธ"><canvas id="campaignWeaponHUDArt" width="96" height="96" aria-hidden="true"></canvas><span>อาวุธ<span id="campaignEquippedLabel">ขวาน · ระดับ 1</span></span><b id="campaignWeaponBadge" class="hud-badge" aria-hidden="true">1</b></button>
+    <button id="campaignMiniButton" class="campaign-hud-button" aria-label="เปิดลานฝึก"><canvas id="campaignMiniHUDArt" width="96" height="96" aria-hidden="true"></canvas><span>ลานฝึก<span id="campaignMiniHUDStatus">วันละ 1 ครั้ง</span></span><b id="campaignMiniBadge" class="hud-badge" aria-hidden="true">1</b></button>
   </nav>
   <dialog id="startDialog" class="campaign-dialog" data-campaign-dialog aria-labelledby="campaignStartHeading" aria-describedby="campaignStartDescription">
-    <div class="campaign-intro"><canvas id="campaignWelcomeArt" width="640" height="240" aria-hidden="true"></canvas><div class="campaign-eyebrow">ผจญภัยไปด้วยกัน</div><h2 id="campaignStartHeading" class="campaign-ribbon outlined" tabindex="-1">รอดให้ครบ 100 วัน</h2><p id="campaignStartDescription">เลือกอาวุธ แล้วไปกันเลย!</p></div>
+    <div class="campaign-intro"><canvas id="campaignWelcomeArt" width="640" height="240" aria-hidden="true"></canvas><div class="campaign-eyebrow sr-only">ผจญภัยไปด้วยกัน</div><h2 id="campaignStartHeading" class="campaign-ribbon outlined" tabindex="-1">รอด 100 วัน</h2><p id="campaignStartDescription" class="sr-only">เลือกอาวุธ แล้วไปกันเลย!</p></div>
     <div id="campaignStartChoices" class="campaign-cards campaign-start-choices" role="group" aria-label="เลือกอาวุธเริ่มต้น"></div>
-    <div class="milestone-road-wrap"><b class="milestone-road-title">ทุก 5 วันมีของใหม่!</b><div id="startRoad" class="milestone-road" role="list" aria-label="ของใหม่ที่รออยู่"></div></div>
-    <div class="welcome-tools"><button id="welcomeHelp" class="ui-button secondary picture-button"><canvas data-pictogram="hand" width="96" height="96" aria-hidden="true"></canvas>วิธีเล่น</button><button id="welcomeSoundButton" class="ui-button secondary picture-button" aria-pressed="false"><canvas data-pictogram="music" width="96" height="96" aria-hidden="true"></canvas><span id="welcomeSoundLabel">เปิดเสียง</span></button></div>
-    <div class="campaign-start-actions"><button id="campaignResume" class="ui-button" hidden>เดินทางต่อ</button><button id="campaignNew" class="ui-button secondary">ออกเดินทาง</button></div>
+    <div class="campaign-start-actions"><button id="campaignResume" class="ui-button picture-button start-main" hidden><canvas data-pictogram="play" width="96" height="96" aria-hidden="true"></canvas><span id="campaignResumeLabel">เล่นต่อ</span></button><button id="campaignNew" class="ui-button picture-button start-main"><canvas id="campaignNewIcon" data-pictogram="play" width="96" height="96" aria-hidden="true"></canvas><span id="campaignNewLabel">ไปกันเลย!</span></button></div>
+    <div class="milestone-road-wrap"><b class="milestone-road-title"><canvas data-pictogram="gift" width="96" height="96" aria-hidden="true"></canvas><span class="sr-only">ทุก 5 วันมีของใหม่!</span></b><div id="startRoad" class="milestone-road" role="list" aria-label="ของใหม่ที่รออยู่"></div></div>
+    <div class="welcome-tools"><button id="welcomeHelp" class="ui-button secondary icon-button" aria-label="วิธีเล่น"><canvas data-pictogram="hand" width="96" height="96" aria-hidden="true"></canvas></button><button id="welcomeSoundButton" class="ui-button secondary icon-button" aria-pressed="false" aria-label="เปิดเสียง"><canvas id="welcomeSoundArt" data-pictogram="sound" width="96" height="96" aria-hidden="true"></canvas><span id="welcomeSoundLabel" class="sr-only">เปิดเสียง</span></button></div>
     <div id="campaignNewConfirm" class="campaign-confirm" hidden><p id="campaignNewConfirmText">เริ่มใหม่จะแทนที่ความคืบหน้าที่บันทึกไว้</p><div class="campaign-confirm-actions"><button id="campaignConfirmNew" class="ui-button">ยืนยันเริ่มใหม่</button><button id="campaignKeepSave" class="ui-button secondary">เก็บการเดินทางเดิม</button></div></div>
-    <span class="campaign-version" id="campaignStartVersion">รุ่น 3.0.0</span>
+    <span class="campaign-version" id="campaignStartVersion">รุ่น 3.1.0</span>
   </dialog>
   <dialog id="weaponDialog" class="campaign-dialog" data-campaign-dialog aria-labelledby="campaignWeaponHeading">
-    <div class="campaign-heading-row"><div><div class="campaign-eyebrow">พร้อมลุย!</div><h2 id="campaignWeaponHeading" tabindex="-1">คลังอาวุธ</h2></div><button class="close-small campaign-close" id="campaignCloseWeapons" aria-label="ปิดคลังอาวุธ">×</button></div>
-    <div class="campaign-resource-row" aria-label="ทรัพยากรที่มี"><span class="campaign-resource"><canvas data-campaign-resource="coin" width="52" height="52" aria-hidden="true"></canvas><span><span id="campaignWeaponCoins">0</span> เหรียญ</span></span><span class="campaign-resource"><canvas data-campaign-resource="gem" width="52" height="52" aria-hidden="true"></canvas><span><span id="campaignWeaponGems">0</span> อัญมณี</span></span></div>
-    <div id="campaignArsenal" class="arsenal-bar" aria-label="วงอาวุธ"><div class="arsenal-bar-head"><span>วงอาวุธรอบตัว</span><b id="campaignArsenalCount">1 ชิ้น</b></div><div id="campaignArsenalSteps" class="arsenal-steps" role="list"></div><div class="arsenal-progress" aria-hidden="true"><i id="campaignArsenalFill"></i></div></div>
-    <div id="campaignWeaponCards" class="campaign-cards"></div><p class="small-note">เปลี่ยนฟรี · อัปเกรดให้เก่งขึ้น</p><button id="campaignWeaponsDone" class="ui-button secondary">กลับสู่ป่า</button>
+    <div class="campaign-heading-row"><div><div class="campaign-eyebrow sr-only">พร้อมลุย!</div><h2 id="campaignWeaponHeading" tabindex="-1">คลังอาวุธ</h2></div><button class="close-small campaign-close" id="campaignCloseWeapons" aria-label="ปิดคลังอาวุธ">×</button></div>
+    <div class="campaign-resource-row" aria-label="ทรัพยากรที่มี"><span class="campaign-resource"><canvas data-campaign-resource="coin" width="52" height="52" aria-hidden="true"></canvas><span><span id="campaignWeaponCoins">0</span><span class="sr-only"> เหรียญ</span></span></span><span class="campaign-resource"><canvas data-campaign-resource="gem" width="52" height="52" aria-hidden="true"></canvas><span><span id="campaignWeaponGems">0</span><span class="sr-only"> อัญมณี</span></span></span></div>
+    <div id="campaignArsenal" class="arsenal-bar" aria-label="วงอาวุธ"><div class="arsenal-bar-head"><span class="arsenal-head-icon"><canvas data-pictogram="swords" width="96" height="96" aria-hidden="true"></canvas><span class="sr-only">วงอาวุธรอบตัว</span></span><b id="campaignArsenalCount">1</b></div><div id="campaignArsenalSteps" class="arsenal-steps" role="list"></div><div class="arsenal-progress" aria-hidden="true"><i id="campaignArsenalFill"></i></div></div>
+    <div id="campaignWeaponCards" class="campaign-cards"></div><button id="campaignWeaponsDone" class="ui-button picture-button"><canvas data-pictogram="play" width="96" height="96" aria-hidden="true"></canvas>เล่นต่อ</button>
   </dialog>
   <dialog id="miniHubDialog" class="campaign-dialog" data-campaign-dialog aria-labelledby="campaignMiniHubHeading">
-    <div class="campaign-heading-row"><div><div class="campaign-eyebrow">เล่นแล้วได้ของ</div><h2 id="campaignMiniHubHeading" tabindex="-1">ลานฝึกกลางป่า</h2></div><button class="close-small campaign-close" id="campaignCloseMiniHub" aria-label="ปิดลานฝึก">×</button></div>
-    <p>เลือกเล่น 1 เกมต่อวัน</p><div id="campaignMiniAvailability" class="campaign-hub-note" role="status">วันนี้ฝึกได้ 1 ครั้ง</div><div id="campaignMiniChoices" class="campaign-cards"></div><button id="campaignMiniHubDone" class="ui-button secondary">กลับสู่ป่า</button>
+    <div class="campaign-heading-row"><div><div class="campaign-eyebrow sr-only">เล่นแล้วได้ของ</div><h2 id="campaignMiniHubHeading" tabindex="-1">ลานฝึก</h2></div><button class="close-small campaign-close" id="campaignCloseMiniHub" aria-label="ปิดลานฝึก">×</button></div>
+    <p class="sr-only">เลือกเล่น 1 เกมต่อวัน</p><div id="campaignMiniAvailability" class="campaign-hub-note sr-only" role="status">วันนี้ฝึกได้ 1 ครั้ง</div><div id="campaignMiniChoices" class="campaign-cards"></div><button id="campaignMiniHubDone" class="ui-button picture-button"><canvas data-pictogram="play" width="96" height="96" aria-hidden="true"></canvas>เล่นต่อ</button>
   </dialog>
   <dialog id="miniGameDialog" class="campaign-dialog" data-campaign-dialog aria-labelledby="campaignMiniHeading" aria-describedby="campaignMiniHelp">
     <div class="campaign-heading-row"><h2 id="campaignMiniHeading" tabindex="-1">ลานฝึก</h2><span class="campaign-eyebrow" id="campaignMiniDay"></span></div>
@@ -713,15 +791,15 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
     <p id="campaignMiniHelp" class="campaign-mini-help"></p><div id="campaignMiniState" class="campaign-mini-state" role="status" aria-live="polite"></div>
     <div id="campaignMiniControls" class="campaign-mini-controls"><div id="campaignMiniDpad" class="campaign-dpad" role="group" aria-label="เคลื่อนที่หลบกระสุน"><button data-mini-dir="up" aria-label="เดินขึ้น">↑</button><button data-mini-dir="left" aria-label="เดินซ้าย">←</button><button data-mini-dir="down" aria-label="เดินลง">↓</button><button data-mini-dir="right" aria-label="เดินขวา">→</button></div><button id="campaignMiniParry" class="ui-button campaign-parry" hidden>ปัดป้อง</button></div>
     <div id="campaignMiniResult" class="campaign-mini-result" hidden><h3 id="campaignMiniResultTitle">จบการฝึก</h3><p id="campaignMiniReward"></p></div>
-    <div class="campaign-mini-footer"><button id="campaignMiniExit" class="ui-button secondary">ยุติการฝึก</button><p id="campaignMiniCancelNote" class="campaign-mini-cancel-note">ออกแล้ว ใช้สิทธิ์วันนี้</p></div>
+    <div class="campaign-mini-footer"><button id="campaignMiniExit" class="ui-button secondary">ยุติการฝึก</button><p id="campaignMiniCancelNote" class="campaign-mini-cancel-note sr-only">ออกแล้ว ใช้สิทธิ์วันนี้</p></div>
   </dialog>
   <dialog id="dayChoiceDialog" class="campaign-dialog" data-campaign-dialog aria-labelledby="campaignDayHeading" aria-describedby="campaignDayDescription">
-    <div class="campaign-eyebrow">รอดชีวิตมาอีกหนึ่งวัน</div><h2 id="campaignDayHeading" class="campaign-ribbon outlined" tabindex="-1">เสบียงสำหรับวันใหม่</h2><p id="campaignDayDescription">แตะเลือก 1 รูป</p><div id="campaignDayOptions" class="campaign-day-options"></div><p class="small-note">เลือกแล้วไปต่อเลย</p>
+    <div class="campaign-eyebrow sr-only">รอดชีวิตมาอีกหนึ่งวัน</div><h2 id="campaignDayHeading" class="campaign-ribbon outlined" tabindex="-1">เสบียงสำหรับวันใหม่</h2><p id="campaignDayDescription" class="sr-only">แตะเลือก 1 รูป</p><div id="campaignDayOptions" class="campaign-day-options"></div>
   </dialog>
   <dialog id="milestoneDialog" class="campaign-dialog milestone-dialog" data-campaign-dialog aria-labelledby="milestoneHeading" aria-describedby="milestoneDay">
     <div class="campaign-eyebrow" id="milestoneDay">วันที่ 5</div><h2 id="milestoneHeading" class="campaign-ribbon outlined" tabindex="-1">ของใหม่!</h2>
     <div id="milestoneItems" class="milestone-items" role="list"></div>
-    <button id="milestoneGo" class="ui-button milestone-go">ลุยเลย!</button>
+    <button id="milestoneGo" class="ui-button milestone-go picture-button"><canvas data-pictogram="play" width="96" height="96" aria-hidden="true"></canvas>ลุยเลย!</button>
   </dialog>
 
   <script id="presentation-layer">
@@ -1047,40 +1125,41 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
     function newWeaponCard(weapon){
       const card=make('article','campaign-card campaign-weapon-card');card.dataset.weaponId=weapon.id;
       const canvas=createArt('campaign-card-art'),copy=make('div','campaign-card-copy'),title=make('h3','campaign-card-title'),state=make('span','campaign-card-state'),check=icon('check','campaign-selected-art');
-      const lock=make('span','campaign-lock-day');lock.hidden=true;copy.append(title,state,lock);const stats=make('div','campaign-stats'),values=[],statCells=[];
+      const lock=make('span','campaign-lock-day'),lockIcon=createArt('campaign-lock-icon',48,48),lockText=make('span');lock.append(lockIcon,lockText);drawIcon(lockIcon,'lock');lock.hidden=true;copy.append(title,state,lock);const stats=make('div','campaign-stats'),values=[],statCells=[];
       for(const [kind,label]of [['damage','พลังโจมตี'],['range','ระยะโจมตี'],['time','จังหวะโจมตี']]){const cell=make('span','campaign-stat'),value=make('b');cell.append(icon(kind),value);cell.setAttribute('title',label);stats.append(cell);values.push(value);statCells.push(cell);}
       const pips=make('div','campaign-level-pips');pips.setAttribute('role','img');for(let i=0;i<10;i++)pips.append(make('span','campaign-level-pip'));
-      const actions=make('div','campaign-weapon-actions'),equip=make('button','ui-button secondary','สวมใส่'),upgrade=make('button','ui-button','อัปเกรด'),note=make('div','campaign-upgrade-note');
+      const actions=make('div','campaign-weapon-actions'),equip=make('button','ui-button secondary picture-button'),upgrade=make('button','ui-button picture-button'),note=make('div','campaign-upgrade-note');
+      const equipIcon=createArt('',96,96),equipLabel=make('span','','ใช้'),upgradeIcon=createArt('',96,96),upgradeLabel=make('span','','+1');equip.append(equipIcon,equipLabel);upgrade.append(upgradeIcon,upgradeLabel);drawIcon(equipIcon,'hand');drawIcon(upgradeIcon,'up');
       const costs=make('div','campaign-visual-costs'),coinCost=make('span','campaign-cost'),gemCost=make('span','campaign-cost'),coinValue=make('b'),gemValue=make('b');coinCost.append(icon('coin'),coinValue);gemCost.append(icon('gem'),gemValue);costs.append(coinCost,gemCost);
       equip.type=upgrade.type='button';equip.addEventListener('click',()=>emit('weapon:equip',{weaponId:weapon.id}));upgrade.addEventListener('click',()=>emit('weapon:upgrade',{weaponId:weapon.id}));
-      actions.append(equip,upgrade);card.append(canvas,copy,stats,pips,costs,actions,note,check);$('campaignWeaponCards').append(card);drawWeapon(canvas,weapon.id);const record={card,canvas,title,state,lock,locked:false,values,statCells,pips,equip,upgrade,note,check,costs,coinValue,gemValue,gemCost};weaponCards.set(weapon.id,record);return record;
+      actions.append(equip,upgrade);card.append(canvas,copy,stats,pips,costs,actions,note,check);$('campaignWeaponCards').append(card);drawWeapon(canvas,weapon.id);const record={card,canvas,title,state,lock,lockText,equipIcon,equipLabel,upgradeLabel,equipped:null,locked:false,values,statCells,pips,equip,upgrade,note,check,costs,coinValue,gemValue,gemCost};weaponCards.set(weapon.id,record);return record;
     }
     function updateCampaign(){
       if(!campaign)return;
       setText($('campaignWeaponCoins'),campaign.resources?.coins||0);setText($('campaignWeaponGems'),campaign.resources?.gems||0);
       const weapons=Array.isArray(campaign.weapons)?campaign.weapons:[];
       const equipped=weapons.find(w=>w.id===campaign.equipped)||weapons.find(w=>w.selected),definition=WEAPONS.find(w=>w.id===campaign.equipped);
-      setText($('campaignEquippedLabel'),`${definition?.short||equipped?.name||'อาวุธ'} ${equipped?.level||1}`);$('campaignWeaponsButton').setAttribute('aria-label',`อาวุธ ${equipped?.name||''} ระดับ ${equipped?.level||1}`);
+      setText($('campaignEquippedLabel'),`${definition?.short||equipped?.name||'อาวุธ'} ${equipped?.level||1}`);setText($('campaignWeaponBadge'),equipped?.level||1);$('campaignWeaponsButton').setAttribute('aria-label',`อาวุธ ${equipped?.name||''} ระดับ ${equipped?.level||1}`);
       if(weaponArtId!==campaign.equipped){weaponArtId=campaign.equipped;drawWeapon($('campaignWeaponHUDArt'),weaponArtId);}
       for(const weapon of weapons){
         const record=weaponCards.get(weapon.id)||newWeaponCard(weapon),selected=weapon.selected||campaign.equipped===weapon.id;
         const maxed=weapon.level>=weapon.maxLevel,cost=weapon.upgradeCost||{};
-        const locked=weapon.unlocked===false;record.card.classList.toggle('is-locked',locked);record.lock.hidden=!locked;setText(record.lock,`มาวันที่ ${weapon.day}`);if(record.locked!==locked){record.locked=locked;drawWeapon(record.canvas,weapon.id,locked);}
+        const locked=weapon.unlocked===false;record.card.classList.toggle('is-locked',locked);record.lock.hidden=!locked;setText(record.lockText,`วัน ${weapon.day}`);if(record.locked!==locked){record.locked=locked;drawWeapon(record.canvas,weapon.id,locked);}
         record.card.classList.toggle('is-selected',selected);record.check.hidden=!selected;setText(record.title,WEAPONS.find(item=>item.id===weapon.id)?.short||weapon.name);setText(record.state,locked?'ยังไม่ปลด':`ระดับ ${weapon.level}`);
         const statValues=[Math.round(weapon.damage*10)/10,Math.round(weapon.range*10)/10,`${Number(weapon.interval).toFixed(1)} วิ.`],statLabels=['พลังโจมตี','ระยะโจมตี','จังหวะโจมตี'];
         for(const [index,value]of statValues.entries()){setText(record.values[index],value);record.statCells[index].setAttribute('aria-label',`${statLabels[index]} ${value}`);}
         for(const [index,pip]of Array.from(record.pips.children).entries())pip.classList.toggle('is-filled',index<weapon.level);record.pips.setAttribute('aria-label',`ระดับ ${weapon.level} จาก ${weapon.maxLevel}`);
-        record.equip.disabled=!!selected||locked;setText(record.equip,selected?'ใช้อยู่':'ใช้');record.equip.setAttribute('aria-label',`${selected?'กำลังใช้':'สวมใส่'} ${weapon.name}`);record.upgrade.disabled=maxed||!weapon.canUpgrade||locked;
-        setText(record.upgrade,maxed?'เต็มแล้ว':'เพิ่มพลัง');record.upgrade.setAttribute('aria-label',`อัปเกรด ${weapon.name}`);
+        record.equip.disabled=!!selected||locked;setText(record.equipLabel,selected?'ใช้อยู่':'ใช้');if(record.equipped!==!!selected){record.equipped=!!selected;drawIcon(record.equipIcon,selected?'check':'hand');}record.equip.setAttribute('aria-label',`${selected?'กำลังใช้':'สวมใส่'} ${weapon.name}`);record.upgrade.disabled=maxed||!weapon.canUpgrade||locked;
+        setText(record.upgradeLabel,maxed?'เต็ม':'+1');record.costs.classList.toggle('is-short',!maxed&&!locked&&!weapon.canUpgrade);record.upgrade.setAttribute('aria-label',`อัปเกรด ${weapon.name}`);
         const price=`${cost.coins||0} เหรียญ${cost.gems?` · ${cost.gems} อัญมณี`:''}`;
         setText(record.coinValue,cost.coins||0);setText(record.gemValue,cost.gems||0);record.gemCost.hidden=!cost.gems;record.costs.hidden=maxed;record.costs.setAttribute('aria-label',`ค่าอัปเกรด ${price}`);
         setText(record.note,maxed?'เต็มแล้ว':weapon.canUpgrade?'':'ของยังไม่พอ');record.note.setAttribute('aria-label',maxed?'พัฒนาอาวุธถึงระดับสูงสุดแล้ว':`ค่าอัปเกรด ${price}${weapon.canUpgrade?'':' ทรัพยากรยังไม่พอ'}`);
       }
       updateArsenal(campaign.arsenal);
       const available=!!campaign.miniAvailable&&!campaign.miniUsedToday;
-      setText($('campaignMiniHUDStatus'),available?'1 ครั้ง/วัน':campaign.miniUsedToday?'พรุ่งนี้มาใหม่':'พักก่อน');
+      setText($('campaignMiniHUDStatus'),available?'1 ครั้ง/วัน':campaign.miniUsedToday?'พรุ่งนี้มาใหม่':'พักก่อน');$('campaignMiniBadge').hidden=!available;$('campaignMiniButton').classList.toggle('is-used',!available);$('campaignMiniButton').setAttribute('aria-label',`ลานฝึก ${available?'เล่นได้ 1 ครั้ง':campaign.miniUsedToday?'วันนี้เล่นแล้ว':'พักก่อน'}`);
       setText($('campaignMiniAvailability'),available?'เล่นได้ 1 ครั้ง/วัน':campaign.miniUsedToday?'วันนี้เล่นแล้ว · พรุ่งนี้มาใหม่':'พักก่อน');
-      for(const record of miniCards.values()){record.card.disabled=!available;setText(record.state,available?'เล่น':campaign.miniUsedToday?'วันนี้เล่นแล้ว':'พักก่อน');}
+      for(const record of miniCards.values()){record.card.disabled=!available;setText(record.state,available?'เล่น':campaign.miniUsedToday?'พรุ่งนี้':'พักก่อน');}
       const over=campaign.phase==='won'||campaign.phase==='lost';$('campaignWeaponsButton').disabled=over;$('campaignMiniButton').disabled=over;
     }
     /** Weapon-menu bar: the six orbit tiers (1 to 10,000), the ones reached, and progress to the next. */
@@ -1091,7 +1170,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
         if(typeof art.drawTierArt==='function'){const c=canvas.getContext('2d');c.setTransform(112/64,0,0,112/64,0,0);art.drawTierArt(c,i,32,32,.95);}return node;});
       arsenalSteps.forEach((node,i)=>{node.classList.toggle('is-reached',i<=tier);node.classList.toggle('is-current',i===tier);});
       const next=tiers[tier+1],cur=tiers[tier],frac=next?Math.min(1,Math.max(0,Math.log10(Math.max(1,count)/cur)/Math.log10(next/cur))):1;
-      $('campaignArsenalFill').style.width=`${Math.round(frac*100)}%`;setText($('campaignArsenalCount'),`${count.toLocaleString('en-US')} ชิ้น`);
+      $('campaignArsenalFill').style.width=`${Math.round(frac*100)}%`;setText($('campaignArsenalCount'),count.toLocaleString('en-US'));
       $('campaignArsenal').setAttribute('aria-label',`วงอาวุธ ${count} ชิ้น ขั้น ${tier+1} จาก ${tiers.length}${next?` อีก ${Math.max(0,next-count)} ชิ้นถึงขั้นถัดไป`:''}`);
     }
     function miniActive(type){return dialogs.miniGame.open&&mini&&!mini.finished&&(!type||mini.type===type);}
@@ -1176,6 +1255,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       rewardIcons.hidden=!rewards.length;$('campaignMiniReward').hidden=!!rewards.length;
       if(mini.finished&&(keys.size||touchDirections.size||dragPointer!==null))resetMiniInput();paintMini();
     }
+    const MILESTONE_ICONS={weapon:'swords',enemy:'zombie',boss:'trophy',scene:'sun',move:'star',effect:'star'};
     const MILESTONE_TAGS={enemy:'ศัตรูใหม่',boss:'บอส',scene:'ฉากใหม่',weapon:'อาวุธใหม่',move:'ท่าใหม่',effect:'พลังใหม่'};
     const SCENE_SKY={dusk:['#f0b56c','#5f8770'],night:['#1d2c56','#0d1828'],snow:['#c4dcef','#7f9db3'],crimson:['#5d1626','#1d0a12'],stars:['#2e1c58','#0b0a1e']};
     /** Picture for a milestone item: the new enemy or boss in front of its scene, or the new scene itself. */
@@ -1224,7 +1304,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
     }
     function openStartMenu(options={}){
       startOptions={...options};chooseWeapon(WEAPONS.some(w=>w.starter&&w.id===options.selectedWeapon)?options.selectedWeapon:'axe');$('campaignResume').hidden=!options.hasSave;$('campaignNewConfirm').hidden=true;
-      setText($('campaignResume'),`เล่นต่อ · วันที่ ${options.saveDay||1}`);setText($('campaignNew'),options.hasSave?'เริ่มใหม่':'ไปกันเลย!');setText($('campaignNewConfirmText'),`เริ่มใหม่? ความคืบหน้าวันที่ ${options.saveDay||1} จะหายไป`);setText($('campaignStartVersion'),`รุ่น ${options.version||campaign?.version||'2.0.0'}`);show('start','campaignStartHeading');
+      setText($('campaignResumeLabel'),`วันที่ ${options.saveDay||1}`);$('campaignResume').setAttribute('aria-label',`เล่นต่อ · วันที่ ${options.saveDay||1}`);setText($('campaignNewLabel'),options.hasSave?'เริ่มใหม่':'ไปกันเลย!');$('campaignNew').classList.toggle('secondary',!!options.hasSave);$('campaignNew').classList.toggle('start-main',!options.hasSave);$('campaignNewIcon').dataset.pictogram=options.hasSave?'retry':'play';setText($('campaignNewConfirmText'),`เริ่มใหม่? ความคืบหน้าวันที่ ${options.saveDay||1} จะหายไป`);setText($('campaignStartVersion'),`รุ่น ${options.version||campaign?.version||'2.0.0'}`);show('start','campaignStartHeading');
     }
     function openWeaponMenu(){updateCampaign();show('weapon','campaignWeaponHeading');}
     function openMiniHub(){updateCampaign();show('miniHub','campaignMiniHubHeading');}
@@ -1264,8 +1344,8 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       if(milestoneRequest?.requestId!==request.requestId){
         milestoneRequest=request;milestonePending=false;$('milestoneItems').replaceChildren();
         for(const item of request.items){
-          const row=make('div','milestone-item'),canvas=createArt('milestone-art',272,248),copy=make('div');row.setAttribute('role','listitem');
-          copy.append(make('span','milestone-tag',MILESTONE_TAGS[item.kind]||'ของใหม่'),make('b','',item.title),make('span','',item.text));row.append(canvas,copy);$('milestoneItems').append(row);drawMilestoneArt(canvas,item);
+          const row=make('div','milestone-item'),canvas=createArt('milestone-art',300,272),copy=make('div'),head=make('div','milestone-head'),tag=createArt('milestone-tag-icon',72,72);row.setAttribute('role','listitem');row.setAttribute('aria-label',`${MILESTONE_TAGS[item.kind]||'ของใหม่'} ${item.title} ${item.text}`);
+          drawIcon(tag,MILESTONE_ICONS[item.kind]||'gift');head.append(tag,make('b','',item.title));copy.append(head,make('span','',item.text));row.append(canvas,copy);$('milestoneItems').append(row);drawMilestoneArt(canvas,item);
         }
       }
       $('milestoneGo').disabled=false;setText($('milestoneDay'),`วันที่ ${request.day}`);show('milestone','milestoneGo');
@@ -1341,6 +1421,11 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       else if(kind==='music'){stroke([[-8,12],[-8,-16],[16,-21],[16,7]],'#b5ecb7',5);stroke([[-8,-8],[16,-13]],'#b5ecb7',4);ellipse(c,-14,14,9,6,'#c5f3aa');ellipse(c,10,10,9,6,'#c5f3aa');}
       else if(kind==='hand'){box(c,-7,-23,9,29,5,'#f7cfaa','#80684e',2.5);poly(c,[[-7,-1],[-16,-7],[-22,-2],[-11,16],[4,23],[18,14],[20,-7],[11,-12],[1,-10]],'#f7cfaa','#80684e',2.5);}
       else if(kind==='arrow'){stroke([[-24,0],[21,0]],'#e2f2d7',5);stroke([[9,-12],[22,0],[9,12]],'#e2f2d7',5);}
+      else if(kind==='zombie'){ellipse(c,0,2,19,18,'#9cc27d','#41603a',3);ellipse(c,-7,-1,5,5.5,'#f4f6dc','#41603a',1.5);ellipse(c,7,-1,5,5.5,'#f4f6dc','#41603a',1.5);ellipse(c,-6,0,2,2.4,'#2b2a26');ellipse(c,8,0,2,2.4,'#2b2a26');stroke([[-8,11],[8,11]],'#41603a',3);stroke([[-4,8],[-4,14]],'#41603a',2);stroke([[3,8],[3,14]],'#41603a',2);stroke([[-6,-15],[-2,-22],[2,-16],[6,-21]],'#5f7d4f',3);}
+      else if(kind==='gift'){box(c,-18,-6,36,28,3,'#e0525e','#7a2430',3);box(c,-21,-14,42,10,3,'#f06a74','#7a2430',3);box(c,-3,-14,6,36,1,'#ffd86a');c.beginPath();c.ellipse(-7,-18,8,5,-.5,0,TAU);c.moveTo(15,-18);c.ellipse(7,-18,8,5,.5,0,TAU);c.strokeStyle='#ffd86a';c.lineWidth=4;c.stroke();}
+      else if(kind==='hammer'){c.save();c.rotate(-.7);box(c,-3,-6,6,32,2,'#a77a4c','#4f3a24',2.5);box(c,-16,-20,32,14,3,'#aab4bb','#3e4a50',3);c.restore();}
+      else if(kind==='up'){poly(c,[[0,-24],[19,-2],[8,-2],[8,22],[-8,22],[-8,-2],[-19,-2]],'#b4ef7b','#40683a',3);}
+      else if(kind==='lock'){c.beginPath();c.arc(0,-6,10,Math.PI,0);c.strokeStyle='#3a3f3a';c.lineWidth=9;c.stroke();c.strokeStyle='#d6d9cf';c.lineWidth=5;c.stroke();box(c,-15,-6,30,26,5,'#d6d9cf','#3a3f3a',3);ellipse(c,0,5,3.4,3.4,'#3a3f3a');box(c,-1.5,5,3,8,1,'#3a3f3a');}
       else{stroke([[-12,-12],[12,12],[-12,12],[12,-12]],'#f5b89c',5);}
       c.restore();
     }
@@ -1679,7 +1764,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
     function drawBuildSite(c,s){
       if(!s||s.visible===false)return;c.save();c.translate(s.x,s.y);const upgrade=s.appearance==='upgrade';
       box(c,-48,-40,96,62,14,upgrade?'#574c35bd':'#5cbb36','#28351f',3);if(!upgrade){box(c,-43,-36,86,51,10,'#75d546');c.fillStyle='#99ef5e44';c.fillRect(-40,-35,80,13);}else{c.save();c.setLineDash([7,6]);box(c,-48,-40,96,62,13,'#44382628','#493d27',3);c.restore();}
-      if(s.showLabel!==false)text(c,s.label||'สร้าง',0,-51,22);drawResource(c,'wood',0,-21,.68);text(c,`${s.deposited}/${s.required}`,0,12,22);c.restore();
+      if(s.showLabel!==false)drawPictogram(c,upgrade?'up':'hammer',0,-62,.62);drawResource(c,'wood',0,-21,.68);text(c,`${s.deposited}/${s.required}`,0,12,22);c.restore();
     }
     /** Tower renderers are shared by the menu art and world renderer. */
     function drawTower(c,tower,time=0,card=false){
@@ -1769,7 +1854,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       for(const node of document.querySelectorAll('[data-pictogram]')){const c=node.getContext('2d');c.setTransform(node.width/48,0,0,node.height/48,0,0);c.clearRect(0,0,48,48);drawPictogram(c,node.dataset.pictogram,24,24,.85);}
       for(const [id,kind]of [['guideMove','move'],['guideLoot','loot'],['guideBuild','build'],['guideSkills','skills'],['guideGoal','goal']])drawPictureGuide($(id),kind);
       if(!$('buildDialog').open)return;
-      document.querySelectorAll('.card-art').forEach(node=>{const c=node.getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,node.width,node.height);const g=c.createRadialGradient(160,142,0,160,142,116);g.addColorStop(0,'#b7fd6e75');g.addColorStop(.48,'#a0ed5a25');g.addColorStop(1,'#7eff3300');c.fillStyle=g;c.fillRect(0,0,node.width,node.height);if(!towerArtCache.has(node.dataset.art)){const art=document.createElement('canvas');art.width=320;art.height=292;const a=art.getContext('2d');a.translate(160,223);a.scale(1.45,1.45);drawTower(a,{type:node.dataset.art},0,true);towerArtCache.set(node.dataset.art,art);}c.save();c.shadowColor='#c5ff75';c.shadowBlur=13;c.drawImage(towerArtCache.get(node.dataset.art),0,0);c.restore();});
+      document.querySelectorAll('.card-art').forEach(node=>{const c=node.getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,node.width,node.height);const g=c.createRadialGradient(160,142,0,160,142,116);g.addColorStop(0,'#b7fd6e75');g.addColorStop(.48,'#a0ed5a25');g.addColorStop(1,'#7eff3300');c.fillStyle=g;c.fillRect(0,0,node.width,node.height);if(!towerArtCache.has(node.dataset.art)){const art=document.createElement('canvas');art.width=320;art.height=292;const a=art.getContext('2d');a.translate(160,238);a.scale(1.85,1.85);drawTower(a,{type:node.dataset.art},0,true);towerArtCache.set(node.dataset.art,art);}c.save();c.shadowColor='#c5ff75';c.shadowBlur=13;c.drawImage(towerArtCache.get(node.dataset.art),0,0);c.restore();});
     }
     function syncHUD(redrawIcons=false){
       if(!model)return;campaignUI.update(model.campaign,model.miniGame);const h=model.hud;
@@ -1777,7 +1862,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       // HUD nodes stable until their displayed values actually change.
       const token=[h.wave,h.totalWaves,h.remaining,h.gems,h.coins,h.wood,h.progress,h.badge,model.player.hp].join('|');
       if(token!==lastHUDToken){lastHUDToken=token;
-        $('waveTitle').textContent=`วันที่ ${h.day??h.wave}/${h.totalDays??h.totalWaves}`;$('monsterCount').innerHTML=`เหลือศัตรู <b>${h.remaining}</b> ตัว`;
+        const day=h.day??h.wave,total=h.totalDays??h.totalWaves;$('waveValue').textContent=`${day}/${total}`;$('waveTitle').setAttribute('aria-label',`วันที่ ${day} จาก ${total}`);$('monsterValue').textContent=h.remaining;$('monsterCount').setAttribute('aria-label',`เหลือศัตรู ${h.remaining} ตัว`);
         for(const key of ['gems','coins','wood'])$(key).textContent=h[key];
         const progress=clamp(model.player.hp??1,0,1);$('healthNumber').textContent=`${Math.round(progress*100)}%`;$('statusFill').style.width=`${progress*100}%`;document.querySelector('.status-track').setAttribute('aria-valuenow',Math.round(progress*100));$('statusBadge').textContent=h.badge;$('statusBadge').setAttribute('aria-label',`สถานะ ${h.badge}`);
       }
@@ -1846,7 +1931,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       $('tierBanner').classList.add('visible');tierDeadline=performance.now()+3000;
     }
     function showToast(message){$('toast').textContent=message;$('toast').classList.add('visible');toastDeadline=performance.now()+2400;}
-    function showResult(result){$('resultHeading').textContent=result.won?'รอดครบ 100 วัน!':'ลองอีกครั้งนะ!';$('resultDescription').textContent=result.won?'ผู้พิทักษ์ค่ายคนเก่ง':'เปลี่ยนอาวุธ แล้วลองใหม่ได้เลย';const rc=$('resultArt').getContext('2d');rc.setTransform(2,0,0,2,0,0);rc.clearRect(0,0,150,100);if(result.won){rc.fillStyle=glow(rc,80,60,64,'#ffe58a55','#ffe58a00');rc.fillRect(0,0,150,100);drawPictogram(rc,'trophy',30,62,.9);star(rc,124,20,7);star(rc,138,46,5);star(rc,14,22,5);rc.save();rc.translate(90,97);rc.scale(.74,.74);drawPlayer(rc,{x:0,y:0,pose:'victory',emotion:'happy',emote:false,wings:true,crown:true,facing:-1},0);rc.restore();}else{drawPictogram(rc,'heart',34,46,.8);rc.save();rc.translate(94,97);rc.scale(.74,.74);drawPlayer(rc,{x:0,y:0,pose:'idle',emotion:'sad',facing:-1},.4);rc.restore();}$('resultWaves').textContent=result.waves;$('resultKills').textContent=result.kills;$('resultTime').textContent=result.time;if(!$('resultDialog').open){$('resultDialog').showModal();menuChanged('result',true);}}
+    function showResult(result){$('resultHeading').textContent=result.won?'รอดครบ 100 วัน!':'ลองอีกครั้งนะ!';$('resultDescription').textContent=result.won?'ผู้พิทักษ์ค่ายคนเก่ง':'เปลี่ยนอาวุธ แล้วลองใหม่ได้เลย';const rc=$('resultArt').getContext('2d');rc.setTransform(3.2,0,0,3.2,0,0);rc.clearRect(0,0,150,100);if(result.won){rc.fillStyle=glow(rc,80,60,64,'#ffe58a55','#ffe58a00');rc.fillRect(0,0,150,100);drawPictogram(rc,'trophy',30,62,.9);star(rc,124,20,7);star(rc,138,46,5);star(rc,14,22,5);rc.save();rc.translate(90,97);rc.scale(.74,.74);drawPlayer(rc,{x:0,y:0,pose:'victory',emotion:'happy',emote:false,wings:true,crown:true,facing:-1},0);rc.restore();}else{drawPictogram(rc,'heart',34,46,.8);rc.save();rc.translate(94,97);rc.scale(.74,.74);drawPlayer(rc,{x:0,y:0,pose:'idle',emotion:'sad',facing:-1},.4);rc.restore();}$('resultWaves').textContent=result.waves;$('resultKills').textContent=result.kills;$('resultTime').textContent=result.time;if(!$('resultDialog').open){$('resultDialog').showModal();menuChanged('result',true);}}
     for(const dialog of dialogs)dialog.addEventListener('close',()=>{const name=dialog.id.replace('Dialog','');menuChanged(name,false);});
     $('buildDialog').addEventListener('cancel',event=>{event.preventDefault();if(menuRequest)emit('build:cancel',{siteId:menuRequest.siteId,requestId:menuRequest.requestId});});
     document.querySelectorAll('.tower-card').forEach(card=>card.addEventListener('click',()=>{if(pending||!menuRequest)return;const request=clone(menuRequest);card.classList.add('selected');setBuildPending(true);emit('build:select',{siteId:request.siteId,requestId:request.requestId,towerType:card.dataset.tower});}));
@@ -1902,7 +1987,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
     function syncAudio(){
       const s=audio.getState(),token=JSON.stringify(s);
       if(token!==lastAudioToken){lastAudioToken=token;
-        $('soundButton').setAttribute('aria-pressed',String(s.muted));$('soundButton').setAttribute('aria-label',s.muted?'เปิดเสียง':'ปิดเสียง');$('welcomeSoundButton').setAttribute('aria-pressed',String(s.muted));$('welcomeSoundLabel').textContent=s.muted?'เสียงปิด':'เสียงเปิด';$('welcomeSoundButton').setAttribute('aria-label',s.muted?'เปิดเสียง':'ปิดเสียง');
+        $('soundButton').setAttribute('aria-pressed',String(s.muted));$('soundButton').setAttribute('aria-label',s.muted?'เปิดเสียง':'ปิดเสียง');$('welcomeSoundButton').setAttribute('aria-pressed',String(s.muted));$('welcomeSoundLabel').textContent=s.muted?'เสียงปิด':'เสียงเปิด';$('welcomeSoundArt').dataset.pictogram=s.muted?'silent':'sound';$('welcomeSoundButton').setAttribute('aria-label',s.muted?'เปิดเสียง':'ปิดเสียง');
         for(const [id,value]of [['musicToggle',s.music],['effectsToggle',s.effects]])$(id).setAttribute('aria-pressed',String(value));
         $('audioVolume').value=Math.round(s.volume*100);$('audioVolumeValue').textContent=`${Math.round(s.volume*100)}%`;
         $('audioStatus').textContent=!s.available?'อุปกรณ์นี้ไม่มีเสียง':s.muted||s.volume===0?'ปิดเสียงอยู่':!s.ready?'แตะเพื่อเปิดเสียง':!s.active?'พักเสียงอยู่':'เปิดเสียงแล้ว';
@@ -2222,7 +2307,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
     const TAU=Math.PI*2,clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
     const copy=value=>typeof structuredClone==='function'?structuredClone(value):JSON.parse(JSON.stringify(value));
     const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
-    const TYPES=['cannon','archer','flame'],WEAPONS=['axe','spear','bow','sword','staff','hammer','dagger','magic','gun','shield'],VERSION='3.0.0',SAVE_VERSIONS=['2.0.0','2.1.0','2.2.0','2.3.0','3.0.0'];
+    const TYPES=['cannon','archer','flame'],WEAPONS=['axe','spear','bow','sword','staff','hammer','dagger','magic','gun','shield'],VERSION='3.1.0',SAVE_VERSIONS=['2.0.0','2.1.0','2.2.0','2.3.0','3.0.0','3.1.0'];
     const WEAPON_NAMES={axe:'ขวานวงเหวี่ยง',spear:'หอกทะลวง',bow:'ธนูนักล่า',sword:'ดาบผู้กล้า',staff:'คทาเวทมนตร์',hammer:'ค้อนยักษ์',dagger:'มีดสั้นคู่',magic:'คัมภีร์สายฟ้า',gun:'ปืนพก',shield:'โล่ผู้พิทักษ์'};
     // ASSUMPTION (3.0): axe, spear and bow stay the starting weapons because every existing save has them;
     // the reference hero's sword arrives on day 5 and the other six follow every 10 days.
@@ -2368,7 +2453,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       sound(name){this.event('sound',{name});}
       drainEvents(){const events=this.events;this.events=[];return events;}
       getState(){return copy({...this.state,paused:this.pauses.size>0,input:this.input});}
-      start(){if(this.state.phase==='ready'){this.state.phase='running';this.sound('start');this.event('toast',{message:'ลากเพื่อเดิน · เก็บไม้ · สร้างป้อม'});}}
+      start(){if(this.state.phase==='ready'){this.state.phase='running';this.sound('start');this.event('toast',{message:'ไปกันเลย!'});}}
       setInput(x,y){
         if(!Number.isFinite(x)||!Number.isFinite(y)){x=0;y=0;}
         if(this.pauses.size||['choosing','day-choice','won','lost'].includes(this.state.phase)||this.miniGame||this.state.milestoneRequest){this.input={x:0,y:0};return;}
@@ -2378,10 +2463,10 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       pause(reason,value){if(value){this.pauses.add(reason);this.input={x:0,y:0};this.state.player.moving=false;}else this.pauses.delete(reason);}
       interactSite(siteId){
         const s=this.state,site=s.site;if(siteId!==site.id||site.level>=this.config.maxTowerLevel)return false;
-        if(distance(s.player,site)>this.config.depositRadius){this.event('toast',{message:'เดินเข้าใกล้จุดก่อสร้างเพื่อฝากไม้'});return false;}
+        if(distance(s.player,site)>this.config.depositRadius){this.event('toast',{message:'เดินไปที่ป้าย'});return false;}
         if(this.pauses.size||['choosing','day-choice','won','lost'].includes(s.phase)||this.miniGame)return false;
         this.start();if(site.deposited>=site.required)this.requestBuild();
-        else if(s.bagWood===0)this.event('toast',{message:'กำจัดศัตรูแล้วเก็บไม้ที่หล่นมาเติมแปลง'});
+        else if(s.bagWood===0)this.event('toast',{message:'เก็บไม้ก่อน'});
         return true;
       }
       requestBuild(){
@@ -2877,7 +2962,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
         if(s.phase==='running'){this.moveEnemies(dt);if(s.phase==='lost')return;this.updateTowers(dt);this.updateProjectiles(dt);}
         s.enemies=s.enemies.filter(e=>e.alive);this.collectPickups(dt);
         if(s.phase==='running'&&s.enemies.length===0){if(s.wave===this.config.waves){this.finish(true);return;}this.requestDayChoice();return;}
-        else if(s.phase==='intermission'){s.intermission=Math.max(0,s.intermission-dt);if(s.intermission<=1e-8){this.spawnWave(s.wave+1);s.phase='running';this.sound(s.wave%10===0?'boss':'day');if(s.wave%10===0)this.setEmotion('angry',1.5);this.event('toast',{message:`วันที่ ${s.wave} / ${this.config.waves}${s.wave%10===0?' · บอสบุกค่าย!':' · รักษาแสงไฟไว้'}`});this.openMilestone(s.wave);this.event('save');}}
+        else if(s.phase==='intermission'){s.intermission=Math.max(0,s.intermission-dt);if(s.intermission<=1e-8){this.spawnWave(s.wave+1);s.phase='running';this.sound(s.wave%10===0?'boss':'day');if(s.wave%10===0)this.setEmotion('angry',1.5);this.event('toast',{message:`วันที่ ${s.wave}${s.wave%10===0?' · บอส!':''}`});this.openMilestone(s.wave);this.event('save');}}
         this.depositWood(dt);s.camera.y+=(clamp(s.player.y,480,980)-s.camera.y)*Math.min(1,dt*8);
       }
       snapshot(){
@@ -2948,7 +3033,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
       else if(action.type==='move:special')engine.special();
       else if(action.type==='site:interact')engine.interactSite(action.siteId);
       else if(action.type==='build:select'){if(!engine.chooseTower(action)&&engine.state.phase==='choosing'){UI.setBuildPending(false);UI.showToast('เลือกป้อมอีกครั้ง คำขอนี้ยังไม่ถูกใช้');}}
-      else if(action.type==='build:cancel'){UI.setBuildPending(false);UI.showToast('เลือกป้อมหนึ่งชนิดเพื่อเล่นต่อ');}
+      else if(action.type==='build:cancel'){UI.setBuildPending(false);UI.showToast('เลือกป้อมก่อน');}
       else if(action.type==='view:inactive'){engine.pause('inactive',true);save();UI.openSettings();}
       else if(action.type==='view:active')engine.pause('inactive',false);
       else if(action.type==='game:restart'){save();UI.closeMenus();intro();}

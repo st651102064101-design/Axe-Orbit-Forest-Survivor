@@ -133,7 +133,7 @@ check('dash and special buttons follow the snapshot and only send intents',()=>{
 check('3.0 weapon menu locks future weapons, shows the orbit tier bar, badge, banner and every orbit tier',()=>{
   UI.closeMenus();const s=fixtures.create('scene'),ids=['axe','spear','bow','sword','staff','hammer','dagger','magic','gun','shield'];
   const days={axe:1,spear:1,bow:1,sword:5,staff:15,hammer:25,dagger:35,magic:45,gun:55,shield:65};
-  s.campaign={version:'3.0.0',day:20,totalDays:100,phase:'running',scene:'night',equipped:'sword',resources:{coins:50,gems:2,wood:3},miniAvailable:true,miniUsedToday:false,milestones:[],
+  s.campaign={version:'3.1.0',day:20,totalDays:100,phase:'running',scene:'night',equipped:'sword',resources:{coins:50,gems:2,wood:3},miniAvailable:true,miniUsedToday:false,milestones:[],
     weapons:ids.map(id=>({id,name:id,level:1,maxLevel:10,damage:10,interval:1,range:80,upgradeCost:{coins:25,gems:0},unlocked:days[id]<=20,day:days[id],canUpgrade:days[id]<=20,selected:id==='sword'})),
     arsenal:{count:150,tier:2,tiers:[1,10,100,1000,5000,10000]}};
   s.hud.arsenal={count:1234,tier:3};UI.setSnapshot(s);
@@ -141,7 +141,7 @@ check('3.0 weapon menu locks future weapons, shows the orbit tier bar, badge, ba
   const cards=get('campaignWeaponCards').children;assert.equal(cards.length,10);
   assert.deepEqual(cards.filter(c=>c.classList.contains('is-locked')).map(c=>c.dataset.weaponId),['hammer','dagger','magic','gun','shield']);
   const steps=get('campaignArsenalSteps').children;assert.equal(steps.length,6);assert.equal(steps.filter(n=>n.classList.contains('is-reached')).length,3);assert.ok(steps[2].classList.contains('is-current'));
-  assert.equal(get('campaignArsenalFill').style.width,'18%');assert.equal(get('campaignArsenalCount').textContent,'150 ชิ้น');
+  assert.equal(get('campaignArsenalFill').style.width,'18%');assert.equal(get('campaignArsenalCount').textContent,'150');
   UI.showTierUp({tier:3,count:1000});assert.ok(get('tierBanner').classList.contains('visible'));assert.equal(get('tierTitle').textContent,'อาวุธ 1,000 ชิ้น!');
   const before=plain(UI.getSnapshot());
   for(let tier=0;tier<=5;tier++){s.player.orbit={tier,count:[1,10,100,1000,5000,10000][tier],rings:[{radius:56,angle:tier,blades:Array(8).fill('sword')},{radius:98,angle:-tier,blades:ids.slice(0,10)},{radius:140,angle:.5,blades:Array(20).fill('magic')}].slice(0,tier>=3?3:tier>=2?2:1),aura:tier>=4?{radius:tier>=5?190:150,pulse:.4}:null};

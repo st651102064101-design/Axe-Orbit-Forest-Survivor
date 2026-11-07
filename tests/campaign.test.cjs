@@ -8,7 +8,7 @@ const plain=v=>JSON.parse(JSON.stringify(v));
 const game=(config={})=>new GameEngine({seed:42,config:{enemySpeed:0,contactDamage:0,axeDamage:0,orbitBase:0,...config}});
 const advance=(g,time)=>{for(let i=0;i<Math.ceil(time*60);i++)g.step(1/60);};
 test('the campaign presents 100 days, ten weapons (three to start) and daily combat choices',()=>{
-  const g=game(),s=g.snapshot();assert.equal(VERSION,'3.0.0');assert.equal(s.campaign.totalDays,100);
+  const g=game(),s=g.snapshot();assert.equal(VERSION,'3.1.0');assert.equal(s.campaign.totalDays,100);
   assert.equal(s.campaign.day,1);assert.deepEqual(Array.from(s.campaign.weapons,w=>w.id),['axe','spear','bow','sword','staff','hammer','dagger','magic','gun','shield']);
   assert.deepEqual(Array.from(s.campaign.weapons.filter(w=>w.unlocked),w=>w.id),['axe','spear','bow']);
   assert.equal(s.campaign.miniAvailable,true);

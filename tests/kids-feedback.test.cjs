@@ -26,14 +26,14 @@ test('mini shot outcomes and rewards provide visual reward data and sound once',
   const before=g.state.coins;g.step(.05);assert.equal(g.state.coins,before);assert.equal(cues(g).length,0);
 });
 test('3.0 accepts existing 2.0 / 2.1 (schema 2) saves and clears new optional reward decorations safely',()=>{
-  assert.equal(VERSION,'3.0.0');
+  assert.equal(VERSION,'3.1.0');
   for(const version of ['2.0.0','2.1.0']){
     const g=game(),save=g.exportSave();save.schema=2;save.version=version;delete save.state.miniRewards;
     for(const key of ['combo','milestoneSeen','milestoneRequest','enemyShots','moves','emotion','arsenal'])delete save.state[key];delete save.state.perks.haste;delete save.state.player.facing;
     for(const id of ['sword','staff','hammer','dagger','magic','gun','shield'])delete save.state.weapons[id];
     for(const e of save.state.enemies)for(const key of ['family','baseHp','baseSpeed','baseDamage','clock','clock2','armed','facing','blocked','windup','charge','blink','blinkX','blinkY','summoned','stage','split','ringReady'])delete e[key];
     const h=game();assert.equal(h.importSave(save),true,version);assert.equal(h.state.bagWood,g.state.bagWood);
-    const out=h.exportSave();assert.equal(out.version,'3.0.0');assert.equal(out.schema,5);assert.equal(out.state.moves.charge,0);assert.equal(out.state.perks.haste,0);assert.equal(out.state.milestoneSeen,1);
+    const out=h.exportSave();assert.equal(out.version,'3.1.0');assert.equal(out.schema,5);assert.equal(out.state.moves.charge,0);assert.equal(out.state.perks.haste,0);assert.equal(out.state.milestoneSeen,1);
     assert.equal(out.state.weapons.sword,1);assert.ok(out.state.arsenal.count>=1);
   }
 });
