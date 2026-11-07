@@ -105,6 +105,31 @@ check('result dialog renders externally supplied data without deciding victory',
   const before=plain(UI.getSnapshot());UI.showResult({won:true,waves:5,kills:85,time:'3:20',description:'ทดสอบภาพ'});
   assert.equal(get('resultDialog').open,true);assert.equal(get('resultWaves').textContent,5);assert.deepEqual(plain(UI.getSnapshot()),before);get('resultDialog').close();
 });
+check('every hero pose, emotion and effect renders from snapshot fields alone',()=>{
+  const s=fixtures.create('scene'),{x,y}=s.player;
+  for(const pose of ['idle','run','attack','spin','dash','special','victory','greet','sleep',undefined])for(const emotion of [null,'happy','angry','surprised','sad','sleep','greet']){
+    Object.assign(s.player,{pose,poseT:.5,emotion,facing:emotion==='sad'?-1:1,wings:!!emotion,crown:!!emotion,dash:pose==='dash'?{fromX:x-60,fromY:y,progress:.5}:null,special:pose==='special'?{progress:.3,level:emotion?2:1}:null});
+    s.effects=[{type:'spin',x,y:y-26,radius:115,progress:.4}];UI.setSnapshot(s);scheduledFrame(500);
+  }
+  UI.showResult({won:false,waves:3,kills:20,time:'1:00'});get('resultDialog').close();UI.openSettings();scheduledFrame(900);get('settingsDialog').close();
+});
+check('dash and special buttons follow the snapshot and only send intents',()=>{
+  UI.closeMenus();const s=fixtures.create('scene'),actions=[],off=UI.onAction(a=>actions.push(plain(a)));
+  const press=id=>{for(const fn of get(id).events.get('pointerdown'))fn({preventDefault:noop});};
+  UI.setSnapshot(s);assert.equal(get('skillButtons').hidden,true,'no moves in the snapshot, no buttons');
+  s.hud.moves={dash:{unlocked:false,day:20,ready:0,active:false},special:{unlocked:false,day:40,charge:0,active:false,level:1}};UI.setSnapshot(s);
+  assert.equal(get('skillButtons').hidden,false);assert.equal(get('dashLabel').textContent,'วัน 20');assert.ok(get('specialButton').classList.contains('locked'));
+  press('dashButton');assert.equal(actions.length,0,'a locked button only says when it opens');assert.equal(get('toast').classList.contains('visible'),true);
+  s.hud.moves={dash:{unlocked:true,day:20,ready:1,active:false},special:{unlocked:true,day:40,charge:.5,active:false,level:2}};UI.setSnapshot(s);
+  assert.equal(get('dashLabel').textContent,'พุ่ง');assert.ok(get('dashButton').classList.contains('ready'));assert.ok(!get('specialButton').classList.contains('ready'));
+  assert.match(get('specialButton').style.background,/#ffd86a 180deg/);
+  const before=plain(UI.getSnapshot());press('dashButton');press('specialButton');
+  globalEvents.get('keydown')({key:'Shift',repeat:false,preventDefault:noop});globalEvents.get('keydown')({key:'e',repeat:false,preventDefault:noop});
+  globalEvents.get('keydown')({key:'e',repeat:true,preventDefault:noop});
+  assert.deepEqual(actions.map(a=>a.type),['move:dash','move:special','move:dash','move:special']);assert.deepEqual(plain(UI.getSnapshot()),before);
+  UI.openSettings();assert.equal(get('skillButtons').hidden,true,'hidden behind menus');globalEvents.get('keydown')({key:'Shift',repeat:false,preventDefault:noop});
+  assert.equal(actions.filter(a=>a.type.startsWith('move:')).length,4,'no skill intents behind a menu');get('settingsDialog').close();off();
+});
 check('one HTML uses no remote libraries, fonts, images, or network APIs',()=>{
   assert.doesNotMatch(html,/<(?:img|script|link)\b[^>]*(?:src|href)=/i);
   assert.doesNotMatch(scripts.join('\n'),/\b(?:fetch|XMLHttpRequest|WebSocket)\s*\(/);

@@ -3,8 +3,10 @@
 // 100-day campaign with the shipped CONFIG (no test shortcuts) and report how far
 // they get. Usage:
 //   node tools/balance-sim.cjs [bot=human] [seeds=3] [weapon=axe] [maxDay=100]
+// SIM_CONFIG='{"specialKills":40}' overrides CONFIG values for a tuning run.
 // Bots: idle (never moves after starting), camper (stands at the build site),
-// human (decides every 0.3 s with aim noise), smart (decides every frame).
+// human (decides every 0.3 s with aim noise), smart (decides every frame). Both use the
+// dash and special buttons once they unlock (days 20 and 40).
 'use strict';
 const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 const html=fs.readFileSync(path.resolve(__dirname,'../emberwood.html'),'utf8');
@@ -41,8 +43,15 @@ function decide(g,fleeAt){
   return [s.fire.x-p.x,s.fire.y-120-p.y];
 }
 
-function play(bot,seed,weapon='axe',maxDay=100){
-  const g=new GameEngine({seed}),rng=mulberry(seed*31+7),dt=1/60;g.equipWeapon(weapon);
+/** 2.3 buttons, pressed the way a child would: the star when a crowd is near, the wind when something is touching. */
+function useSkills(g){
+  const s=g.state,p=s.player;let near=0,close=false;
+  for(const e of s.enemies){if(!e.alive)continue;const d=Math.hypot(e.x-p.x,e.y-p.y);if(d<260)near++;if(d<45)close=true;}
+  if(s.moves.charge>=1&&near>=4)g.special();if(close)g.dash();
+}
+
+function play(bot,seed,weapon='axe',maxDay=100,config={}){
+  const g=new GameEngine({seed,config}),rng=mulberry(seed*31+7),dt=1/60;g.equipWeapon(weapon);
   let hold=[0,0],clock=0,t=0,minHp=100,hits=0,lastHp=100,towerTurn=0;const dayLog=[];
   g.setInput(.3,0);
   while(!['won','lost'].includes(g.state.phase)&&g.state.wave<=maxDay&&t<6*3600){
@@ -52,9 +61,9 @@ function play(bot,seed,weapon='axe',maxDay=100){
     if(s.buildRequest){const type=['cannon','flame','archer'][towerTurn++%3];g.chooseTower({...s.buildRequest,towerType:s.towers[0]?.type||type});}
     while(s.coins>=g.weaponCost(s.equipped).coins&&s.gems>=g.weaponCost(s.equipped).gems&&s.weapons[s.equipped]<10)if(!g.upgradeWeapon(s.equipped))break;
     let move=[0,0];
-    if(bot==='camper')move=[s.site.x-s.player.x,s.site.y-60-s.player.y];
-    else if(bot==='human'){clock-=dt;if(clock<=0){clock=.3;const [x,y]=decide(g,26),n=Math.hypot(x,y);if(n<2)hold=[0,0];else{const a=Math.atan2(y,x)+(rng()-.5)*.6;hold=[Math.cos(a),Math.sin(a)];}}move=hold;}
-    else if(bot==='smart'){const [x,y]=decide(g,32),n=Math.hypot(x,y);move=n<2?[0,0]:[x/n,y/n];}
+    if(bot==='camper'){const dx=s.site.x-s.player.x,dy=s.site.y-60-s.player.y;move=Math.hypot(dx,dy)<6?[0,0]:[dx,dy];}
+    else if(bot==='human'){clock-=dt;if(clock<=0){clock=.3;const [x,y]=decide(g,26),n=Math.hypot(x,y);if(n<2)hold=[0,0];else{const a=Math.atan2(y,x)+(rng()-.5)*.6;hold=[Math.cos(a),Math.sin(a)];}g.setInput(hold[0],hold[1]);useSkills(g);}move=hold;}
+    else if(bot==='smart'){const [x,y]=decide(g,32),n=Math.hypot(x,y);move=n<2?[0,0]:[x/n,y/n];g.setInput(move[0],move[1]);useSkills(g);}
     if(bot!=='idle'||t<.05)g.setInput(move[0],move[1]);
     g.step(dt);t+=dt;g.drainEvents();
     if(s.player.hp<lastHp-.5)hits++;lastHp=s.player.hp;if(s.phase==='running')minHp=Math.min(minHp,s.player.hp);
@@ -66,7 +75,7 @@ function play(bot,seed,weapon='axe',maxDay=100){
 if(require.main===module){
   const [bot='human',seeds='3',weapon='axe',maxDay='100']=process.argv.slice(2);
   for(let i=1;i<=Number(seeds);i++){
-    const r=play(bot,i,weapon,Number(maxDay));
+    const r=play(bot,i,weapon,Number(maxDay),JSON.parse(process.env.SIM_CONFIG||'{}'));
     const curve=r.dayLog.filter(d=>d.day%10===0).map(d=>`d${d.day}:${d.hp}hp`).join(' ');
     console.log(`${r.bot.padEnd(6)} seed ${r.seed} ${r.weapon.padEnd(5)} ${r.result.padEnd(4)} day ${String(r.day).padStart(3)}  ${String(r.minutes).padStart(5)} min  minHP ${String(r.minHp).padStart(3)}  hits ${String(r.hits).padStart(4)}  kills ${String(r.kills).padStart(4)}  weapon L${r.weaponLevel}  tower ${r.tower}  speed x${r.speed}  ${curve}`);
   }

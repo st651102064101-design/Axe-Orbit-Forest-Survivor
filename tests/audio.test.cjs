@@ -6,7 +6,7 @@ const assert = require('node:assert/strict');
 const file = process.env.EMBERWOOD_AUDIO_SOURCE;
 const html = file ? '' : fs.readFileSync(path.resolve(__dirname, '../emberwood.html'), 'utf8');
 const source = file ? fs.readFileSync(file, 'utf8') : html.match(/<script id="presentation-layer">([\s\S]*?)\/\* Campaign UI/)[1];
-const requiredCues = ['ui','confirm','error','start','swing','spear','bow','hit','hurt','enemyDown','coin','gem','wood','deposit','build','upgrade','levelUp','day','boss','shoot','cannon','flame','targetHit','miss','dodgeHit','parry','parryMiss','miniWin','miniEnd','win','lose'];
+const requiredCues = ['ui','confirm','error','start','swing','spear','bow','hit','hurt','enemyDown','coin','gem','wood','deposit','build','upgrade','levelUp','day','boss','shoot','cannon','flame','targetHit','miss','dodgeHit','parry','parryMiss','miniWin','miniEnd','win','lose','combo','comboMax','milestone','explode','spin','dash','special'];
 class Param {
   constructor(value = 1) { this.value = value; this.events = []; }
   setValueAtTime(value, time) { this.value=value; this.events.push({type:'set',value,time}); }
