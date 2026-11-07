@@ -8,7 +8,7 @@ const plain=v=>JSON.parse(JSON.stringify(v));
 const game=(config={})=>new GameEngine({seed:42,config:{enemySpeed:0,contactDamage:0,axeDamage:0,...config}});
 const advance=(g,time)=>{for(let i=0;i<Math.ceil(time*60);i++)g.step(1/60);};
 test('v2 campaign presents 100 days, three distinct weapons and daily combat choices',()=>{
-  const g=game(),s=g.snapshot();assert.equal(VERSION,'2.1.0');assert.equal(s.campaign.totalDays,100);
+  const g=game(),s=g.snapshot();assert.equal(VERSION,'2.2.0');assert.equal(s.campaign.totalDays,100);
   assert.equal(s.campaign.day,1);assert.deepEqual(Array.from(s.campaign.weapons,w=>w.id),['axe','spear','bow']);
   assert.equal(s.campaign.miniAvailable,true);
 });
@@ -74,9 +74,11 @@ test('resuming dodge clears held movement and rejects a mini from another campai
   saved.mini.day=2;assert.equal(game().importSave(saved),false);
 });
 test('real combat can win only after all 100 days and emits one result',()=>{
-  const g=game({enemyHP:1,enemyHPGrowth:0,enemySpeed:220,axeDamage:10000,axeRadius:150,axePeriod:.15,intermission:.05,initialWood:0,initialDeposit:0});g.start();
+  // The player never moves here, so the static axe must also cover the band archers keep (150-205 from day 45).
+  const g=game({enemyHP:1,enemyHPGrowth:0,enemySpeed:220,axeDamage:10000,axeRadius:220,axePeriod:.15,intermission:.05,initialWood:0,initialDeposit:0});g.start();
   for(let i=0;i<150000&&g.state.phase!=='won';i++){
     if(g.state.dayChoice){const q=g.state.dayChoice;g.chooseDayReward({requestId:q.requestId,choiceId:q.options[0].id});}
+    if(g.state.milestoneRequest)g.ackMilestone({requestId:g.state.milestoneRequest.requestId});
     g.step(.05);
   }
   assert.equal(g.state.wave,100);assert.equal(g.state.phase,'won');assert.equal(g.drainEvents().filter(e=>e.type==='result').length,1);

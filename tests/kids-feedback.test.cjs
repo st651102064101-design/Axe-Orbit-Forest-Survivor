@@ -25,9 +25,15 @@ test('mini shot outcomes and rewards provide visual reward data and sound once',
   const mini=g.snapshot().miniGame;assert.ok(Array.isArray(mini.rewards));assert.ok(mini.rewards.some(r=>r.type==='coin'&&r.amount>0));assert.ok(cues(g).some(c=>c==='miniWin'||c==='miniEnd'));
   const before=g.state.coins;g.step(.05);assert.equal(g.state.coins,before);assert.equal(cues(g).length,0);
 });
-test('2.1 accepts an existing 2.0 save and clears new optional reward decorations safely',()=>{
-  assert.equal(VERSION,'2.1.0');const g=game(),save=g.exportSave();save.version='2.0.0';delete save.state.miniRewards;
-  const h=game();assert.equal(h.importSave(save),true);assert.equal(h.state.bagWood,g.state.bagWood);assert.equal(h.exportSave().version,'2.1.0');
+test('2.2 accepts existing 2.0 / 2.1 (schema 2) saves and clears new optional reward decorations safely',()=>{
+  assert.equal(VERSION,'2.2.0');
+  for(const version of ['2.0.0','2.1.0']){
+    const g=game(),save=g.exportSave();save.schema=2;save.version=version;delete save.state.miniRewards;
+    for(const key of ['combo','milestoneSeen','milestoneRequest','enemyShots'])delete save.state[key];delete save.state.perks.haste;
+    for(const e of save.state.enemies)for(const key of ['family','baseHp','baseSpeed','baseDamage','clock','clock2','armed','facing','blocked','windup','charge','blink','blinkX','blinkY','summoned','stage','split'])delete e[key];
+    const h=game();assert.equal(h.importSave(save),true,version);assert.equal(h.state.bagWood,g.state.bagWood);
+    const out=h.exportSave();assert.equal(out.version,'2.2.0');assert.equal(out.schema,3);assert.equal(out.state.perks.haste,0);assert.equal(out.state.milestoneSeen,1);
+  }
 });
 test('an accurate target hit sounds correct even when previous misses keep total score at zero',()=>{
   const g=game();g.startMiniGame('targets');const id=g.miniGame.id;g.drainEvents();

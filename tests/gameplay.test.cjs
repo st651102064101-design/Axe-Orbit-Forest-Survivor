@@ -107,7 +107,7 @@ test('a built tower is solid to the player',()=>{
 });
 test('a configurable short campaign clears every encounter and emits victory exactly once',()=>{
   const g=game({waves:5,waveGrowth:4,enemyHP:1,enemyHPGrowth:0,enemySpeed:200,axeDamage:1000,axeRadius:120,axePeriod:.2,intermission:.1,initialWood:0,initialDeposit:0});g.start();
-  for(let i=0;i<10800&&g.state.phase!=='won';i++){if(g.state.dayChoice){const q=g.state.dayChoice;g.chooseDayReward({requestId:q.requestId,choiceId:q.options[0].id});}g.step(1/60);}
+  for(let i=0;i<10800&&g.state.phase!=='won';i++){if(g.state.dayChoice){const q=g.state.dayChoice;g.chooseDayReward({requestId:q.requestId,choiceId:q.options[0].id});}if(g.state.milestoneRequest)g.ackMilestone({requestId:g.state.milestoneRequest.requestId});g.step(1/60);}
   assert.equal(g.state.phase,'won');assert.equal(g.state.wave,5);assert.equal(g.state.kills,85);
   assert.equal(g.drainEvents().filter(e=>e.type==='result').length,1);advance(g,5);assert.equal(g.drainEvents().filter(e=>e.type==='result').length,0);
 });
