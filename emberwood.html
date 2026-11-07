@@ -553,6 +553,8 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
 #arsenalBadge[data-tier="5"] { border-color:#d9b8ff; color:#f3e8ff; background:#2a1640e6; }
 #tierBanner { position:absolute; left:50%; top:calc(var(--hud-y) + 150px + env(safe-area-inset-top)); transform:translateX(-50%) scale(.6); opacity:0; display:flex; align-items:center; gap:10px; padding:8px 18px 8px 8px; border:3px solid #ffd86a; border-radius:20px; background:linear-gradient(#5a3f12f2,#2e1f08f2); color:#fff3c4; pointer-events:none; transition:opacity .25s,transform .25s; white-space:nowrap; z-index:2; }
 #tierBanner.visible { opacity:1; transform:translateX(-50%) scale(1); }
+/* When the hero is high on the screen the banner and the combo counter move down, above the bottom buttons, so they never cover him. */
+#tierBanner.low, #comboCounter.low { top:auto; bottom:calc(184px + env(safe-area-inset-bottom)); }
 #tierBanner canvas { width:64px; height:64px; flex:none; }
 #tierBanner b { display:block; font-size:24px; }
 #tierBanner span { font-size:18px; color:#ffe9a3; }
@@ -566,10 +568,10 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
 .arsenal-step.is-current canvas { box-shadow:0 0 0 3px #ffd86a; }
 .arsenal-progress { height:8px; border-radius:4px; background:#0f2a1f; margin-top:8px; overflow:hidden; }
 .arsenal-progress i { display:block; height:100%; width:0; background:linear-gradient(90deg,#ffd86a,#ff9a3a); }
-.campaign-weapon-card.is-locked { filter:saturate(.35); }
+.campaign-weapon-card.is-locked { filter:saturate(.35); align-self:start; }
 .campaign-weapon-card.is-locked .campaign-stats, .campaign-weapon-card.is-locked .campaign-level-pips, .campaign-weapon-card.is-locked .campaign-visual-costs, .campaign-weapon-card.is-locked .campaign-weapon-actions, .campaign-weapon-card.is-locked .campaign-upgrade-note { display:none; }
 .campaign-lock-day { display:inline-block; margin-top:4px; padding:2px 10px; border-radius:10px; background:#0f2a1f; color:#ffe9a3; font-weight:900; }
-@media (orientation:landscape) and (max-height:500px) { #arsenalBadge { top:calc(var(--hud-y) + 110px + env(safe-area-inset-top)); height:32px; font-size:17px; } #arsenalBadge canvas { width:24px; height:24px; } #tierBanner { top:calc(var(--hud-y) + 100px + env(safe-area-inset-top)); } #tierBanner canvas { width:48px; height:48px; } #tierBanner b { font-size:20px; } }
+@media (orientation:landscape) and (max-height:500px) { #tierBanner.low, #comboCounter.low { bottom:calc(150px + env(safe-area-inset-bottom)); } #arsenalBadge { top:calc(var(--hud-y) + 110px + env(safe-area-inset-top)); height:32px; font-size:17px; } #arsenalBadge canvas { width:24px; height:24px; } #tierBanner { top:calc(var(--hud-y) + 100px + env(safe-area-inset-top)); } #tierBanner canvas { width:48px; height:48px; } #tierBanner b { font-size:20px; } }
 @media (max-width:340px) { .arsenal-step { font-size:11px; } }
 #tierBanner.visible ~ #comboCounter { visibility:hidden; }
 /* Narrow phones: speed, weapon count and combo stack down the right and centre; the tier banner sits below the inventory. */
@@ -1832,8 +1834,12 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
     }
     function setBuildPending(value,message='กำลังสร้าง…'){pending=!!value;document.querySelectorAll('.tower-card').forEach(card=>card.disabled=pending);$('buildPending').textContent=pending?message:'';}
     const TIER_NAMES=['ดาบหมุนรอบตัว','วงหมุนเร็วขึ้น','วงแหวนหลายชั้น','วงเวทใหญ่','ออร่าเทพเจ้า','จักรวาลอาวุธ'];
-    /** Non-blocking banner when the weapon count reaches a new orbit tier (the engine also plays its sound). */
+    /** Non-blocking banner when the weapon count reaches a new orbit tier (the engine also plays its sound).
+        A tier reached while a menu is open, or a banner a menu opens over (day 1's tenth weapon arrives one step
+        before the day-reward card), waits until menus close and then shows in full. */
+    let pendingTier=null,currentTier=null;
     function showTierUp(event){
+      if(blocked()){pendingTier=event;return;}currentTier=event;
       const tier=clamp(Math.round(Number(event?.tier)||0),0,TIER_NAMES.length-1),count=Math.max(0,Math.floor(Number(event?.count)||0));
       $('tierTitle').textContent=`อาวุธ ${count.toLocaleString('en-US')} ชิ้น!`;$('tierText').textContent=TIER_NAMES[tier];
       const c=$('tierArt').getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,128,128);c.setTransform(2,0,0,2,0,0);drawTierArt(c,tier,32,32,.92);
@@ -1921,7 +1927,7 @@ button.campaign-card:hover:enabled { border-color:#ffe490; background:#496f43; }
     document.addEventListener('visibilitychange',()=>{audio.setActive(!document.hidden);syncAudio();});
     syncAudio();
 
-    function frame(ms){const dt=Math.min((ms-lastFrame)/1000||0,.05);lastFrame=ms;const phase=model?.campaign?.phase;audio.tick(ms/1000,{scene:phase==='won'?'won':phase==='lost'?'lost':model?.miniGame?'mini':blocked()?'menu':(model?.campaign?.day||1)%10===0?'boss':'game',paused:document.hidden});audioElapsed+=dt;if(audioElapsed>.07){syncAudio();audioElapsed=0;}if(!blocked()&&!reducedMotion)visualTime+=dt;render(visualTime);if($('settingsDialog').open)drawPauseArt(ms/1000);hudElapsed+=dt;if(hudElapsed>.15){syncHUD(true);hudElapsed=0;}if(toastDeadline&&ms>toastDeadline){$('toast').classList.remove('visible');toastDeadline=0;}if(tierDeadline&&ms>tierDeadline){$('tierBanner').classList.remove('visible');tierDeadline=0;}requestAnimationFrame(frame);}
+    function frame(ms){const dt=Math.min((ms-lastFrame)/1000||0,.05);lastFrame=ms;const phase=model?.campaign?.phase;audio.tick(ms/1000,{scene:phase==='won'?'won':phase==='lost'?'lost':model?.miniGame?'mini':blocked()?'menu':(model?.campaign?.day||1)%10===0?'boss':'game',paused:document.hidden});audioElapsed+=dt;if(audioElapsed>.07){syncAudio();audioElapsed=0;}if(!blocked()&&!reducedMotion)visualTime+=dt;render(visualTime);if($('settingsDialog').open)drawPauseArt(ms/1000);hudElapsed+=dt;if(hudElapsed>.15){syncHUD(true);hudElapsed=0;}if(toastDeadline&&ms>toastDeadline){$('toast').classList.remove('visible');toastDeadline=0;}if(tierDeadline&&(blocked()||ms>tierDeadline)){$('tierBanner').classList.remove('visible');if(blocked()&&ms<=tierDeadline)pendingTier=pendingTier||currentTier;tierDeadline=0;}if(pendingTier&&!blocked()){const e=pendingTier;pendingTier=null;showTierUp(e);audio.play('tierUp');}if(model?.player){const y=project({x:model.player.x,y:model.player.y-30}).y/view.height;for(const id of ['tierBanner','comboCounter']){const node=$(id),low=node.classList.contains('low');if(!low&&y<.45)node.classList.add('low');else if(low&&y>.55)node.classList.remove('low');}}requestAnimationFrame(frame);}
     const campaignUI=window.EmberwoodCampaignUI.create({emit,onMenuState:menuChanged,isBlocked:blocked,art:{drawWeaponIcon,drawResource,drawPictogram,drawPlayer,drawEnemy,drawCampfire,drawEffect,drawTierArt}});
     window.EmberwoodUI=Object.freeze({...campaignUI,version:1,playSound:name=>audio.play(name),getAudioState:()=>audio.getState(),setSnapshot,getSnapshot:()=>clone(model),getViewport:()=>({...view}),openBuildMenu,closeBuildMenu,closeMenus,openSettings,setBuildPending,showToast,showTierUp,showResult,project,onAction:fn=>{listeners.add(fn);return()=>listeners.delete(fn);},art:Object.freeze({drawPlayer,drawEnemy,drawTree,drawCampfire,drawAxe,drawAttackVFX,drawTower,drawRange,drawProjectile,drawEffect,drawDamage,drawResource,drawWeaponIcon,drawWeaponShape,drawOrbit,drawOrbitGround,drawTierArt,drawPictogram})});
     fit();requestAnimationFrame(frame);

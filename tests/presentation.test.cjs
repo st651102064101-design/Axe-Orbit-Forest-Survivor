@@ -150,6 +150,15 @@ check('3.0 weapon menu locks future weapons, shows the orbit tier bar, badge, ba
   for(const type of ids){s.player.weapon={type,angle:2.5,flash:.1,range:90};UI.setSnapshot(s);scheduledFrame(720);}
   assert.equal(UI.getSnapshot().player.orbit.tier,5);assert.equal(before.player.x,UI.getSnapshot().player.x,'rendering never moves the hero');
 });
+check('a tier banner waits behind menus and shows in full once they close',()=>{
+  const visible=()=>get('tierBanner').classList.contains('visible');UI.closeMenus();scheduledFrame(10);
+  UI.showTierUp({tier:2,count:100});assert.ok(visible());
+  UI.openSettings();scheduledFrame(100);assert.equal(visible(),false,'hidden while a menu covers it');
+  get('settingsDialog').close();scheduledFrame(200);assert.ok(visible(),'shown again after the menu closes');
+  UI.openSettings();UI.showTierUp({tier:3,count:1000});scheduledFrame(250);assert.equal(visible(),false,'a tier reached under a menu waits');
+  get('settingsDialog').close();scheduledFrame(300);assert.ok(visible());assert.equal(get('tierTitle').textContent,'อาวุธ 1,000 ชิ้น!');
+  scheduledFrame(5000);assert.equal(visible(),false,'expires after its three seconds');
+});
 check('one HTML uses no remote libraries, fonts, images, or network APIs',()=>{
   assert.doesNotMatch(html,/<(?:img|script|link)\b[^>]*(?:src|href)=/i);
   assert.doesNotMatch(scripts.join('\n'),/\b(?:fetch|XMLHttpRequest|WebSocket)\s*\(/);
